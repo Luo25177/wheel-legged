@@ -1,0 +1,46 @@
+#VRML_OBJ R2021a utf8
+Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          ambientIntensity 1
+          diffuseColor 1 1 1
+          emissiveColor 1 0.666667 0.498039
+          shininess 0.21
+          specularColor 0.88 0.88 0.88
+        }
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate {
+          point [
+            -0.09 -0.015 -0.03
+            -0.09 -0.015 0.03
+            -0.09 0.015 -0.03
+            -0.09 0.015 0.03
+            0.09 -0.015 -0.03
+            0.09 -0.015 0.03
+            0.09 0.015 -0.03
+            0.09 0.015 0.03
+          ]
+        }
+        normal Normal {
+          vector [
+            -1 0 0
+            0 -1 0
+            0 0 -1
+            0 0 1
+            0 1 0
+            1 0 0
+          ]
+        }
+        coordIndex [
+          7, 5, 6, -1, 6, 5, 4, -1, 3, 1, 7, -1, 7, 1, 5, -1, 2, 0, 3, -1, 3, 0, 1, -1, 6, 4, 2, -1, 2, 4, 0, -1, 1, 0, 5, -1, 5, 0, 4, -1, 2, 3, 6, -1, 6, 3, 7, -1
+        ]
+        normalIndex [
+          5, 5, 5, -1, 5, 5, 5, -1, 3, 3, 3, -1, 3, 3, 3, -1, 0, 0, 0, -1, 0, 0, 0, -1, 2, 2, 2, -1, 2, 2, 2, -1, 1, 1, 1, -1, 1, 1, 1, -1, 4, 4, 4, -1, 4, 4, 4, -1
+        ]
+      }
+    }
+  ]
+}
