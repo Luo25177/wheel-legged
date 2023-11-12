@@ -13,6 +13,7 @@
 #include "stm32f4xx.h"
 #include "string.h"
 #include "arm_math.h"
+#include "stdbool.h"
 
 #define AngleToRad 0.0174533f
 #define RadToAngle 57.295780f
@@ -25,10 +26,21 @@
 #define min(x, y) (((x) > (y)) ? (y) : (x))
 #define halfPI 1.57079633f
 
-void S16ToU8 (s16* s, u8* u); 
-void U8ToS16 (u8* u, s16* s);
-void F32ToU8 (float* f, u8* u);
-void U8ToF32 (u8* u, float* f);
+//----
+// @brief 这里的数据类型转化都是小端模式，也就是低位在地址小的地方
+//----
+void LS16ToU8 (s16* s, u8* u); 
+void LU8ToS16 (u8* u, s16* s);
+void LF32ToU8 (float* f, u8* u);
+void LU8ToF32 (u8* u, float* f);
 
-void limitInRange(float* val, float* limit);
-void limitIn2Range(float* val, float* min, float* max);
+//----
+// @brief 大端模式的数据转换，直接利用union来实现
+//----
+void BS16ToU8 (s16* s, u8* u); 
+void BU8ToS16 (u8* u, s16* s);
+void BF32ToU8 (float* f, u8* u);
+void BU8ToF32 (u8* u, float* f);
+
+void limitInRange(float* val, float limit);
+void limitIn2Range(float* val, float min, float max);

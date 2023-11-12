@@ -6,7 +6,7 @@
 // @date 2023-11-12
 // 
 // @copyright Copyright (c) 2023
-// @description this is a datastruct to storage some wheelfoot data
+// @details this is a datastruct to storage some wheelfoot data
 //----
 #pragma once
 
