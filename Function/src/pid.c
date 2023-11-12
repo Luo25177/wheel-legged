@@ -76,16 +76,16 @@ void pidInit(PID* pid, float kp, float ki, float kd, float outputLimit, float ac
   pid->outputLimit = outputLimit;
   pid->accErrLimit = accErrLimit;
   switch(mode) {
-    case INC:
+    case PIDINC:
       pid->compute = incCompute;
       break;
-    case POS:
+    case PIDPOS:
       pid->compute = posCompute;
       break;
-    case TINC:
+    case PIDTINC:
       pid->compute = TincCompute;
       break;
-    case TPOS:
+    case PIDTPOS:
       pid->compute = TposCompute;
       break;
     default:

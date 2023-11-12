@@ -1,9 +1,9 @@
 #include "can.h"
 
-CanRxQueue* can1RxMsg;
-CanTxQueue* can1TxMsg;
-CanRxQueue* can2RxMsg;
-CanTxQueue* can2TxMsg;
+queue(CanTxMsg) *can1Txmsg;
+queue(CanRxMsg) *can1Rxmsg;
+queue(CanTxMsg) *can2Txmsg;
+queue(CanRxMsg) *can2Rxmsg;
 
 void can1Init()
 {
@@ -63,6 +63,10 @@ void can1Init()
 	CAN_ClearITPendingBit(CAN1, CAN_IT_BOF);	// Error:Bus-off Interrupt
 	CAN_ClearFlag(CAN1, CAN_IT_BOF);
 	CAN_ITConfig(CAN1, CAN_IT_BOF, ENABLE);
+
+	can1Txmsg = newqueue(CanTxMsg);
+	can1Rxmsg = newqueue(CanRxMsg);
+
 }
 
 void can2Init()
@@ -125,35 +129,38 @@ void can2Init()
 	CAN_ClearITPendingBit(CAN2, CAN_IT_BOF);
 	CAN_ClearFlag(CAN2, CAN_IT_BOF);
 	CAN_ITConfig(CAN2, CAN_IT_BOF, ENABLE);
+	
+	can1Txmsg = newqueue(CanTxMsg);
+	can1Rxmsg = newqueue(CanRxMsg);
 }
 
 void canSend(u8 ctrlWord)
 {
 	CanTxMsg msg;
-
-	if (ctrlWord & 0xf0)
-		if (can1TxMsg->dequeue(can1TxMsg, &msg))
-			CAN_Transmit(CAN1, &msg);
-	if (ctrlWord & 0x0f)
-		if (can2TxMsg->dequeue(can2TxMsg, &msg))
-			CAN_Transmit(CAN2, &msg);
+	if ((ctrlWord & 0x01) && can1Txmsg->dequeue(can1Txmsg, &msg))
+		can1Txmsg->pop(can1Txmsg);
+	if ((ctrlWord & 0x02) && can2Txmsg->dequeue(can2Txmsg, &msg))
+		can2Txmsg->pop(can2Txmsg);
 }
 
 void sendzero(){
-    CanTxMsg *txmsg;
-    txmsg->IDE = CAN_Id_Standard;
-    txmsg->DLC = 8;
-    txmsg->ExtId = 0x01000000;
-    txmsg->RTR = CAN_RTR_DATA;
-    txmsg->Data[0] = 0x01;
-    txmsg->Data[1] = 0x02;
-    txmsg->Data[2] = 0x03;
-    txmsg->Data[3] = 0x04;
-    txmsg->Data[4] = 0x05;
-    txmsg->Data[5] = 0x06;
-    txmsg->Data[6] = 0x07;
-    txmsg->Data[7] = 0x08;
-    CAN_Transmit(CAN1, txmsg);    
-    CAN_Transmit(CAN2, txmsg);
+    CanTxMsg txmsg;
+    txmsg.IDE = CAN_Id_Standard;
+    txmsg.DLC = 8;
+    txmsg.ExtId = 0x01000000;
+    txmsg.RTR = CAN_RTR_DATA;
+    txmsg.Data[0] = 0x01;
+    txmsg.Data[1] = 0x02;
+    txmsg.Data[2] = 0x03;
+    txmsg.Data[3] = 0x04;
+    txmsg.Data[4] = 0x05;
+    txmsg.Data[5] = 0x06;
+    txmsg.Data[6] = 0x07;
+    txmsg.Data[7] = 0x08;
+    CAN_Transmit(CAN1, &txmsg);
+    CAN_Transmit(CAN2, &txmsg);
+}
+
+void canCheck() {
 
 }

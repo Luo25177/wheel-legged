@@ -13,10 +13,10 @@
 #include "mymath.h"
 
 typedef enum {
-  INC,
-  POS,
-  TINC,
-  TPOS,
+  PIDINC,
+  PIDPOS,
+  PIDTINC,
+  PIDTPOS,
 }pidMode;
 
 typedef struct {

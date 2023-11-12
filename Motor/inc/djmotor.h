@@ -13,6 +13,7 @@
 
 #include "pid.h"
 #include "mymath.h"
+#include "motorparam.h"
 #include "stm32f4xx_can.h"
 
 #define M3508MAXPULSE		8192
@@ -23,20 +24,15 @@
 #define M3508RATIO			19.2f
 #define M3508ANGLETOPULSE	436.906666666667f
 
-typedef enum {
-  DJHALT,
-  DJPOSITION,
-  DJSPEED,
-  DJCURRENT
-}DJmode;
-
 typedef struct {
   int n;
   u8 id;
 	u8 mode;
+	u8 dir;
+	bool enable;
  
   s16 lockPulse;
-	bool isGetZero;	   // 是否获得的零点位置脉冲
+	bool setZero;	   // 是否获得的零点位置脉冲
   
   // 超时记录
 	bool timeOut;
@@ -47,17 +43,19 @@ typedef struct {
 	float angleRead;	// 角度 累积(deg)
 	
 	vs16 pulseRead;
-	vs16  speedRead;
-	vs16  currentRead;
-	vs16  temperature;
+	vs16 speedRead;
+	vs16 currentRead;
+	vs16 temperature;
 	
   vs16 lastPulseRead;
 	
 	vs16 angleSet;
-  vs16  output; // 最终的电流输出
+  vs16 output; // 最终的电流输出
 
 	PID* pulsePid;	  // 获得速度
 	PID* speedPid;	  // 获得电流
 }DJmotor;
 
-void DJmotorInit(DJmotor* motor, u8 id);
+void DJmotorInit(DJmotor* motor, u8 id, MotorDir dir);
+void DJreceiveHandle(DJmotor* motor, CanRxMsg msg);
+void DJcompute(DJmotor* motor);

@@ -16,8 +16,8 @@ void LU8ToF32 (u8* u, float* f) {
 }
 
 void BS16ToU8 (s16* s, u8* u) {
-  *u = (*s >> 8) | 0xff;
-  *(u + 1) = *s | 0xff;
+  *u = (*s >> 8) & 0xff;
+  *(u + 1) = *s & 0xff;
 }
 
 void BU8ToS16 (u8* u, s16* s) {
@@ -25,10 +25,10 @@ void BU8ToS16 (u8* u, s16* s) {
 }
 
 void BF32ToU8 (float* f, u8* u) {
-  *u = (*(int *)f >> 24) | 0xff;
-  *(u + 1) = (*(int *)f >> 16) | 0xff;
-  *(u + 2) = (*(int *)f >> 8) | 0xff;
-  *(u + 3) = *(int *)f | 0xff;
+  *u = (*(int *)f >> 24) & 0xff;
+  *(u + 1) = (*(int *)f >> 16) & 0xff;
+  *(u + 2) = (*(int *)f >> 8) & 0xff;
+  *(u + 3) = *(int *)f & 0xff;
 }
 
 void BU8ToF32 (u8* u, float* f) {

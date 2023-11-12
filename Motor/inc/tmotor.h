@@ -11,7 +11,10 @@
 
 #pragma once
 
+#include "can.h"
+#include "mymath.h"
 #include <stdbool.h>
+#include "motorparam.h"
 
 //电机极限参数（见电机说明）
 #define P_MIN -95.5f    // 位置极限（rad）
@@ -26,37 +29,73 @@
 #define T_MAX 18.0f 
 
 typedef enum {
-  TPOSITION,
-  TSPEED,
-  TPOSSPEED
-}Tmode;
+  TENTERCONTROL,
+  TEXITCONTROL,
+  TSETZERO
+}Tcontrol;
 
 typedef struct {
-  float angle2Rad;
-  float ratio;
-  float gearradio;
-}Tparam;
-
-typedef struct {
-  float angle;
-  float speed;
-  float torque;
+  float kp;
+  float kd;
+  
   float kpBg;
   float kdBg;
   float kpSt;
   float kdSt;
+  
   float acc;
-  float accRange;
   float dcc;
+  
+  float accRange;
   float dccRange;
-  float SPStart;
+
+  float spMaxpos;
+  float spMinpos;
+
+  float maxangle;
+  float minangle;
+  
+  float ratio;
+  float gearratio;
+}Tinitval;
+
+typedef struct {
+  float angle; // rad
+  float speed; // rad
+  float torque;
   float lockRange;
+  
+  float spStart;
+  float spTemp;
+  float spCal;
+  
+  float angleBg;
+  float angleStart;
+  float angleCal;
+  
+  float timeBg;
+  float timeNow;
 }Tvalue;
 
 typedef struct {
   unsigned int timeOutCnt;
   bool timeOut;
+  unsigned int stuckCnt;
+  bool stuck;
+  bool stuckDet;
+  bool stuckRelease;
 }Tstatus;
 
 typedef struct {
+  u8 id;
+  u8 dir;
+  bool enable;
+  bool setZero;
+  float timeUse;
+  u8 mode;
+  Tvalue real, set;
+  Tinitval initval;
+  Tstatus status;
 }Tmotor;
+
+void TmotorInit(Tmotor* motor, u8 id, MotorDir dir);
