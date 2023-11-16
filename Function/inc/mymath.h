@@ -19,7 +19,7 @@
 #define RadToAngle 57.295780f
 #define cos(x) arm_cos_f32(x)
 #define sin(x) arm_sin_f32(x)
-#define sqrt(x) arm_sqrt_f32(x)
+// #define sqrt(x) arm_sqrt_f32(x)
 #define abs(x) arm_abs_f32(x)
 #define square(x) ((x) * (x));
 #define max(x, y) (((x) > (y)) ? (x) : (y))
@@ -44,3 +44,18 @@ void BU8ToF32 (u8* u, float* f);
 
 void limitInRange(float* val, float limit);
 void limitIn2Range(float* val, float min, float max);
+
+//----
+// @brief 矩阵相乘，一定要注意三个矩阵的大小，可能是导致 handlefault 的原因之一
+//----
+void MatrixMulty(float* src1[], int row1, int col1, float* src2[], int row2, int col2, float* dst[]) {
+  if(col1 != row2) return;
+  for(int i = 0; i < row1; i++) {
+    for(int j = 0; j < col2; i++) {
+      dst[i][j] = 0;
+      for(int k = 0; k < col1; k++) {
+        dst[i][j] += src1[i][k] * src2[k][j];
+      }
+    }
+  }
+}

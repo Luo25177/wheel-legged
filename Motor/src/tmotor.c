@@ -6,10 +6,9 @@
 // @param motor 
 // @param id 
 //----
-void TmotorInit(Tmotor* motor, u8 id, MotorDir dir) {
+void TmotorInit(Tmotor* motor, u8 id) {
   motor->enable = false;
   motor->id = id;
-  motor->dir = dir;
   motor->initval.ratio = 7.643f;
   motor->initval.gearratio = 1.0f;
   motor->initval.spMaxpos = 60; // deg
@@ -143,9 +142,9 @@ void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg) {
   float pos = uint2float(p, P_MIN, P_MAX, 16);
   float speed = uint2float(v, P_MIN, P_MAX, 12);
 
-  motor->real.angle = motor->dir * pos * RadToAngle / motor->initval.gearratio / motor->initval.ratio;
-  motor->real.speed = motor->dir * speed * RadToAngle / motor->initval.gearratio / motor->initval.ratio;
-  motor->real.torque = motor->dir * uint2float(t, T_MIN, T_MAX, 12);
+  motor->real.angle = pos * RadToAngle / motor->initval.gearratio / motor->initval.ratio;
+  motor->real.speed = speed * RadToAngle / motor->initval.gearratio / motor->initval.ratio;
+  motor->real.torque = uint2float(t, T_MIN, T_MAX, 12);
 }
 
 void TmotorEnable(Tmotor* motor, u8 controlword) {
@@ -185,13 +184,13 @@ void TmotorRun(Tmotor* motor) {
 // @param pos rad
 //----
 void TmotorSetPos(Tmotor* motor, float anglerad) {
-  motor->set.angle = anglerad * motor->dir;
+  motor->set.angle = anglerad;
 }
 
 void TmotorSetSpeed(Tmotor* motor, float speedrad) {
-  motor->set.speed = speedrad * motor->dir;
+  motor->set.speed = speedrad;
 }
 
 void TmotorSetTorque(Tmotor* motor, float torque) {
-  motor->set.torque = torque * motor->dir;
+  motor->set.torque = torque;
 }

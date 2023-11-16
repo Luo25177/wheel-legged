@@ -1,5 +1,7 @@
 #include "tim.h"
 
+unsigned int GolbalTimer = 0;
+
 void tim2Init()
 {
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;

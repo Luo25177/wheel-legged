@@ -1,8 +1,7 @@
 #include "djmotor.h"
 
-void DJmotorInit(DJmotor* motor, u8 id, MotorDir dir) {
+void DJmotorInit(DJmotor* motor, u8 id) {
   motor->id = id;
-  motor->dir = dir;
   motor->setZero = false;
   motor->timeOut = false;
   motor->mode = POSITION;
@@ -10,13 +9,13 @@ void DJmotorInit(DJmotor* motor, u8 id, MotorDir dir) {
   motor->n = 0;
   motor->speedPid = (PID *) malloc(sizeof(PID));
   motor->pulsePid = (PID *) malloc(sizeof(PID));
-  pidInit(motor->speedPid, 8, 0.25, 0, 0, 0, INC);
-  pidInit(motor->pulsePid, 0.76, 0.1, 0, M3508MAXSPEED, 0, INC);
+  // 增量式PID
+  pidInit(motor->speedPid, 8, 0.25, 0, 0, 0, PIDINC);
+  pidInit(motor->pulsePid, 0.76, 0.1, 0, M3508MAXSPEED, 0, PIDINC);
 }
 
 void DJreceiveHandle(DJmotor* motor, CanRxMsg msg) {
   BU8ToS16(msg.Data, &motor->pulseRead);
-  motor->pulseRead *= motor->dir;
   if(!motor->setZero) {
     motor->setZero = true;
     motor->lockPulse = motor->pulseRead;
@@ -28,8 +27,6 @@ void DJreceiveHandle(DJmotor* motor, CanRxMsg msg) {
   BU8ToS16(msg.Data + 2, &motor->speedRead);
   BU8ToS16(msg.Data + 4, &motor->currentRead);
   BU8ToS16(msg.Data + 6, &motor->temperature);
-  motor->speedRead *= motor->dir;
-  motor->currentRead *= motor->dir;
   motor->pulseAccumulate = motor->n * M3508MAXPULSE + motor->pulseRead - motor->lockPulse;
   motor->angleRead = motor->pulseAccumulate / M3508ANGLETOPULSE;
 }
@@ -51,7 +48,6 @@ void DJcompute(DJmotor* motor) {
       limitInRange(&motor->output, M3508MAXCURRENT);
       break;
     case TORQUE:
-      motor->output *= motor->dir;
       break;
     default:
       motor->output = 0;

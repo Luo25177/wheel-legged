@@ -16,19 +16,19 @@
 #include "motorparam.h"
 #include "stm32f4xx_can.h"
 
-#define M3508MAXPULSE		8192
+#define M3508MAXPULSE	8192
 #define M3508PULSETHRESHOLD 4096
-#define M3508MAXCURRENT		14745
-#define M3508MAXSPEED		8550.f
-#define M3508ZEROSPEED		1000.f	// 寻零或者失能的最大速度
-#define M3508RATIO			19.2f
-#define M3508ANGLETOPULSE	436.906666666667f
+#define M3508MAXCURRENT	14745
+#define M3508MAXSPEED	8550.f
+#define M3508ZEROSPEED 1000.f	// 寻零或者失能的最大速度
+#define M3508RATIO 19.2f
+#define M3508ANGLETOPULSE	436.90667f // 角度转为编码数
+#define M3508TTOI 2800.f // I = T * K 中的K，将扭矩转为电流
 
 typedef struct {
   int n;
   u8 id;
 	u8 mode;
-	u8 dir;
 	bool enable;
  
   s16 lockPulse;
@@ -56,6 +56,6 @@ typedef struct {
 	PID* speedPid;	  // 获得电流
 }DJmotor;
 
-void DJmotorInit(DJmotor* motor, u8 id, MotorDir dir);
+void DJmotorInit(DJmotor* motor, u8 id);
 void DJreceiveHandle(DJmotor* motor, CanRxMsg msg);
 void DJcompute(DJmotor* motor);

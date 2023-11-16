@@ -92,7 +92,7 @@ void TIM2_IRQHandler(void)	  // 1ms
 {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)	// 溢出中断
 	{
-
+		GolbalTimer++; // 全局计时器 代码的全局时间可都靠这个
 	}
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);	   // 清除中断标志位
 }

@@ -88,7 +88,6 @@ typedef struct {
 
 typedef struct {
   u8 id;
-  u8 dir;
   bool enable;
   bool setZero;
   float timeUse;
@@ -98,4 +97,10 @@ typedef struct {
   Tstatus status;
 }Tmotor;
 
-void TmotorInit(Tmotor* motor, u8 id, MotorDir dir);
+void TmotorInit(Tmotor* motor, u8 id);
+void TmotorStatueControl(u8 controlword, u8 id);
+void TmotorRunControl(Tmotor* motor, float _pos, float _speed, float _torque, float _kp, float _kd);
+void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg);
+void TmotorSetPos(Tmotor* motor, float anglerad);
+void TmotorSetSpeed(Tmotor* motor, float speedrad);
+void TmotorSetTorque(Tmotor* motor, float torque);

@@ -10,8 +10,9 @@
 //----
 #pragma once
 
-#include "datastruct.h"
+#include "tim.h"
 #include <stdbool.h>
+#include "datastruct.h"
 
 typedef struct {
 	float accelx; // m/s2

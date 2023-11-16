@@ -1,31 +1,47 @@
 //----
 // @file robotparam.h
 // @author mask <beloved25177@126.com>
-// @brief 
+// @brief 机器人所需要的所有参数的定义，但是不完全需要测定
 // @version 1.0
 // @date 2023-11-13
 // 
 // @copyright Copyright (c) 2023
-// @details 机器人所需要的所有参数的定义，但是不完全需要测定
+// 
 //----
 #pragma once
 
-#define L1 0.18f
-#define L2 0.336f
-#define L3 0.336f
-#define L4 0.18f
-#define L5 0.24f
+#define l1 0.18f
+#define l2 0.336f
+#define l3 0.336f
+#define l4 0.18f
+#define l5 0.24f
 
 // TODO: 重量测定和参数计算
-#define MASSL1 
-#define MASSL2 
-#define MASSL3 
-#define MASSL4 
-#define MASSWHEEL
-#define MASSBODY
+#define MASSL1 0.1f
+#define MASSL2 0.1f
+#define MASSL3 0.1f
+#define MASSL4 0.1f
+
+#define MASSBODY 0.1f
+#define HALFMASSBODY 0.1f
+#define MASSLEG 0.1f
+#define MASSWHEEL 0.1f
+
 #define GRAVITY 9.805f
 
 float Kcoeff[12][4] = {0};
+
+typedef enum {
+  LEFT = (char) -1,
+  RIGHT = (char) 1
+}LegDir;
+
+typedef enum {
+  NORMAL,
+  JUMP,
+  SOAR
+}RobotRunMode;
+
 
 typedef struct {
   float theta;
@@ -40,3 +56,6 @@ typedef struct {
   float Tp;
   float Twheel;
 }Output;
+
+void inputInit(Input* input);
+void outputInit(Output* output);

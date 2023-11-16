@@ -50,6 +50,7 @@
 #define ALT_DATA_FACTOR 0.001f
 #define SPEED_DATA_FACTOR 0.001f
 
+unsigned int yesenseTimer = 0;
 /*------------------------------------------------Variables define------------------------------------------------*/
 typedef enum
 {
@@ -109,8 +110,17 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
 			yesense->roll.dot = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 			yesense->pitch.dot = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
 			yesense->yaw.dot = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
-      // TODO: 计算角加速度
-      // yesense->roll.ddot = (yesense->roll.dot - yesense->roll.lastdot) / ;
+      // TODO: 计算角加速度可以在中断中计算
+			float dt = (float) (GolbalTimer - yesenseTimer) / 1000;
+			yesenseTimer = GolbalTimer;
+			if(dt != 0) {
+				yesense->roll.ddot = (yesense->roll.dot - yesense->roll.lastdot) / dt;
+				yesense->pitch.ddot = (yesense->pitch.dot - yesense->pitch.lastdot) / dt;
+				yesense->yaw.ddot = (yesense->yaw.dot - yesense->yaw.lastdot) / dt;
+				yesense->roll.lastdot = yesense->roll.dot;
+				yesense->pitch.lastdot = yesense->pitch.dot;
+				yesense->yaw.lastdot = yesense->yaw.dot;
+			}
 		}
 		else
 			ret = (unsigned char)0x00;
