@@ -15,7 +15,7 @@ void DJmotorInit(DJmotor* motor, u8 id) {
 }
 
 void DJreceiveHandle(DJmotor* motor, CanRxMsg msg) {
-  BU8ToS16(msg.Data, &motor->pulseRead);
+  BU8ToVS16(msg.Data, &motor->pulseRead);
   if(!motor->setZero) {
     motor->setZero = true;
     motor->lockPulse = motor->pulseRead;
@@ -24,9 +24,9 @@ void DJreceiveHandle(DJmotor* motor, CanRxMsg msg) {
     motor->n--;
   else if((motor->lastPulseRead - motor->pulseRead) > M3508PULSETHRESHOLD)
     motor->n++;
-  BU8ToS16(msg.Data + 2, &motor->speedRead);
-  BU8ToS16(msg.Data + 4, &motor->currentRead);
-  BU8ToS16(msg.Data + 6, &motor->temperature);
+  BU8ToVS16(msg.Data + 2, &motor->speedRead);
+  BU8ToVS16(msg.Data + 4, &motor->currentRead);
+  BU8ToVS16(msg.Data + 6, &motor->temperature);
   motor->pulseAccumulate = motor->n * M3508MAXPULSE + motor->pulseRead - motor->lockPulse;
   motor->angleRead = motor->pulseAccumulate / M3508ANGLETOPULSE;
 }
@@ -42,10 +42,11 @@ void DJcompute(DJmotor* motor) {
       break;
     case POSITION:
       motor->pulsePid->target = motor->angleSet * M3508ANGLETOPULSE;
-      motor->speedPid->target = motor->pulsePid->compute(motor->pulsePid, motor->pulseAccumulate);
+      motor->speedPid->target = incCompute(motor->pulsePid, motor->pulseAccumulate);
     case SPEED:
-      motor->output += motor->speedPid->compute(motor->speedPid, motor->pulseAccumulate);
-      limitInRange(&motor->output, M3508MAXCURRENT);
+      motor->output += incCompute(motor->speedPid, motor->pulseAccumulate);
+      // TODO:
+      // limitInRange(&motor->output, M3508MAXCURRENT);
       break;
     case TORQUE:
       break;

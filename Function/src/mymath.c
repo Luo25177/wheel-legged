@@ -7,6 +7,14 @@ void LS16ToU8 (s16* s, u8* u) {
 void LU8ToS16 (u8* u, s16* s) {
   memcpy(s, u, sizeof(s16));
 }
+
+void LVS16ToU8 (vs16* s, u8* u) {
+  memcpy(u, (void *) s, sizeof(s16));
+}
+void LU8ToVS16 (u8* u, vs16* s) {
+  memcpy((void *) s, u, sizeof(s16));
+}
+
 void LF32ToU8 (float* f, u8* u) {
   memcpy(u, f, sizeof(float));
 }
@@ -21,6 +29,15 @@ void BS16ToU8 (s16* s, u8* u) {
 }
 
 void BU8ToS16 (u8* u, s16* s) {
+  *s = (s16) (u[0] << 8 | u[1]);
+}
+
+void BVS16ToU8 (vs16* s, u8* u) {
+  *u = (*s >> 8) & 0xff;
+  *(u + 1) = *s & 0xff;
+}
+
+void BU8ToVS16 (u8* u, vs16* s) {
   *s = (s16) (u[0] << 8 | u[1]);
 }
 

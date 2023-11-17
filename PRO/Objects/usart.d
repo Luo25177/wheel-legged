@@ -1,9 +1,7 @@
-./objects/usart.o: ..\Hardware\src\usart.cpp ..\Hardware\inc\usart.h \
-  ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_usart.h \
+./objects/usart.o: ..\Hardware\src\usart.c ..\Hardware\inc\usart.h \
+  ..\Library\STM32F4xx_StdPeriph_Driver\inc\misc.h \
   ..\Library\CMSIS\stm32f4xx.h ..\Library\Include\core_cm4.h \
-  D:\keil\ARM\ARMCLANG\Bin\..\include\libcxx\stdint.h \
-  D:\keil\ARM\ARMCLANG\Bin\..\include\libcxx\__config \
-  D:\keil\ARM\ARMCLANG\Bin\..\include\stdint.h \
+  D:\Software\keil\core\ARM\ARMCLANG\Bin\..\include\stdint.h \
   ..\Library\Include\core_cmInstr.h ..\Library\Include\cmsis_armcc_V6.h \
   ..\Library\Include\core_cmFunc.h ..\Library\Include\core_cmSimd.h \
   ..\Library\CMSIS\system_stm32f4xx.h \
@@ -19,8 +17,6 @@
   ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_syscfg.h \
   ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_tim.h \
   ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_usart.h \
-  ..\Library\STM32F4xx_StdPeriph_Driver\inc\misc.h \
-  ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_gpio.h \
-  ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_rcc.h \
-  ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dma.h \
-  ..\Library\STM32F4xx_StdPeriph_Driver\inc\misc.h
+  D:\Software\keil\core\ARM\ARMCLANG\Bin\..\include\stdio.h \
+  D:\Software\keil\core\ARM\ARMCLANG\Bin\..\include\stdlib.h \
+  D:\Software\keil\core\ARM\ARMCLANG\Bin\..\include\string.h

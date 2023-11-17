@@ -8,6 +8,7 @@
 // @copyright Copyright (c) 2023
 // @details 电机需要的一些通用的参数
 //----
+#pragma once
 
 typedef enum {
   HALT,
@@ -16,8 +17,3 @@ typedef enum {
   TORQUE,
   POSSPEED
 }MotorMode;
-
-typedef enum {
-  FORWARD = -1,
-  BACKWARD = 1
-}MotorDir;

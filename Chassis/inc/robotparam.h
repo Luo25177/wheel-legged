@@ -9,6 +9,7 @@
 // 
 //----
 #pragma once
+#include "vector.h"
 
 #define l1 0.18f
 #define l2 0.336f
@@ -29,17 +30,18 @@
 
 #define GRAVITY 9.805f
 
-float Kcoeff[12][4] = {0};
+extern float Kcoeff[12][4];
 
 typedef enum {
-  LEFT = (char) -1,
-  RIGHT = (char) 1
+  LEGLEFT = (char) -1,
+  LEGRIGHT = (char) 1
 }LegDir;
 
 typedef enum {
-  NORMAL,
-  JUMP,
-  SOAR
+  ROBOTNORMAL = 0,
+  ROBOTJUMP,
+  ROBOTSOAR,
+  ROBOTHALT
 }RobotRunMode;
 
 
@@ -59,3 +61,6 @@ typedef struct {
 
 void inputInit(Input* input);
 void outputInit(Output* output);
+
+
+extern vector2f jumpPoints[4];

@@ -32,8 +32,6 @@ typedef struct {
   float kp;
   float ki;
   float kd;
-
-  float (* compute) (PID* pid, float input);
 }PID;
 
 float incCompute(PID* pid, float input);

@@ -11,12 +11,12 @@ float yaw_last = 0, yaw_now = 0;
 void  G_output_infoSet(Yesense* yesense)
 {
 	yaw_last = yaw_now;
-	yaw_now	 = icm.yawAngle;
+	yaw_now	 = yesense->yaw.now;
 	if (yaw_now - yaw_last < -100)	  // 发生了突变
 		n += 1;
 	else if (yaw_now - yaw_last > 100)
 		n -= 1;
-	icm.yawAngle += n * 360;
+	yesense->yaw.now += n * 360;
 }
 
 void DMA2_Stream7_IRQHandler(void)	  // 数据传输完成，产生中断，检查是否还有没有传输的数据，继续传输
@@ -74,12 +74,12 @@ void USART2_IRQHandler(void)
 			if (temp == 0x53)	 // 帧头2
 			{
 				Data_len  -= 2;
-				res		   = analysis_data(Data_Yesense, Data_len);
+				res	= yesenseAnalyze(&robot->yesense, Data_Yesense, Data_len);
 				Data_len   = 2;
 				RX_FLAG	   = 1;
 				HEAD_FLAG  = 0;
 				if (res == 0 || res == 1)
-					G_output_infoSet();
+					G_output_infoSet(&robot->yesense);
 			} else if (temp != 0x59)
 				HEAD_FLAG = 0;
 		}

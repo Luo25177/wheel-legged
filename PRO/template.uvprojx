@@ -329,7 +329,7 @@
             <uC99>1</uC99>
             <uGnu>1</uGnu>
             <useXO>0</useXO>
-            <v6Lang>3</v6Lang>
+            <v6Lang>6</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,ARM_MATH_CM4,__FPU_PRESENT,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING,DEBUG_ENABLE_SEMIHOST,__TARGET_FPU_VFP</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Library\STM32F4xx_StdPeriph_Driver\inc;..\Library\Include;..\uCOSII\CONFIG;..\uCOSII\CORE;..\uCOSII\PORT;..\Library\CMSIS;..\Library\Startup;..\Hardware\inc;..\Function\inc;..\Main\inc</IncludePath>
+              <IncludePath>..\Library\STM32F4xx_StdPeriph_Driver\inc;..\Library\Include;..\uCOSII\CONFIG;..\uCOSII\CORE;..\uCOSII\PORT;..\Library\CMSIS;..\Library\Startup;..\Hardware\inc;..\Function\inc;..\Main\inc;..\Chassis\inc;..\Motor\inc;..\Sensor\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -389,16 +389,102 @@
               <FileType>1</FileType>
               <FilePath>..\Main\src\main.c</FilePath>
             </File>
+            <File>
+              <FileName>irqhandler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Main\src\irqhandler.c</FilePath>
+            </File>
+            <File>
+              <FileName>task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Main\src\task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>FUNCTION</GroupName>
+          <Files>
+            <File>
+              <FileName>datastruct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Function\src\datastruct.c</FilePath>
+            </File>
+            <File>
+              <FileName>mymath.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Function\src\mymath.c</FilePath>
+            </File>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Function\src\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>vector.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Function\src\vector.c</FilePath>
+            </File>
+            <File>
+              <FileName>queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Function\src\queue.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>CHASSIS</GroupName>
+          <Files>
+            <File>
+              <FileName>leg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Chassis\src\leg.c</FilePath>
+            </File>
+            <File>
+              <FileName>robot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Chassis\src\robot.c</FilePath>
+            </File>
+            <File>
+              <FileName>robotparam.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Chassis\src\robotparam.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SENSOR</GroupName>
+          <Files>
+            <File>
+              <FileName>yesense.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sensor\src\yesense.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>MOTOR</GroupName>
+          <Files>
+            <File>
+              <FileName>djmotor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Motor\src\djmotor.c</FilePath>
+            </File>
+            <File>
+              <FileName>tmotor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Motor\src\tmotor.c</FilePath>
+            </File>
+            <File>
+              <FileName>vesc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Motor\src\vesc.c</FilePath>
+            </File>
+            <File>
+              <FileName>zdrive.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Motor\src\zdrive.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>HARDWARE</GroupName>
@@ -407,6 +493,36 @@
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Hardware\src\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>beep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\src\beep.c</FilePath>
+            </File>
+            <File>
+              <FileName>can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\src\can.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\src\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>led8.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\src\led8.c</FilePath>
+            </File>
+            <File>
+              <FileName>tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\src\tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\src\usart.c</FilePath>
             </File>
           </Files>
         </Group>

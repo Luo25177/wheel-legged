@@ -1,7 +1,7 @@
 ./objects/beep.o: ..\Hardware\src\beep.c ..\Hardware\inc\beep.h \
-  ..\Hardware\inc\delay.h ..\Library\CMSIS\stm32f4xx.h \
-  ..\Library\Include\core_cm4.h \
-  D:\keil\ARM\ARMCLANG\Bin\..\include\stdint.h \
+  ..\uCOSII\CONFIG\os_cfg.h ..\uCOSII\PORT\os_cpu.h \
+  ..\Library\CMSIS\stm32f4xx.h ..\Library\Include\core_cm4.h \
+  D:\Software\keil\core\ARM\ARMCLANG\Bin\..\include\stdint.h \
   ..\Library\Include\core_cmInstr.h ..\Library\Include\cmsis_armcc_V6.h \
   ..\Library\Include\core_cmFunc.h ..\Library\Include\core_cmSimd.h \
   ..\Library\CMSIS\system_stm32f4xx.h \
@@ -18,5 +18,4 @@
   ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_tim.h \
   ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_usart.h \
   ..\Library\STM32F4xx_StdPeriph_Driver\inc\misc.h \
-  ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_rcc.h \
-  ..\Library\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_gpio.h
+  ..\uCOSII\CORE\ucos_ii.h

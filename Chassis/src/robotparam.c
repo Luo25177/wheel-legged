@@ -1,5 +1,7 @@
 #include "robotparam.h"
 
+float Kcoeff[12][4] = {0};
+
 void inputInit(Input* input) {
   input->theta = 0;
   input->thetadot = 0;

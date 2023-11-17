@@ -19,7 +19,9 @@
 
 typedef struct {
   DJmotor* wheel;
-  Tmotor* front, behind;
+  Tmotor* front;
+  Tmotor* behind;
+
   float angle1, angle2, angle3, angle4; // 角度计算值和读取到的真实值，是和图中的一一对应
   float angle1set, angle4set; // 角度设定值，是在初始角度之上的设定值
   datastruct angle0;
@@ -49,7 +51,6 @@ typedef struct {
   float TBset;
   float TWheelset;
 
-  PID Fpid; // 虚拟力的pid
   float normalforce; // 地面对机器人的实际支持力
   bool flyflag;
 
@@ -59,7 +60,7 @@ typedef struct {
   float K[2][6];
 }Leg;
 
-void legInit(Leg* leg, LegDir dir);
+void legInit(Leg* leg, LegDir dir, DJmotor* wheel, Tmotor* front, Tmotor* behind);
 void Zjie(Leg* leg, float pitch);
 void Njie(Leg* leg, float xc, float yc);
 void VMC(Leg* leg);

@@ -125,7 +125,7 @@ void TmotorRunControl(Tmotor* motor, float _pos, float _speed, float _torque, fl
   txmsg.Data[6] = ((kd & 0xf) << 4) | (t >> 8);
   txmsg.Data[7] = t & 0xff;
   
-  can1Txmsg->push(can1Txmsg, txmsg);
+  can1Txmsg->enqueue(can1Txmsg, &txmsg);
 }
 
 //----

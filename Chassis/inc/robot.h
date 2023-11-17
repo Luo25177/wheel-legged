@@ -17,14 +17,21 @@ typedef struct {
   Leg legR;
   Leg legSim;
   Yesense yesense;
+  // 以下三个PID输出结果均为力
   // 角速度控制
   PID yawpid;
   // 翻滚角控制
   PID rollpid;
   // 双腿劈叉控制
   PID splitpid;
+  // 虚拟力的pid 是腿长的控制
+  PID L0pid; 
+  
+  RobotRunMode mode;
 
-  u8 mode;
+  float L0Set; // 设定腿长，也就是当前两条腿的平均腿长
+  float xSet;
+  float vSet;
 } Robot;
 
 extern Robot* robot;

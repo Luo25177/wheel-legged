@@ -13,6 +13,7 @@
 
 #include "pid.h"
 #include "mymath.h"
+#include <stdlib.h>
 #include "motorparam.h"
 #include "stm32f4xx_can.h"
 

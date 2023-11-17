@@ -1,9 +1,9 @@
 #include "can.h"
 
-queue(CanTxMsg) *can1Txmsg;
-queue(CanRxMsg) *can1Rxmsg;
-queue(CanTxMsg) *can2Txmsg;
-queue(CanRxMsg) *can2Rxmsg;
+CanTxQueue *can1Txmsg;
+CanRxQueue *can1Rxmsg;
+CanTxQueue *can2Txmsg;
+CanRxQueue *can2Rxmsg;
 
 void can1Init()
 {
@@ -64,8 +64,8 @@ void can1Init()
 	CAN_ClearFlag(CAN1, CAN_IT_BOF);
 	CAN_ITConfig(CAN1, CAN_IT_BOF, ENABLE);
 
-	can1Txmsg = newqueue(CanTxMsg);
-	can1Rxmsg = newqueue(CanRxMsg);
+	can1Txmsg = newCanTxQueue();
+	can1Rxmsg = newCanRxQueue();
 
 }
 
@@ -130,17 +130,18 @@ void can2Init()
 	CAN_ClearFlag(CAN2, CAN_IT_BOF);
 	CAN_ITConfig(CAN2, CAN_IT_BOF, ENABLE);
 	
-	can1Txmsg = newqueue(CanTxMsg);
-	can1Rxmsg = newqueue(CanRxMsg);
+	can2Txmsg = newCanTxQueue();
+	can2Rxmsg = newCanRxQueue();
 }
 
 void canSend(u8 ctrlWord)
 {
 	CanTxMsg msg;
+	// TODO: 发送消息
 	if ((ctrlWord & 0x01) && can1Txmsg->dequeue(can1Txmsg, &msg))
-		can1Txmsg->pop(can1Txmsg);
+		;
 	if ((ctrlWord & 0x02) && can2Txmsg->dequeue(can2Txmsg, &msg))
-		can2Txmsg->pop(can2Txmsg);
+		;
 }
 
 void sendzero(){

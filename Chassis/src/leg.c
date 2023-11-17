@@ -1,6 +1,12 @@
 #include "leg.h"
 
-void legInit(Leg* leg, LegDir dir) {
+//----
+// @brief 初始化
+// 
+// @param leg 
+// @param dir 腿的方向
+//----
+void legInit(Leg* leg, LegDir dir, DJmotor* wheel, Tmotor* front, Tmotor* behind) {
   leg->Fset = -(HALFMASSBODY + MASSLEG) * GRAVITY; // 虚拟力设定值的初始化
   leg->dir = dir;
   
@@ -16,13 +22,24 @@ void legInit(Leg* leg, LegDir dir) {
   leg->TWheelset = 0;
   leg->normalforce = leg->Fset;
 
+  // 电机绑定
+  leg->wheel = wheel;
+  leg->front = front;
+  leg->behind = behind;
+  
   inputInit(&leg->X);
   inputInit(&leg->Xd);
   outputInit(&leg->U);
 }
 
+//----
+// @brief 计算L0和angle0的原值和导数值
+// 
+// @param leg 
+// @param pitch 俯仰角 用于坐标系的转换
+//----
 void Zjie(Leg* leg, float pitch) {
-  leg->angle1 = leg->front->real.angle;
+  leg->angle1 = PI + leg->front->real.angle;
   leg->angle4 = leg->behind->real.angle;
 
   leg->xb = l1 * cos(leg->angle1) - l5 / 2;
@@ -62,6 +79,13 @@ void Zjie(Leg* leg, float pitch) {
   }
 }
 
+//----
+// @brief 腿部结构逆解，用于解算出脚端落点的对应的电机角度
+// 
+// @param leg 
+// @param xc 
+// @param yc 
+//----
 void Njie(Leg* leg, float xc, float yc) {
   float m, n, b, x1, y1;
   float A, B, C;
@@ -94,6 +118,11 @@ void Njie(Leg* leg, float xc, float yc) {
   // nije_5((void *)0, &angle2, x1, y1, l1, l2, l3, l4, l5);        //计算c4 ,
 }
 
+//----
+// @brief VMC 解算，虚拟力->实际电机扭矩
+// 
+// @param leg 
+//----
 void VMC(Leg* leg) {
   float trans[2][2] = {l1 * cos(leg->angle0.now + leg->angle3) * sin(leg->angle1 - leg->angle2) / sin(leg->angle2 - leg->angle3),
                        l1 * sin(leg->angle0.now + leg->angle3) * sin(leg->angle1 - leg->angle2) / (leg->L0.now * sin(leg->angle2 - leg->angle3)),
@@ -105,6 +134,11 @@ void VMC(Leg* leg) {
 }
 
 // TODO: 没测试过不一定没问题
+//----
+// @brief 逆向VMC解算 实际电机扭矩->虚拟力
+// 
+// @param leg 
+//----
 void INVMC(Leg* leg) {
   float trans[2][2] = {-(sin(leg->angle0.now + leg->angle2)*sin(leg->angle2 - leg->angle3))/(l1*cos(leg->angle0.now + leg->angle2)*sin(leg->angle0.now + leg->angle3)*sin(leg->angle1 - leg->angle2) - l1*cos(leg->angle0.now + leg->angle3)*sin(leg->angle0.now + leg->angle2)*sin(leg->angle1 - leg->angle2)), 
                       (sin(leg->angle0.now + leg->angle3)*sin(leg->angle2 - leg->angle3))/(l4*cos(leg->angle0.now + leg->angle2)*sin(leg->angle0.now + leg->angle3)*sin(leg->angle3 - leg->angle4) - l4*cos(leg->angle0.now + leg->angle3)*sin(leg->angle0.now + leg->angle2)*sin(leg->angle3 - leg->angle4)),
@@ -115,6 +149,12 @@ void INVMC(Leg* leg) {
   leg->Tpnow = trans[1][0] * leg->TFnow + trans[1][1] * leg->TBnow;
 }
 
+//----
+// @brief 腾空检测
+// 
+// @param leg 
+// @param accely 
+//----
 void flyCheck(Leg* leg, float accely) {
   INVMC(leg);
   float zwdd = accely - leg->L0.ddot * cos(leg->angle0.now) + 2.0 * leg->angle0.dot * leg->L0.dot * sin(leg->angle0.now) + leg->L0.now * leg->angle0.ddot * sin(leg->angle0.now) + leg->L0.now * leg->angle0.dot * leg->angle0.dot * cos(leg->angle0.now);
