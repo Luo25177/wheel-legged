@@ -4,6 +4,7 @@
 *.edk
 *.lst
 *.Inp
+*.lnp
 *.mpf
 *.mpj
 *.obj
