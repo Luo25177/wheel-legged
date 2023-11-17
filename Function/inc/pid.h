@@ -19,7 +19,7 @@ typedef enum {
   PIDTPOS,
 }pidMode;
 
-typedef struct {
+typedef struct PID {
   float real;
   float target;
   float err[3];
@@ -32,6 +32,8 @@ typedef struct {
   float kp;
   float ki;
   float kd;
+
+  float (*compute) (struct PID* pid, float input);
 }PID;
 
 float incCompute(PID* pid, float input);

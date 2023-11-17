@@ -19,13 +19,13 @@ typedef struct {
   Yesense yesense;
   // 以下三个PID输出结果均为力
   // 角速度控制
-  PID yawpid;
+  PID* yawpid;
   // 翻滚角控制
-  PID rollpid;
+  PID* rollpid;
   // 双腿劈叉控制
-  PID splitpid;
+  PID* splitpid;
   // 虚拟力的pid 是腿长的控制
-  PID L0pid; 
+  PID* L0pid; 
   
   RobotRunMode mode;
 
@@ -49,3 +49,5 @@ void jumpMode();
 void haltMode();
 
 void flyCheck();
+
+void robotRun();

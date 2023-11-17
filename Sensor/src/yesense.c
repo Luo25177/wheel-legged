@@ -286,3 +286,29 @@ int calc_checksum(unsigned char *data, unsigned short len, unsigned short *check
 
 	return 0;
 }
+
+void yesenseInit(Yesense* yesense) {
+	yesense->accelx = 0;
+	yesense->accely = 0;
+	yesense->accelz = 0;
+          
+	yesense->magx = 0;
+	yesense->magy = 0;
+	yesense->magz = 0;
+          
+	yesense->rawMagx = 0;
+	yesense->rawMagy = 0;
+	yesense->rawMagz = 0;
+	
+	datastructInit(&yesense->pitch, 0, 0, 0, 0);
+	datastructInit(&yesense->roll, 0, 0, 0, 0);
+	datastructInit(&yesense->yaw, 0, 0, 0, 0);
+	
+	yesense->quaternion_data0 = 0;
+	yesense->quaternion_data1 = 0;
+	yesense->quaternion_data2 = 0;
+	yesense->quaternion_data3 = 0;
+
+	yesense->datalen = 0;
+	yesense->init = false;
+}

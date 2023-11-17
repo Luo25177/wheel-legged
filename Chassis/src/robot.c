@@ -15,26 +15,30 @@ void robotInit() {
   DJmotor* motorL = (DJmotor *) malloc(sizeof(DJmotor));
   DJmotor* motorR = (DJmotor *) malloc(sizeof(DJmotor));
 
+  yesenseInit(&robot->yesense);
   legInit(&robot->legL, LEGLEFT, motorL, motorLF, motorLB);
   legInit(&robot->legR, LEGRIGHT, motorR, motorRF, motorRB);
   legInit(&robot->legVir, LEGLEFT, NULL, NULL, NULL);
   // TODO: 参数暂定 调节
-  pidInit(&robot->yawpid, 1, 1, 1, 0, 0, PIDPOS);
-  pidInit(&robot->rollpid, 1, 1, 1, 0, 0, PIDPOS);
-  pidInit(&robot->splitpid, 1, 1, 1, 0, 0, PIDPOS);
-  robot->yawpid.target = 0;
-  robot->rollpid.target = 0;
-  robot->splitpid.target = 0;
+  robot->yawpid = (PID *) malloc(sizeof(PID));
+  robot->rollpid = (PID *) malloc(sizeof(PID));
+  robot->splitpid = (PID *) malloc(sizeof(PID));
+  robot->L0pid = (PID *) malloc(sizeof(PID));
+  pidInit(robot->yawpid, 1, 1, 1, 0, 0, PIDPOS);
+  pidInit(robot->rollpid, 1, 1, 1, 0, 0, PIDPOS);
+  pidInit(robot->splitpid, 1, 1, 1, 0, 0, PIDPOS);
+  pidInit(robot->L0pid, 1, 1, 1, 0, 0, PIDPOS);
+  robot->yawpid->target = 0;
+  robot->rollpid->target = 0;
+  robot->splitpid->target = 0;
   robot->flyflag = false;
 }
 
 //----
-// @brief 状态量更新 和一些检查
+// @brief 状态量更新和一些检查
 // 
 //----
 void updateState() {
-  robot->yawpid.real = robot->yesense.yaw.now;
-  robot->rollpid.real = robot->yesense.roll.now;
   Zjie(&robot->legL, robot->yesense.pitch.now);
   Zjie(&robot->legR, robot->yesense.pitch.now);
   
@@ -45,22 +49,9 @@ void updateState() {
   robot->legR.TBnow = robot->legR.behind->real.torque;
   robot->legR.TWheelnow = robot->legR.wheel->currentRead * M3508CURRENTTOTORQUE;
   
-  flyCheck(&robot->legL, robot->yesense.accelz);
-  flyCheck(&robot->legR, robot->yesense.accelz);
+  flyCheck();
   
-  switch(robot->mode) {
-    case ROBOTNORMAL:
-      balanceMode();
-      break;
-    case ROBOTJUMP:
-      jumpMode();
-      break;
-    case ROBOTHALT:
-      haltMode();
-      break;
-    default:
-      break;
-  }
+
 }
 
 //----
@@ -131,19 +122,19 @@ void balanceMode() {
   robot->legL.Fset = FFEEDFORWARD;
   robot->legR.Fset = FFEEDFORWARD;
   // 补偿虚拟力
-  float FCompensate = posCompute(&robot->L0pid, robot->legVir.L0.now);
-  robot->legL.Fset -= FCompensate;
-  robot->legR.Fset -= FCompensate;
+  float fCompensate = robot->L0pid->compute(robot->L0pid, robot->legVir.L0.now);
+  robot->legL.Fset -= fCompensate;
+  robot->legR.Fset -= fCompensate;
   // 旋转补偿
-  float yawCompensate = posCompute(&robot->yawpid, robot->yesense.yaw.now);
+  float yawCompensate = robot->yawpid->compute(robot->yawpid, robot->yesense.yaw.now);
   robot->legL.TWheelset -= yawCompensate;
   robot->legR.TWheelset += yawCompensate;
   // 劈腿补偿
-  float splitCompensate = posCompute(&robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
+  float splitCompensate = robot->splitpid->compute(robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
   robot->legL.Tpset -= splitCompensate;
   robot->legR.Tpset += splitCompensate;
   // 翻滚角补偿
-  float rollCompensate = posCompute(&robot->rollpid, robot->yesense.roll.now);
+  float rollCompensate = robot->rollpid->compute(robot->rollpid, robot->yesense.roll.now);
   robot->legL.Fset -= splitCompensate;
   robot->legR.Fset += splitCompensate;
   
@@ -194,4 +185,24 @@ void flyCheck() {
     robot->flyflag = true;
   else
     robot->flyflag = false;
+}
+
+//----
+// @brief 开始运行
+// 
+//----
+void robotRun() {
+  switch(robot->mode) {
+    case ROBOTNORMAL:
+      balanceMode();
+      break;
+    case ROBOTJUMP:
+      jumpMode();
+      break;
+    case ROBOTHALT:
+      haltMode();
+      break;
+    default:
+      break;
+  }
 }

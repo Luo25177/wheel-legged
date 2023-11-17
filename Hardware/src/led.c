@@ -22,19 +22,18 @@ void ledInit() {
 
 void ledShow() {
     LED_RED_ON;
-    OSTimeDly(1000);
-    LED_YELLOW_ON;
-    OSTimeDly(1000);
-    LED_BLUE_ON;
-    OSTimeDly(1000);
-    LED_GREEN_ON;
-    OSTimeDly(1000);
-    LED_RED_OFF;
-    OSTimeDly(1000);
-    LED_YELLOW_OFF;
-    OSTimeDly(1000);
-    LED_BLUE_OFF;
-    OSTimeDly(1000);
+    OSTimeDly(5000);
     LED_GREEN_OFF;
-    OSTimeDly(1000);
+    OSTimeDly(5000);
+    LED_YELLOW_ON;
+    OSTimeDly(5000);
+    LED_RED_OFF;
+    OSTimeDly(5000);
+    LED_BLUE_ON;
+    OSTimeDly(5000);
+    LED_YELLOW_OFF;
+    OSTimeDly(5000);
+    LED_GREEN_ON;
+    OSTimeDly(5000);
+    LED_BLUE_OFF;
 }

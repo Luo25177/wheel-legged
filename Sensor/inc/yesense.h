@@ -42,4 +42,5 @@ typedef struct {
 }Yesense;
 
 int yesenseAnalyze(Yesense* yesense, unsigned char *data, short len);
+void yesenseInit(Yesense* yesense);
 

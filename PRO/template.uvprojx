@@ -395,9 +395,9 @@
               <FilePath>..\Main\src\irqhandler.c</FilePath>
             </File>
             <File>
-              <FileName>task.c</FileName>
+              <FileName>bluetooth.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Main\src\task.c</FilePath>
+              <FilePath>..\Main\src\bluetooth.c</FilePath>
             </File>
           </Files>
         </Group>

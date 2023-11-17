@@ -42,9 +42,9 @@ void DJcompute(DJmotor* motor) {
       break;
     case POSITION:
       motor->pulsePid->target = motor->angleSet * M3508ANGLETOPULSE;
-      motor->speedPid->target = incCompute(motor->pulsePid, motor->pulseAccumulate);
+      motor->speedPid->target = motor->pulsePid->compute(motor->pulsePid, motor->pulseAccumulate);
     case SPEED:
-      motor->output += incCompute(motor->speedPid, motor->pulseAccumulate);
+      motor->output += motor->speedPid->compute(motor->speedPid, motor->pulseAccumulate);
       // TODO:
       // limitInRange(&motor->output, M3508MAXCURRENT);
       break;
