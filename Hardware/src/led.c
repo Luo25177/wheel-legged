@@ -1,7 +1,6 @@
 #include "led.h"
 
-void ledInit()
-{
+void ledInit() {
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
@@ -21,8 +20,7 @@ void ledInit()
     LED_RED_OFF;
 }
 
-void ledShow()
-{
+void ledShow() {
     LED_RED_ON;
     OSTimeDly(1000);
     LED_YELLOW_ON;

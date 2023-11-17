@@ -61,7 +61,7 @@ typedef enum
 	analysis_done = 1
 }analysis_res_t;
 
-typedef struct
+typedef struct 
 {
 	unsigned char header1;	/*0x59*/
 	unsigned char header2;	/*0x53*/

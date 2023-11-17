@@ -27,8 +27,12 @@
 #define HALFMASSBODY 0.1f
 #define MASSLEG 0.1f
 #define MASSWHEEL 0.1f
-
 #define GRAVITY 9.805f
+
+// 虚拟力前馈
+#define FFEEDFORWARD -0.1f
+
+#define FORCETHRESHOLD -20.f
 
 extern float Kcoeff[12][4];
 
@@ -40,7 +44,6 @@ typedef enum {
 typedef enum {
   ROBOTNORMAL = 0,
   ROBOTJUMP,
-  ROBOTSOAR,
   ROBOTHALT
 }RobotRunMode;
 

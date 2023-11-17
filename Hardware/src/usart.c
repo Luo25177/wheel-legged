@@ -3,8 +3,7 @@
 Usart* usart1;
 Usart* usart2;
 
-void usart1Init()
-{
+void usart1Init() {
 	usart1			= (Usart*) malloc(sizeof(Usart));
 	usart1->send	= usart1Send;
 	usart1->dmaAble = 1;
@@ -76,8 +75,7 @@ void usart1Init()
 	USART_Cmd(USART1, ENABLE);
 }
 
-void usart2Init()
-{
+void usart2Init() {
 	usart2			= (Usart*) malloc(sizeof(Usart));
 	usart2->send	= usart2Send;
 	usart2->dmaAble = 1;
@@ -151,8 +149,7 @@ void usart2Init()
 	USART_Cmd(USART2, ENABLE);
 }
 
-void usart3Init()
-{
+void usart3Init() {
 	USART_InitTypeDef USART_InitStructure;
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	NVIC_InitTypeDef  NVIC_InitStructure;
@@ -188,8 +185,7 @@ void usart3Init()
 	USART_Cmd(USART3, ENABLE);
 }
 
-void uart5Init()
-{
+void uart5Init() {
 	USART_InitTypeDef USART_InitStructure;
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	NVIC_InitTypeDef  NVIC_InitStructure;
@@ -231,8 +227,7 @@ void uart5Init()
 	USART_Cmd(UART5, ENABLE);
 }
 
-void usart1Send(u8* data, u8 cnt)
-{
+void usart1Send(u8* data, u8 cnt) {
 	memcpy(usart1->txBuff, data, cnt);
 	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
 	DMA_Cmd(DMA2_Stream7, DISABLE); // 关闭 DMA 传输
@@ -241,8 +236,7 @@ void usart1Send(u8* data, u8 cnt)
 	DMA_Cmd(DMA2_Stream7, ENABLE);
 }
 
-void usart2Send(u8* data, u8 cnt)
-{
+void usart2Send(u8* data, u8 cnt) {
 	memcpy(usart2->txBuff, data, cnt);
 	USART_DMACmd(USART2, USART_DMAReq_Tx, ENABLE);
 	DMA_Cmd(DMA1_Stream6, DISABLE);	// 关闭 DMA 传输

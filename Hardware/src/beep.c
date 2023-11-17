@@ -1,8 +1,5 @@
 #include "beep.h"
 
-OS_EVENT* beepShowSem;
-u8		  beepShowErr;
-
 void beepInit() {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -27,4 +24,6 @@ void beepShow(int num) {
 	}
 }
 
-void beepWarning() { BEEP_ON; }
+void beepWarning() {
+	BEEP_ON; 
+}

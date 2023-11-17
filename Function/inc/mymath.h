@@ -8,12 +8,12 @@
 // @copyright Copyright (c) 2023
 // 
 //----
-
 #pragma once
-#include "stm32f4xx.h"
+
 #include "string.h"
-#include "arm_math.h"
 #include "stdbool.h"
+#include "arm_math.h"
+#include "stm32f4xx.h"
 
 #define AngleToRad 0.0174533f
 #define RadToAngle 57.295780f

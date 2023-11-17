@@ -2,8 +2,7 @@
 
 unsigned int GolbalTimer = 0;
 
-void tim2Init()
-{
+void tim2Init() {
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -27,8 +26,7 @@ void tim2Init()
     TIM_Cmd(TIM2, ENABLE);
 }
 
-void tim3Init()
-{
+void tim3Init() {
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 

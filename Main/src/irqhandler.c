@@ -8,8 +8,7 @@ int	  res			   = 0;
 u8	  n;
 float yaw_last = 0, yaw_now = 0;
 
-void  G_output_infoSet(Yesense* yesense)
-{
+void  G_output_infoSet(Yesense* yesense) {
 	yaw_last = yaw_now;
 	yaw_now	 = yesense->yaw.now;
 	if (yaw_now - yaw_last < -100)	  // 发生了突变
@@ -19,24 +18,23 @@ void  G_output_infoSet(Yesense* yesense)
 	yesense->yaw.now += n * 360;
 }
 
-void DMA2_Stream7_IRQHandler(void)	  // 数据传输完成，产生中断，检查是否还有没有传输的数据，继续传输
-{
+// 数据传输完成，产生中断，检查是否还有没有传输的数据，继续传输
+void DMA2_Stream7_IRQHandler(void) { 
 	if (DMA_GetITStatus(DMA2_Stream7, DMA_IT_TCIF7) == SET) {
 		DMA_ClearFlag(DMA2_Stream7, DMA_IT_TCIF7);	  // 清除中断标志
 		DMA_ClearITPendingBit(DMA2_Stream7, DMA_IT_TCIF7);
 	}
 }
 
-void DMA1_Stream6_IRQHandler(void)	  // 数据传输完成,产生中断,检查是否还有没有传输的数据，继续传输
-{
+// 数据传输完成,产生中断,检查是否还有没有传输的数据，继续传输
+void DMA1_Stream6_IRQHandler(void) {
 	if (DMA_GetITStatus(DMA1_Stream6, DMA_IT_TCIF6) == SET) {
 		DMA_ClearFlag(DMA1_Stream6, DMA_IT_TCIF6);	  // 清除中断标志
 		DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6);
 	}
 }
 
-void USART1_IRQHandler(void)
-{
+void USART1_IRQHandler(void) {
 	u8 temp;
 	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)	  // 接收寄存器非空
 	{
@@ -48,8 +46,7 @@ void USART1_IRQHandler(void)
 	}
 }
 
-void USART2_IRQHandler(void)
-{
+void USART2_IRQHandler(void) {
 	u8 temp;
 
 	if (USART_GetITStatus(USART2, USART_IT_ORE_RX) != RESET) {
@@ -87,9 +84,9 @@ void USART2_IRQHandler(void)
 			HEAD_FLAG = 1;
 	}
 }
-
-void TIM2_IRQHandler(void)	  // 1ms
-{
+ 
+// 1ms 
+void TIM2_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)	// 溢出中断
 	{
 		GolbalTimer++; // 全局计时器 代码的全局时间可都靠这个
@@ -97,16 +94,15 @@ void TIM2_IRQHandler(void)	  // 1ms
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);	   // 清除中断标志位
 }
 
-void TIM3_IRQHandler(void)	  // 100ms
-{
+// 100ms
+void TIM3_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) == SET) {
 
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }
 
-void CAN1_RX0_IRQHandler(void)
-{
+void CAN1_RX0_IRQHandler(void) {
 	CAN_ClearITPendingBit(CAN1, CAN_IT_FMP0);
 	CAN_ClearFlag(CAN1, CAN_IT_FMP0);
 	if (CAN_GetITStatus(CAN1, CAN_IT_FMP0) != RESET) {
@@ -115,8 +111,7 @@ void CAN1_RX0_IRQHandler(void)
 	}
 }
 
-void CAN2_RX0_IRQHandler(void)
-{
+void CAN2_RX0_IRQHandler(void) {
 	CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
 	CAN_ClearFlag(CAN2, CAN_IT_FMP0);
 	if (CAN_GetITStatus(CAN2, CAN_IT_FMP0) != RESET) {

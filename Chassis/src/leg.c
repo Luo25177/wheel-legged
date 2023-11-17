@@ -148,24 +148,3 @@ void INVMC(Leg* leg) {
   leg->Fnow = trans[0][0] * leg->TFnow + trans[0][1] * leg->TBnow;
   leg->Tpnow = trans[1][0] * leg->TFnow + trans[1][1] * leg->TBnow;
 }
-
-//----
-// @brief 腾空检测
-// 
-// @param leg 
-// @param accely 
-//----
-void flyCheck(Leg* leg, float accely) {
-  INVMC(leg);
-  float zwdd = accely - leg->L0.ddot * cos(leg->angle0.now) + 2.0 * leg->angle0.dot * leg->L0.dot * sin(leg->angle0.now) + leg->L0.now * leg->angle0.ddot * sin(leg->angle0.now) + leg->L0.now * leg->angle0.dot * leg->angle0.dot * cos(leg->angle0.now);
-
-  // 这里的 F_set 本来应该是电机反馈力矩解算出来的，但是webots的电机反馈力矩非常的恶心
-  // Fnow
-  leg->normalforce = MASSWHEEL * zwdd + GRAVITY * MASSWHEEL + leg->Fnow * cos(leg->angle0.now) + leg->TWheelnow * sin(leg->angle0.now) / leg->L0.now;
-  if (leg->normalforce > -20) {
-    leg->flyflag = true;
-  }
-  else {
-    leg->flyflag = false;
-  }
-}

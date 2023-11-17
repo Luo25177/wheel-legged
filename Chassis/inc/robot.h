@@ -15,7 +15,7 @@
 typedef struct {
   Leg legL;
   Leg legR;
-  Leg legSim;
+  Leg legVir;
   Yesense yesense;
   // 以下三个PID输出结果均为力
   // 角速度控制
@@ -32,6 +32,8 @@ typedef struct {
   float L0Set; // 设定腿长，也就是当前两条腿的平均腿长
   float xSet;
   float vSet;
+
+  bool flyflag;
 } Robot;
 
 extern Robot* robot;
@@ -44,4 +46,6 @@ void balanceMode();
 
 void jumpMode();
 
-void flyMode();
+void haltMode();
+
+void flyCheck();

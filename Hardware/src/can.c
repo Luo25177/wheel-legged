@@ -5,8 +5,7 @@ CanRxQueue *can1Rxmsg;
 CanTxQueue *can2Txmsg;
 CanRxQueue *can2Rxmsg;
 
-void can1Init()
-{
+void can1Init() {
 	NVIC_InitTypeDef NVIC_InitStructure;
 	CAN_InitTypeDef CAN_InitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;

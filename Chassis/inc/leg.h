@@ -52,7 +52,6 @@ typedef struct {
   float TWheelset;
 
   float normalforce; // 地面对机器人的实际支持力
-  bool flyflag;
 
   Input X, Xd;
   Output U;
@@ -65,4 +64,3 @@ void Zjie(Leg* leg, float pitch);
 void Njie(Leg* leg, float xc, float yc);
 void VMC(Leg* leg);
 void INVMC(Leg* leg);
-void flyCheck(Leg* leg, float accely);

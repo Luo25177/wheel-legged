@@ -25,6 +25,7 @@
 #define M3508RATIO 19.2f
 #define M3508ANGLETOPULSE	436.90667f // 角度转为编码数
 #define M3508TTOI 2800.f // I = T * K 中的K，将扭矩转为电流
+#define M3508CURRENTTOTORQUE 0.001f // TODO: 预设值
 
 typedef struct {
   int n;
