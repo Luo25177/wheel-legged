@@ -66,7 +66,6 @@ void can1Init()
 
 	can1Txmsg = newCanTxQueue();
 	can1Rxmsg = newCanRxQueue();
-
 }
 
 void can2Init()

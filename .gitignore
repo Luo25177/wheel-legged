@@ -3,7 +3,7 @@
 *.ddk
 *.edk
 *.lst
-*.lnp
+*.Inp
 *.mpf
 *.mpj
 *.obj

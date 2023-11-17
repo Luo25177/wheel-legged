@@ -84,6 +84,7 @@ void balanceMode() {
   robot->legSim.Xd.v = 0;
   robot->legSim.Xd.pitch = 0;
   robot->legSim.Xd.pitchdot = 0;
+
 }
 
 //----
