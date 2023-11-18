@@ -1,4 +1,5 @@
-﻿Checks: '-*,
+﻿
+Checks: '-*,
     misc-throw-by-value-catch-by-reference,
     misc-misplaced-const,
     misc-unconventional-assign-operator,
@@ -39,7 +40,7 @@
     readability-deleted-default,
     readability-make-member-function-const,
     readability-misplaced-array-index,
-    readability-non-const-parameter,
+    <!-- readability-non-const-parameter, -->
     readability-qualified-auto,
     readability-redundant-access-specifiers,
     readability-redundant-control-flow,
@@ -156,9 +157,9 @@ WarningsAsErrors: '*'
 
 CheckOptions:
   - key: readability-identifier-naming.ClassCase
-    value: camelCase
+    value: CamelCase
   - key: readability-identifier-naming.EnumCase
-    value: camelBack
+    value: CamelCase
   - key: readability-identifier-naming.LocalVariableCase
     value: camelBack
   - key: readability-identifier-naming.StaticConstantCase
@@ -171,16 +172,15 @@ CheckOptions:
     value: ''
   - key: readability-identifier-naming.ProtectedMemberPrefix
     value: ''
-  - key: readability-identifier-naming.GlobalVariablePrefix
-    value: g
+
   - key: readability-identifier-naming.GlobalConstantCase
-    value: camelBack
+    value: UPPER_CASE
   - key: readability-identifier-naming.GlobalConstantPrefix
     value: ''
   - key: readability-identifier-naming.PublicMemberCase
     value: camelBack
   - key: readability-identifier-naming.MethodCase
-    value: camelCase
+    value: CamelCase
   - key: readability-identifier-naming.PrivateMethodPrefix
     value: ''
   - key: readability-identifier-naming.ProtectedMethodPrefix
@@ -203,3 +203,10 @@ CheckOptions:
     value: CamelCase
   - key: readability-identifier-naming.GlobalFunctionCase
     value: CamelCase
+    value: Camel_Snake_Case
+  # - key: readability-identifier-naming.GlobalConstantPointerPrefix
+  #   value: p_
+  # - key: readability-identifier-naming.GlobalPointerPrefix
+  #   value: p_
+  - key: readability-identifier-naming.GlobalVariablePrefix
+    value: g_

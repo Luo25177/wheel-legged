@@ -399,6 +399,11 @@
               <FileType>1</FileType>
               <FilePath>..\Main\src\bluetooth.c</FilePath>
             </File>
+            <File>
+              <FileName>masterparam.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Main\src\masterparam.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -738,6 +743,13 @@
         </Group>
         <Group>
           <GroupName>README</GroupName>
+          <Files>
+            <File>
+              <FileName>readme.md</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\readme.md</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>
@@ -754,6 +766,7 @@
       <Layer>
         <LayName>template</LayName>
         <LayPrjMark>1</LayPrjMark>
+        <LayTitle>wheelfoot</LayTitle>
       </Layer>
     </Layers>
   </LayerInfo>

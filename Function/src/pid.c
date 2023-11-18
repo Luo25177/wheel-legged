@@ -66,6 +66,17 @@ float TposCompute(PID* pid, float input) {
   return pid->output;
 }
 
+//----
+// @brief PID初始化，设置kp,ki,kd 选定pid模式
+// 
+// @param pid 
+// @param kp 
+// @param ki 
+// @param kd 
+// @param outputLimit 
+// @param accErrLimit 
+// @param mode 
+//----
 void pidInit(PID* pid, float kp, float ki, float kd, float outputLimit, float accErrLimit, pidMode mode) {
   pid->kp = kp;
   pid->ki = ki;

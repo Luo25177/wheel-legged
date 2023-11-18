@@ -13,7 +13,7 @@ int main(){
 	tim2Init();
 	tim3Init();
 
-  // robotInit();
+  robotInit();
 
 	OSInit();
 	OSTaskCreate(taskStart, (void*) 0, &taskStartStk[TASK_STK_SIZE - 1], START_TASK_PRIO);	// 创建初始任务
@@ -62,6 +62,9 @@ static void taskRun(void* pdata) {
 	pdata = pdata;
 	while (1) {
 		updateState();
+		if(master.control.begin){
+			robotRun();
+		}
 		OSTimeDly(100);
 	}
 }

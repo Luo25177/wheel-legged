@@ -4,11 +4,12 @@
 // @brief 蓝牙通讯
 // @version 1.0
 // @date 2023-11-17
-// 
+//
 // @copyright Copyright (c) 2023
-// 
+//
 //----
 #pragma once
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include "stm32f4xx.h"
@@ -29,13 +30,12 @@ typedef struct {
   u8 txDataSize;
 
   bool gethead;
-}BlueToothMsg;
+} BlueToothMsg;
 
-extern BlueToothMsg* bluetoothmsg;
+extern BlueToothMsg *bluetoothmsg;
 
 void blueToothInit();
 void blueToothReceive(u8 data);
 void blueToothDeal();
 void blueToothClear();
-void blueToothSend(u8 id, void* data, u8 size);
-
+void blueToothSend(u8 id, void *data, u8 size);

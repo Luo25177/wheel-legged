@@ -10,6 +10,8 @@
 //----
 
 #pragma once
+
+#include <stdbool.h>
 #include "stm32f4xx.h"
 
 //----
@@ -35,3 +37,18 @@ typedef struct {
   bool begin; // 开始运行
   bool stop; // 急停 打算做一个功能就是为了防止程序疯跑，再怎么说没有急停开关好用
 }ControlParam;
+
+//----
+// @brief 主控参数
+// 
+//----
+typedef struct {
+  HandleParam handle;
+  ControlParam control;
+}Master;
+
+extern Master master;
+
+void HandleParamInit(HandleParam* handleparam);
+void ControlParamInit(ControlParam* controlparam);
+void MasterInit(Master* master);

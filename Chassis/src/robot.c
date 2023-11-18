@@ -19,11 +19,13 @@ void robotInit() {
   legInit(&robot->legL, LEGLEFT, motorL, motorLF, motorLB);
   legInit(&robot->legR, LEGRIGHT, motorR, motorRF, motorRB);
   legInit(&robot->legVir, LEGLEFT, NULL, NULL, NULL);
-  // TODO: 参数暂定 调节
+  
   robot->yawpid = (PID *) malloc(sizeof(PID));
   robot->rollpid = (PID *) malloc(sizeof(PID));
   robot->splitpid = (PID *) malloc(sizeof(PID));
   robot->L0pid = (PID *) malloc(sizeof(PID));
+  
+  // TODO: 参数暂定 调节
   pidInit(robot->yawpid, 1, 1, 1, 0, 0, PIDPOS);
   pidInit(robot->rollpid, 1, 1, 1, 0, 0, PIDPOS);
   pidInit(robot->splitpid, 1, 1, 1, 0, 0, PIDPOS);
@@ -50,8 +52,6 @@ void updateState() {
   robot->legR.TWheelnow = robot->legR.wheel->currentRead * M3508CURRENTTOTORQUE;
   
   flyCheck();
-  
-
 }
 
 //----

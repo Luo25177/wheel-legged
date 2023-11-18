@@ -34,8 +34,8 @@ AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: false 
-BinPackParameters: false
+BinPackArguments: true
+BinPackParameters: true
 BitFieldColonSpacing: Both
 BreakBeforeBraces: Custom
 BraceWrapping:
@@ -59,7 +59,7 @@ BreakConstructorInitializersBeforeComma: false
 BreakInheritanceList: AfterComma
 BreakBeforeTernaryOperators: true
 BreakStringLiterals: true
-ColumnLimit: 132
+ColumnLimit: 100
 CommentPragmas: "^ IWYU pragma:"
 CompactNamespaces: true
 ConstructorInitializerIndentWidth: 4
@@ -156,3 +156,4 @@ SpacesInSquareBrackets: false
 Standard: Auto
 TabWidth: 4
 UseTab: Always
+
