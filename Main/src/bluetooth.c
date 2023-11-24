@@ -48,10 +48,14 @@ void blueToothReceive(u8 data) {
 void blueToothDeal() {
   switch(bluetoothmsg->rxData[0]) {
     case 1:
+      memcpy(&master.control, &bluetoothmsg->rxData[1], sizeof(ControlParam));
       break;
     case 2:
+      memcpy(&master.handle, &bluetoothmsg->rxData[1], sizeof(HandleParam));
       break;
     case 3:
+      break;
+    default:
       break;
   }
 }

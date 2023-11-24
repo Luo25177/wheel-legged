@@ -19,10 +19,10 @@
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_rcc.h"
 
-extern CanTxQueue *can1Txmsg;
-extern CanRxQueue *can1Rxmsg;
-extern CanTxQueue *can2Txmsg;
-extern CanRxQueue *can2Rxmsg;
+extern queue(CanTxMsg)* can1Txmsg;
+extern queue(CanRxMsg)* can1Rxmsg;
+extern queue(CanTxMsg)* can2Txmsg;
+extern queue(CanRxMsg)* can2Rxmsg;
 
 void can1Init();
 void can2Init();
@@ -31,5 +31,4 @@ void can1Check();
 void can2Check();
 
 void canSend(u8 ctrlWord);
-void sendzero();
 void canCheck();

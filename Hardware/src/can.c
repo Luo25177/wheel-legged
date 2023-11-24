@@ -1,9 +1,9 @@
 #include "can.h"
 
-CanTxQueue *can1Txmsg;
-CanRxQueue *can1Rxmsg;
-CanTxQueue *can2Txmsg;
-CanRxQueue *can2Rxmsg;
+queue(CanTxMsg)* can1Txmsg;
+queue(CanRxMsg)* can1Rxmsg;
+queue(CanTxMsg)* can2Txmsg;
+queue(CanRxMsg)* can2Rxmsg;
 
 void can1Init() {
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -63,8 +63,8 @@ void can1Init() {
 	CAN_ClearFlag(CAN1, CAN_IT_BOF);
 	CAN_ITConfig(CAN1, CAN_IT_BOF, ENABLE);
 
-	can1Txmsg = newCanTxQueue();
-	can1Rxmsg = newCanRxQueue();
+	can1Txmsg = newqueue(CanTxMsg) (QUEUEMAXSIZE);
+	can1Rxmsg = newqueue(CanRxMsg) (QUEUEMAXSIZE);
 }
 
 void can2Init()
@@ -128,36 +128,18 @@ void can2Init()
 	CAN_ClearFlag(CAN2, CAN_IT_BOF);
 	CAN_ITConfig(CAN2, CAN_IT_BOF, ENABLE);
 	
-	can2Txmsg = newCanTxQueue();
-	can2Rxmsg = newCanRxQueue();
+	can2Txmsg = newqueue(CanTxMsg) (QUEUEMAXSIZE);
+	can2Rxmsg = newqueue(CanRxMsg) (QUEUEMAXSIZE);
 }
 
 void canSend(u8 ctrlWord)
 {
 	CanTxMsg msg;
 	// TODO: 发送消息
-	if ((ctrlWord & 0x01) && can1Txmsg->dequeue(can1Txmsg, &msg))
-		;
-	if ((ctrlWord & 0x02) && can2Txmsg->dequeue(can2Txmsg, &msg))
-		;
-}
-
-void sendzero(){
-    CanTxMsg txmsg;
-    txmsg.IDE = CAN_Id_Standard;
-    txmsg.DLC = 8;
-    txmsg.ExtId = 0x01000000;
-    txmsg.RTR = CAN_RTR_DATA;
-    txmsg.Data[0] = 0x01;
-    txmsg.Data[1] = 0x02;
-    txmsg.Data[2] = 0x03;
-    txmsg.Data[3] = 0x04;
-    txmsg.Data[4] = 0x05;
-    txmsg.Data[5] = 0x06;
-    txmsg.Data[6] = 0x07;
-    txmsg.Data[7] = 0x08;
-    CAN_Transmit(CAN1, &txmsg);
-    CAN_Transmit(CAN2, &txmsg);
+	if ((ctrlWord & 0x01) && can1Txmsg->pop(can1Txmsg, &msg))
+		CAN_Transmit(CAN1, &msg);
+	if ((ctrlWord & 0x02) && can2Txmsg->pop(can2Txmsg, &msg))
+		CAN_Transmit(CAN1, &msg);
 }
 
 void canCheck() {

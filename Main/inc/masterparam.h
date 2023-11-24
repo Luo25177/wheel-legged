@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "robot.h"
 #include <stdbool.h>
 #include "stm32f4xx.h"
 
@@ -19,14 +20,10 @@
 // 
 //----
 typedef struct {
-  s16 forward; // 前进
-  s16 backward; // 后退
-  s16 left; // 左转
-  s16 right; // 右转
-  s16 up; // 升高底盘
-  s16 down; // 降低底盘
-  s16 tiltleft; // 底盘左倾
-  s16 tiltright; // 底盘右倾
+  s16 run; // 跑
+  s16 turn; // 后退
+  s16 height; // 底盘高度
+  s16 tilt; // 底盘倾斜
 }HandleParam;
 
 //----
@@ -36,6 +33,7 @@ typedef struct {
 typedef struct {
   bool begin; // 开始运行
   bool stop; // 急停 打算做一个功能就是为了防止程序疯跑，再怎么说没有急停开关好用
+  u8 robotmode;
 }ControlParam;
 
 //----
@@ -52,3 +50,5 @@ extern Master master;
 void HandleParamInit(HandleParam* handleparam);
 void ControlParamInit(ControlParam* controlparam);
 void MasterInit(Master* master);
+void ControlParamDeal(ControlParam* controlparam);
+void HandleParamDeal(HandleParam* handleparam);

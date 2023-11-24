@@ -10,6 +10,7 @@
 //----
 
 #pragma once
+
 #include "leg.h"
 #include "yesense.h"
 typedef struct {
@@ -39,15 +40,9 @@ typedef struct {
 extern Robot* robot;
 
 void robotInit();
-
 void updateState();
-
 void balanceMode();
-
 void jumpMode();
-
 void haltMode();
-
 void flyCheck();
-
 void robotRun();

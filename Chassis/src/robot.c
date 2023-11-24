@@ -1,6 +1,8 @@
 #include "robot.h"
 
 Robot* robot;
+Tmotor tmotor[4];
+DJmotor djmotor[2];
 
 //----
 // @brief 初始化
@@ -8,22 +10,20 @@ Robot* robot;
 //----
 void robotInit() {
   robot = (Robot *) malloc(sizeof(Robot));
-  Tmotor* motorLF = (Tmotor *) malloc(sizeof(Tmotor));
-  Tmotor* motorLB = (Tmotor *) malloc(sizeof(Tmotor));
-  Tmotor* motorRF = (Tmotor *) malloc(sizeof(Tmotor));
-  Tmotor* motorRB = (Tmotor *) malloc(sizeof(Tmotor));
-  DJmotor* motorL = (DJmotor *) malloc(sizeof(DJmotor));
-  DJmotor* motorR = (DJmotor *) malloc(sizeof(DJmotor));
+
+  DJmotorInit(djmotor, 1);
+  TmotorInit(tmotor, 1);
 
   yesenseInit(&robot->yesense);
-  legInit(&robot->legL, LEGLEFT, motorL, motorLF, motorLB);
-  legInit(&robot->legR, LEGRIGHT, motorR, motorRF, motorRB);
+  legInit(&robot->legL, LEGLEFT, &djmotor[1], &tmotor[2], &tmotor[3]);
+  legInit(&robot->legR, LEGRIGHT, &djmotor[0], &tmotor[0], &tmotor[1]);
   legInit(&robot->legVir, LEGLEFT, NULL, NULL, NULL);
   
   robot->yawpid = (PID *) malloc(sizeof(PID));
   robot->rollpid = (PID *) malloc(sizeof(PID));
   robot->splitpid = (PID *) malloc(sizeof(PID));
   robot->L0pid = (PID *) malloc(sizeof(PID));
+  robot->mode = ROBOTNORMAL;
   
   // TODO: 参数暂定 调节
   pidInit(robot->yawpid, 1, 1, 1, 0, 0, PIDPOS);
@@ -37,7 +37,7 @@ void robotInit() {
 }
 
 //----
-// @brief 状态量更新和一些检查
+// @brief 状态量更新和一些检查 对控制器的输入量就不在这里做处理了，毕竟这个运行频率有点高
 // 
 //----
 void updateState() {
@@ -86,7 +86,6 @@ void balanceMode() {
       }
     }
   }
-
   robot->legVir.X.theta = robot->legVir.angle0.now;
   robot->legVir.X.thetadot = robot->legVir.angle0.dot;
   robot->legVir.X.x = robot->legVir.dis.now;
@@ -100,7 +99,7 @@ void balanceMode() {
   robot->legVir.Xd.v = 0;
   robot->legVir.Xd.pitch = 0;
   robot->legVir.Xd.pitchdot = 0;
-
+  
   robot->legVir.U.Twheel = robot->legVir.K[0][0] * (robot->legVir.Xd.theta - robot->legVir.X.theta)
                          + robot->legVir.K[0][1] * (robot->legVir.Xd.thetadot - robot->legVir.X.thetadot)
                          + robot->legVir.K[0][2] * (robot->legVir.Xd.x - robot->legVir.X.x)
@@ -156,15 +155,22 @@ void balanceMode() {
 // 
 //----
 void jumpMode() {
-
+// TODO: 待做 再研究一下子
 }
 
 //----
-// @brief 宕机模式
+// @brief 宕机模式 实际上就是电机全部设置0电流
 // 
 //----
 void haltMode() {
-
+  tmotor[0].mode = HALT;
+  tmotor[1].mode = HALT;
+  tmotor[2].mode = HALT;
+  tmotor[3].mode = HALT;
+  djmotor[0].output = 0;
+  djmotor[0].mode = HALT;
+  djmotor[1].output = 0;
+  djmotor[1].mode = HALT;
 }
 
 //----
@@ -192,6 +198,7 @@ void flyCheck() {
 // 
 //----
 void robotRun() {
+  updateState();
   switch(robot->mode) {
     case ROBOTNORMAL:
       balanceMode();
@@ -205,4 +212,7 @@ void robotRun() {
     default:
       break;
   }
+  // 将会运行所有的tmotor和djmotor
+  TmotorRun(tmotor);
+  DJmotorRun(djmotor);
 }

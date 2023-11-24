@@ -17,29 +17,34 @@
 
 #define QUEUEMAXSIZE 10
 
-typedef struct CanTxQueue {
-	u8 tail, head;
-	CanTxMsg data[QUEUEMAXSIZE];
-	bool (*isFull)(struct CanTxQueue* queue);
-	bool (*isEmpty)(struct CanTxQueue* queue);
-	bool (*enqueue)(struct CanTxQueue* queue, void* data);
-	bool (*dequeue)(struct CanTxQueue* queue, void* data);
-} CanTxQueue;
+#define queue(T) queue_##T
+#define newqueue(T) newqueue_##T
+#define deletequeue(T) deletequeue_##T
+#define Queue(T) typedef struct queue_##T{\
+  T *val;\
+  int head;\
+  int tail;\
+  int size;\
+  int (*maxsize)(struct queue_##T* queue);\
+  int (*getsize)(struct queue_##T* queue);\
+  int (*isempty)(struct queue_##T* queue);\
+  int (*isfull)(struct queue_##T* queue);\
+  void (*push)(struct queue_##T* queue, T val);\
+  bool (*pop)(struct queue_##T* queue, T* val);\
+  void (*clear)(struct queue_##T *queue);\
+}queue_##T;
+#define ExternNewQueue(T) extern queue_##T *newqueue_##T(int size);
+#define ExternDeleteQueue(T) extern void deletequeue_##T(queue_##T* queue);
 
-typedef struct CanRxQueue {
-	int	tail, head;
-	CanRxMsg data[QUEUEMAXSIZE];
-	bool (*isFull)(struct CanRxQueue* queue);
-	bool (*isEmpty)(struct CanRxQueue* queue);
-	bool (*enqueue)(struct CanRxQueue* queue, void* data);
-	bool (*dequeue)(struct CanRxQueue* queue, void* data);
-} CanRxQueue;
+Queue(CanRxMsg);
+Queue(CanTxMsg);
+ExternNewQueue(CanRxMsg);
+ExternNewQueue(CanTxMsg);
+ExternDeleteQueue(CanRxMsg);
+ExternDeleteQueue(CanTxMsg);
 
-CanRxQueue* newCanRxQueue();
-CanTxQueue* newCanTxQueue();
-
-extern CanRxQueue* can1RxMsg;
-extern CanTxQueue* can1TxMsg;
-extern CanRxQueue* can2RxMsg;
-extern CanTxQueue* can2TxMsg;
+extern queue(CanRxMsg)* can1RxMsg;
+extern queue(CanTxMsg)* can1TxMsg;
+extern queue(CanRxMsg)* can2RxMsg;
+extern queue(CanTxMsg)* can2TxMsg;
 

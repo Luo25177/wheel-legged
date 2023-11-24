@@ -12,7 +12,7 @@ float incCompute(PID* pid, float input) {
   pid->output = pid->kp * (pid->err[0] - pid->err[1]) + pid->ki * pid->err[0] + pid->kd * (pid->err[0] - 2 * pid->err[1] + pid->err[2]);
   pid->err[2] = pid->err[1];
   pid->err[1] = pid->err[0];
-  limitInRange(&pid->output, pid->outputLimit);
+  limitInRange(float) (&pid->output, pid->outputLimit);
   return pid->output;
 }
 //----
@@ -25,10 +25,11 @@ float incCompute(PID* pid, float input) {
 float posCompute(PID* pid, float input) {
   pid->err[0] = pid->target - input;
   pid->accErr += pid->err[0];
-  limitInRange(&pid->accErr, pid->accErrLimit);
+  limitInRange(float) (&pid->accErr, pid->accErrLimit);
   pid->output = pid->kp * pid->err[0] + pid->ki * pid->accErr + pid->kd * (pid->err[0] - pid->err[1]);
   pid->err[2] = pid->err[1];
   pid->err[1] = pid->err[0];
+  limitInRange(float) (&pid->output, pid->outputLimit);
   return pid->output;
 }
 
@@ -45,7 +46,7 @@ float TincCompute(PID* pid, float input) {
   pid->output = pid->kp * (pid->err[0] - pid->err[1]) + pid->ki * ierr + pid->kd * (pid->err[0] - 2 * pid->err[1] + pid->err[2]);
   pid->err[2] = pid->err[1];
   pid->err[1] = pid->err[0];
-  limitInRange(&pid->output, pid->outputLimit);
+  limitInRange(float) (&pid->output, pid->outputLimit);
   return pid->output;
 }
 
@@ -59,10 +60,11 @@ float TincCompute(PID* pid, float input) {
 float TposCompute(PID* pid, float input) {
   pid->err[0] = pid->target - input;
   pid->accErr += (pid->err[0] + pid->err[1]) / 2;
-  limitInRange(&pid->accErr, pid->accErrLimit);
+  limitInRange(float) (&pid->accErr, pid->accErrLimit);
   pid->output = pid->kp * pid->err[0] + pid->ki * pid->accErr + pid->kd * (pid->err[0] - pid->err[1]);
   pid->err[2] = pid->err[1];
   pid->err[1] = pid->err[0];
+  limitInRange(float) (&pid->output, pid->outputLimit);
   return pid->output;
 }
 

@@ -1,17 +1,17 @@
 //----
 // @file djmotor.h
 // @author mask <beloved25177@126.com>
-// @brief 
+// @brief 这里的电机操作都是对电机数组中的所有电机进行操作的
 // @version 1.0
 // @date 2023-11-12
 // 
 // @copyright Copyright (c) 2023
 // 
 //----
-
 #pragma once
 
 #include "pid.h"
+#include "can.h"
 #include "mymath.h"
 #include <stdlib.h>
 #include "motorparam.h"
@@ -52,12 +52,15 @@ typedef struct {
   vs16 lastPulseRead;
 	
 	vs16 angleSet;
-  vs16 output; // 最终的电流输出
+  s16 output; // 最终的电流输出
 
 	PID* pulsePid;	  // 获得速度
 	PID* speedPid;	  // 获得电流
 }DJmotor;
 
+extern DJmotor djmotor[2];
+
 void DJmotorInit(DJmotor* motor, u8 id);
 void DJreceiveHandle(DJmotor* motor, CanRxMsg msg);
-void DJcompute(DJmotor* motor);
+void DJmotorCommunicate(DJmotor* motor, u8 stdid);
+void DJmotorRun(DJmotor* motor);

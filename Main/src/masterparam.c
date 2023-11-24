@@ -3,14 +3,10 @@
 Master master;
 
 void HandleParamInit(HandleParam* handleparam) {
-  handleparam->forward = 0;
-  handleparam->backward = 0;
-  handleparam->left = 0;
-  handleparam->right = 0;
-  handleparam->up = 0;
-  handleparam->down = 0;
-  handleparam->tiltleft = 0;
-  handleparam->tiltright = 0;
+  handleparam->run = 0;
+  handleparam->height = 0;
+  handleparam->tilt = 0;
+  handleparam->turn = 0;
 }
 
 void ControlParamInit(ControlParam* controlparam) {
@@ -23,3 +19,13 @@ void MasterInit(Master* master) {
   ControlParamInit(&master->control);
 }
 
+void ControlParamDeal(ControlParam* controlparam) {
+}
+
+void HandleParamDeal(HandleParam* handleparam) {
+  robot->vSet = handleparam->run;
+  // TODO: 参数暂定
+  robot->L0Set += handleparam->height * 0.001;
+  robot->rollpid->target += handleparam->tilt * 0.001;
+  robot->yawpid->target += handleparam->turn * 0.001;
+}

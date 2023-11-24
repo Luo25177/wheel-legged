@@ -1,7 +1,7 @@
 //----
 // @file bluetooth.h
 // @author mask <beloved25177@126.com>
-// @brief 蓝牙通讯
+// @brief 蓝牙通讯，消息处理
 // @version 1.0
 // @date 2023-11-17
 //
@@ -11,8 +11,10 @@
 #pragma once
 
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 #include "stm32f4xx.h"
+#include "masterparam.h"
 
 #define HEADCHAR1 0xff
 #define HEADCHAR2 0xff

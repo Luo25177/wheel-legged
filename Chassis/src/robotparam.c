@@ -1,7 +1,5 @@
 #include "robotparam.h"
 
-float Kcoeff[12][4] = {0};
-
 void inputInit(Input* input) {
   input->theta = 0;
   input->thetadot = 0;
@@ -15,3 +13,6 @@ void outputInit(Output* output) {
   output->Tp = 0;
   output->Twheel = 0;
 }
+
+vector2f jumpPoints[4];
+float Kcoeff[12][4] = {0};

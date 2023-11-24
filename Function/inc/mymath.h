@@ -51,5 +51,18 @@ void BU8ToVS16 (u8* u, vs16* s);
 void BF32ToU8 (float* f, u8* u);
 void BU8ToF32 (u8* u, float* f);
 
-void limitInRange(float* val, float limit);
-void limitIn2Range(float* val, float min, float max);
+#define ExternLimitInRange(T) extern void limitInRange_##T(T* val, T limit);
+#define ExternLimitIn2Range(T) extern void limitIn2Range_##T(T* val, T min, T max);
+
+#define limitInRange(T) limitInRange_##T
+#define limitIn2Range(T) limitIn2Range_##T
+
+ExternLimitInRange(u8);
+ExternLimitInRange(s16);
+ExternLimitInRange(int);
+ExternLimitInRange(float);
+
+ExternLimitIn2Range(u8);
+ExternLimitIn2Range(s16);
+ExternLimitIn2Range(int);
+ExternLimitIn2Range(float);

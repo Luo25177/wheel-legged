@@ -1,7 +1,7 @@
 //----
 // @file tmotor.h
 // @author mask <beloved25177@126.com>
-// @brief 
+// @brief 这里的电机操作都是对电机数组中的所有电机进行操作的
 // @version 1.0
 // @date 2023-11-12
 // 
@@ -97,10 +97,10 @@ typedef struct {
   Tstatus status;
 }Tmotor;
 
+extern Tmotor tmotor[4];
+
 void TmotorInit(Tmotor* motor, u8 id);
 void TmotorStatueControl(u8 controlword, u8 id);
-void TmotorRunControl(Tmotor* motor, float _pos, float _speed, float _torque, float _kp, float _kd);
 void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg);
-void TmotorSetPos(Tmotor* motor, float anglerad);
-void TmotorSetSpeed(Tmotor* motor, float speedrad);
-void TmotorSetTorque(Tmotor* motor, float torque);
+void TmotorCommunicate(Tmotor* motor, float _pos, float _speed, float _torque, float _kp, float _kd);
+void TmotorRun(Tmotor* motor);

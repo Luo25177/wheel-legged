@@ -1,92 +1,64 @@
 #include "queue.h"
 
-bool canTxQueueIsFull(CanTxQueue* queue)
-{
-	if (queue->head == (queue->tail + 1) % QUEUEMAXSIZE)
-		return true;
-	return false;
+#define Maxsize(T) int maxsize_##T(queue_##T *queue) {return queue->size;}
+#define Getsize(T) int getsize_##T(queue_##T *queue) {\
+  int size = queue->tail - queue->head;\
+  while(size < 0)size += queue->size;\
+  while(size > queue->size)size -= queue->size;\
+  return size;\
 }
-bool canRxQueueIsFull(CanRxQueue* queue)
-{
-	if (queue->head == (queue->tail + 1) % QUEUEMAXSIZE)
-		return true;
-	return false;
+#define Isempty(T) int isempty_##T(queue_##T *queue) {\
+  return queue->head == queue->tail;\
 }
+#define Isfull(T) int isfull_##T(queue_##T *queue) {\
+  return queue->tail == (queue->head - 1 >= 0? queue->head - 1 : queue->head - 1 + queue->size);\
+}
+#define Push(T) void push_##T(queue_##T *queue, T val) {\
+  if(queue->tail == (queue->head - 1 >= 0? queue->head - 1 : queue->head - 1 + queue->size))return;\
+  *(queue->val + queue->tail) = val;\
+  queue->tail += 1;\
+  queue->tail %= queue->size;\
+}
+#define Pop(T) bool pop_##T(queue_##T *queue, T *val) {\
+  if(queue->head == queue->tail) \
+    return false;\
+  *val = *(queue->val + queue->head);\
+  queue->head++;\
+  queue->head %= queue->size;\
+	return true;\
+}
+#define Clear(T) void clear_##T(queue_##T *queue) {\
+  queue->head = 0;\
+  queue->tail = 0;\
+}
+#define NewQueue(T) queue_##T *newqueue_##T(int size) {\
+  queue_##T *queue = (queue_##T *) malloc(sizeof(queue_##T));\
+  queue->val = (T *) malloc(sizeof(T) * size);\
+  queue->size = size;\
+  queue->head = 0;\
+  queue->tail = 0;\
+  queue->maxsize = maxsize_##T;\
+  queue->getsize = getsize_##T;\
+  queue->isempty = isempty_##T;\
+  queue->isfull = isfull_##T;\
+  queue->push = push_##T;\
+  queue->pop = pop_##T;\
+  queue->clear = clear_##T;\
+  return queue;\
+}
+#define DeleteQueue(T) void deletequeue_##T(queue_##T* queue){\
+  free(queue->val);\
+  free(queue);\
+}
+#define DEFINEQUEUE(T) Maxsize(T)\
+  Getsize(T)\
+  Isempty(T)\
+  Isfull(T)\
+  Push(T)\
+  Pop(T)\
+  Clear(T)\
+  NewQueue(T)\
+  DeleteQueue(T)
 
-bool canTxQueueIsEmpty(CanTxQueue* queue)
-{
-	if (queue->tail == queue->head)
-		return true;
-	return false;
-}
-bool canRxQueueIsEmpty(CanRxQueue* queue)
-{
-	if (queue->tail == queue->head)
-		return true;
-	return false;
-}
-
-bool canTxEnqueue(CanTxQueue* queue, void* data)
-{
-	if (queue->isFull(queue))
-		return false;
-	memcpy(&(queue->data[queue->tail]), data, sizeof(CanTxMsg));
-	queue->tail++;
-	queue->tail %= QUEUEMAXSIZE;
-	return true;
-}
-bool canRxEnqueue(CanRxQueue* queue, void* data)
-{
-	if (queue->isFull(queue))
-		return false;
-	memcpy(&(queue->data[queue->tail]), data, sizeof(CanRxMsg));
-	queue->tail++;
-	queue->tail %= QUEUEMAXSIZE;
-	return true;
-}
-
-bool canTxDequeue(CanTxQueue* queue, void* data)
-{
-	if (queue->isEmpty(queue))
-		return false;
-	memcpy(data, &(queue->data[queue->head]), sizeof(CanTxMsg));
-	queue->head++;
-	queue->head %= QUEUEMAXSIZE;
-	return true;
-}
-bool canRxDequeue(CanRxQueue* queue, void* data)
-{
-	if (queue->isEmpty(queue))
-		return false;
-	memcpy(data, &(queue->data[queue->head]), sizeof(CanRxMsg));
-	queue->head++;
-	queue->head %= QUEUEMAXSIZE;
-	return true;
-}
-
-CanRxQueue* newCanRxQueue()
-{
-	CanRxQueue* queue = (CanRxQueue*) malloc(sizeof(CanRxQueue));
-	if (!queue)
-		return NULL;
-	queue->isEmpty = canRxQueueIsEmpty;
-	queue->enqueue = canRxEnqueue;
-	queue->dequeue = canRxDequeue;
-	queue->isFull  = canRxQueueIsFull;
-	queue->head	   = 0;
-	queue->tail	   = 0;
-	return queue;
-}
-CanTxQueue* newCanTxQueue()
-{
-	CanTxQueue* queue = (CanTxQueue*) malloc(sizeof(CanTxQueue));
-	if (!queue)
-		return NULL;
-	queue->isEmpty = canTxQueueIsEmpty;
-	queue->enqueue = canTxEnqueue;
-	queue->dequeue = canTxDequeue;
-	queue->isFull  = canTxQueueIsFull;
-	queue->head	   = 0;
-	queue->tail	   = 0;
-	return queue;
-}
+DEFINEQUEUE(CanTxMsg);
+DEFINEQUEUE(CanRxMsg);

@@ -52,14 +52,21 @@ void BU8ToF32 (u8* u, float* f) {
   *f = (float) ((s32) (u[0] << 24 | u[1] << 16 | u[2] << 8 | u[3]));
 }
 
-void limitInRange(float* val, float limit) {
-  if(limit == 0) return;
-  if(*val < -limit) *val = -limit;
-  else if(*val > limit) *val = limit;
+#define LimitInRange(T) void limitInRange_##T(T* val, T limit) {\
+  if(*val < -limit) *val = -limit;\
+  else if(*val > limit) *val = limit;\
+}
+#define LimitIn2Range(T) void limitIn2Range_##T(T* val, T min, T max) {\
+  if(*val < min) *val = min;\
+  else if(*val > max) *val = max;\
 }
 
-void limitIn2Range(float* val, float min, float max) {
-  if(max == min) return;
-  if(*val < min) *val = min;
-  else if(*val > max) *val = max;
-}
+LimitInRange(u8);
+LimitInRange(s16);
+LimitInRange(int);
+LimitInRange(float);
+
+LimitIn2Range(u8);
+LimitIn2Range(s16);
+LimitIn2Range(int);
+LimitIn2Range(float);

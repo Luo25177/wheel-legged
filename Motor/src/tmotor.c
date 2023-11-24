@@ -7,37 +7,49 @@
 // @param id 
 //----
 void TmotorInit(Tmotor* motor, u8 id) {
-  motor->enable = false;
-  motor->id = id;
-  motor->initval.ratio = 7.643f;
-  motor->initval.gearratio = 1.0f;
-  motor->initval.spMaxpos = 60; // deg
-  motor->initval.spMinpos = 10; // deg
+  while(motor) {
+    motor->enable = false;
+    motor->id = id;
+    motor->mode = TORQUE;
 
-  motor->status.stuckDet = true;
-  motor->status.stuckRelease = true;
+    motor->initval.ratio = 7.643f;
+    motor->initval.gearratio = 1.0f;
+    motor->initval.spMaxpos = 60; // deg
+    motor->initval.spMinpos = 10; // deg
 
-  motor->initval.maxangle = 1800;
-  motor->initval.minangle = -1800;
+    motor->status.stuckDet = true;
+    motor->status.stuckRelease = true;
 
-  motor->initval.kp = 150;
-  motor->initval.kd = 1.0;
-  
-  motor->initval.kpBg = 150;
-  motor->initval.kdBg = 3;
-  motor->initval.kpSt = 180;
-  motor->initval.kdSt = 1.5;
+    motor->initval.maxangle = 1800;
+    motor->initval.minangle = -1800;
 
-  motor->initval.acc = 0;
-  motor->initval.dcc = 0;
-  motor->initval.accRange = 0;
-  motor->initval.dccRange = 0;
-  
-  motor->set.spStart = 0;
-  motor->set.lockRange = 1.5;
-  
-  motor->real.spStart = 0;
-  motor->real.lockRange = 1.5;
+    motor->initval.kp = 150;
+    motor->initval.kd = 1.0;
+    
+    motor->initval.kpBg = 150;
+    motor->initval.kdBg = 3;
+    motor->initval.kpSt = 180;
+    motor->initval.kdSt = 1.5;
+
+    motor->initval.acc = 0;
+    motor->initval.dcc = 0;
+    motor->initval.accRange = 0;
+    motor->initval.dccRange = 0;
+    
+    motor->set.spStart = 0;
+    motor->set.torque = 0;
+    motor->set.speed = 0;
+    motor->set.angle = 0;
+    motor->set.lockRange = 1.5;
+    
+    motor->real.spStart = 0;
+    motor->real.lockRange = 1.5;
+
+    // 进入控制模式
+    TmotorStatueControl(TENTERCONTROL, id);
+    ++id;
+    ++motor;
+  }
 }
 
 //----
@@ -101,7 +113,7 @@ static float uint2float(int x_int, float x_min, float x_max, int bits)	//整型�
 // @param _kp 
 // @param _kd 
 //----
-void TmotorRunControl(Tmotor* motor, float _pos, float _speed, float _torque, float _kp, float _kd) {
+void TmotorCommunicate(Tmotor* motor, float _pos, float _speed, float _torque, float _kp, float _kd) {
   _pos *= AngleToRad * motor->initval.gearratio * motor->initval.ratio;
   _speed *= AngleToRad * motor->initval.gearratio * motor->initval.ratio;
   
@@ -125,7 +137,7 @@ void TmotorRunControl(Tmotor* motor, float _pos, float _speed, float _torque, fl
   txmsg.Data[6] = ((kd & 0xf) << 4) | (t >> 8);
   txmsg.Data[7] = t & 0xff;
   
-  can1Txmsg->enqueue(can1Txmsg, &txmsg);
+  can1Txmsg->push(can1Txmsg, txmsg);
 }
 
 //----
@@ -135,6 +147,7 @@ void TmotorRunControl(Tmotor* motor, float _pos, float _speed, float _torque, fl
 // @param msg 
 //----
 void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg) {
+  u8 id = msg.Data[0] - 1;
 	u16 p = (msg.Data[1] << 8) | msg.Data[2];		   //电机位置
 	u16 v = (msg.Data[3] << 4) | (msg.Data[4] >> 4); //电机速度
 	u16 t = (msg.Data[4] & 0x0f) << 8 | msg.Data[5]; //电机扭矩
@@ -142,9 +155,9 @@ void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg) {
   float pos = uint2float(p, P_MIN, P_MAX, 16);
   float speed = uint2float(v, P_MIN, P_MAX, 12);
 
-  motor->real.angle = pos * RadToAngle / motor->initval.gearratio / motor->initval.ratio;
-  motor->real.speed = speed * RadToAngle / motor->initval.gearratio / motor->initval.ratio;
-  motor->real.torque = uint2float(t, T_MIN, T_MAX, 12);
+  motor[id].real.angle = pos * RadToAngle / motor[id].initval.gearratio / motor[id].initval.ratio;
+  motor[id].real.speed = speed * RadToAngle / motor[id].initval.gearratio / motor[id].initval.ratio;
+  motor[id].real.torque = uint2float(t, T_MIN, T_MAX, 12);
 }
 
 void TmotorEnable(Tmotor* motor, u8 controlword) {
@@ -157,40 +170,25 @@ void TmotorEnable(Tmotor* motor, u8 controlword) {
 }
 
 void TmotorRun(Tmotor* motor) {
-  if(!motor->enable) return;
-  switch(motor->mode) {
-    case HALT:
-      TmotorRunControl(motor, 0, 0, 0, 0, 0);
-      break;
-    case POSITION:
-      TmotorRunControl(motor, motor->set.angle * motor->initval.ratio * motor->initval.gearratio, 0, motor->initval.kp, motor->initval.kd, 0);
-      break;
-    case SPEED:
-      TmotorRunControl(motor, 0, motor->set.speed * motor->initval.ratio * motor->initval.gearratio, 0, motor->initval.kd, 0);
-      break;
-    case TORQUE:
-      TmotorRunControl(motor, 0, 0, motor->set.torque, 0, 0);
-      break;
-    default:
-      TmotorRunControl(motor, 0, 0, 0, 0, 0);
-      break;
+  while(motor) {
+    if(!motor->enable) continue;
+    switch(motor->mode) {
+      case HALT:
+        TmotorCommunicate(motor, 0, 0, 0, 0, 0);
+        break;
+      case POSITION:
+        TmotorCommunicate(motor, motor->set.angle * motor->initval.ratio * motor->initval.gearratio, 0, motor->initval.kp, motor->initval.kd, 0);
+        break;
+      case SPEED:
+        TmotorCommunicate(motor, 0, motor->set.speed * motor->initval.ratio * motor->initval.gearratio, 0, motor->initval.kp, 0);
+        break;
+      case TORQUE:
+        TmotorCommunicate(motor, 0, 0, motor->set.torque, 0, 0);
+        break;
+      default:
+        TmotorCommunicate(motor, 0, 0, 0, 0, 0);
+        break;
+    }
+    motor++;
   }
-}
-
-//----
-// @brief 设定位置
-// 
-// @param motor 
-// @param pos rad
-//----
-void TmotorSetPos(Tmotor* motor, float anglerad) {
-  motor->set.angle = anglerad;
-}
-
-void TmotorSetSpeed(Tmotor* motor, float speedrad) {
-  motor->set.speed = speedrad;
-}
-
-void TmotorSetTorque(Tmotor* motor, float torque) {
-  motor->set.torque = torque;
 }

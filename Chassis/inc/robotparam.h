@@ -1,7 +1,7 @@
 //----
 // @file robotparam.h
 // @author mask <beloved25177@126.com>
-// @brief 机器人所需要的所有参数的定义，但是不完全需要测定
+// @brief 机器人所需要的所有参数的定义，但是不完全，还需要测定
 // @version 1.0
 // @date 2023-11-13
 // 
@@ -22,19 +22,19 @@
 #define MASSL2 0.1f
 #define MASSL3 0.1f
 #define MASSL4 0.1f
-
 #define MASSBODY 0.1f
 #define HALFMASSBODY 0.1f
 #define MASSLEG 0.1f
 #define MASSWHEEL 0.1f
 #define GRAVITY 9.805f
-
 // 虚拟力前馈
 #define FFEEDFORWARD -0.1f
-
+// 最小支持力
 #define FORCETHRESHOLD -20.f
 
-extern float Kcoeff[12][4];
+#define MAXROBOTSPEED 1.f
+#define MINROBOTLEGLEN 0.1f;
+#define MAXROBOTLEGLEN 0.3f;
 
 typedef enum {
   LEGLEFT = (char) -1,
@@ -46,7 +46,6 @@ typedef enum {
   ROBOTJUMP,
   ROBOTHALT
 }RobotRunMode;
-
 
 typedef struct {
   float theta;
@@ -65,5 +64,5 @@ typedef struct {
 void inputInit(Input* input);
 void outputInit(Output* output);
 
-
 extern vector2f jumpPoints[4];
+extern float Kcoeff[12][4];
