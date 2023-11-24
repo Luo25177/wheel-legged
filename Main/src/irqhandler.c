@@ -41,7 +41,7 @@ void USART1_IRQHandler(void) {
 		USART_ClearFlag(USART1, USART_IT_RXNE);	   // USART_FLAG_RXNE        //清除中断标志
 		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 		temp = USART_ReceiveData(USART1);
-		// receiveData(controlMsg, temp);
+		blueToothReceive(temp);
 		// controlMsg->receiveData(controlMsg, temp);
 	}
 }
@@ -90,6 +90,7 @@ void TIM2_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)	// 溢出中断
 	{
 		GolbalTimer++; // 全局计时器 代码的全局时间可都靠这个
+		canSend(0x3);
 	}
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);	   // 清除中断标志位
 }
@@ -97,7 +98,8 @@ void TIM2_IRQHandler(void) {
 // 100ms
 void TIM3_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) == SET) {
-
+		RobotStateUpdate(&robotstate);
+		blueToothSend(3, (void *) &robotstate, sizeof(RobotState));
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }

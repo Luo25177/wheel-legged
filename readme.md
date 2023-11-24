@@ -28,7 +28,7 @@ usart1 作为通讯的接口，使用蓝牙通讯
 - id:
   - 1 控制参数 ControlParam
   - 2 摇杆数据 HandleParam
-  - 3
+  - 3 机器人状态参数 RobotState
   - 4
 - data: 利用memcpy来实现复制
 - tail: 0x0a 0x0d

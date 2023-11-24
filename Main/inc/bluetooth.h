@@ -10,6 +10,7 @@
 //----
 #pragma once
 
+#include "usart.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>

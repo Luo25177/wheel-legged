@@ -45,10 +45,25 @@ typedef struct {
   ControlParam control;
 }Master;
 
+//----
+// @brief 机器人状态参数，供主控查看
+// 
+//----
+typedef struct {
+  float v;
+  float height;
+  float pitch;
+  float yaw;
+  float roll;
+}RobotState;
+
 extern Master master;
+extern RobotState robotstate;
 
 void HandleParamInit(HandleParam* handleparam);
 void ControlParamInit(ControlParam* controlparam);
 void MasterInit(Master* master);
 void ControlParamDeal(ControlParam* controlparam);
 void HandleParamDeal(HandleParam* handleparam);
+void RobotStateInit(RobotState* robotstate);
+void RobotStateUpdate(RobotState* robotstate);

@@ -132,6 +132,11 @@ void can2Init()
 	can2Rxmsg = newqueue(CanRxMsg) (QUEUEMAXSIZE);
 }
 
+//----
+// @brief 发送can消息，使用标志位 0000 0011 can2 can1
+// 
+// @param ctrlWord 
+//----
 void canSend(u8 ctrlWord)
 {
 	CanTxMsg msg;

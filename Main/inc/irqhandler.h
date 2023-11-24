@@ -14,6 +14,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "robot.h"
+#include "bluetooth.h"
 
 void DMA2_Stream7_IRQHandler();
 void DMA1_Stream6_IRQHandler();

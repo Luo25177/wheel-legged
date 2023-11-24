@@ -11,6 +11,8 @@ void blueToothInit() {
   bluetoothmsg->gethead = false;
   bluetoothmsg->rxDataSize = 0;
   bluetoothmsg->txDataSize = 0;
+  bluetoothmsg->txData[0] = HEADCHAR1;
+  bluetoothmsg->txData[1] = HEADCHAR2;
 }
 
 //----
@@ -49,9 +51,11 @@ void blueToothDeal() {
   switch(bluetoothmsg->rxData[0]) {
     case 1:
       memcpy(&master.control, &bluetoothmsg->rxData[1], sizeof(ControlParam));
+      ControlParamDeal(&master.control);
       break;
     case 2:
       memcpy(&master.handle, &bluetoothmsg->rxData[1], sizeof(HandleParam));
+      HandleParamDeal(&master.handle);
       break;
     case 3:
       break;
@@ -68,6 +72,11 @@ void blueToothDeal() {
 // @param size 
 //----
 void blueToothSend(u8 id, void* data, u8 size) {
-
+  bluetoothmsg->txData[2] = id;
+  memcpy(&bluetoothmsg->txData[3], data, size);
+  bluetoothmsg->txData[size + 3] = TAILCHAR1;
+  bluetoothmsg->txData[size + 4] = TAILCHAR2;
+  // size + 5 = head1 + head2 + id + size + tail1 + tail2
+  usart1->send(bluetoothmsg->txData, size + 5);
 }
 

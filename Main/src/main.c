@@ -14,6 +14,8 @@ int main(){
 	tim3Init();
 
   robotInit();
+	MasterInit(&master);
+	RobotStateInit(&robotstate);
 
 	OSInit();
 	OSTaskCreate(taskStart, (void*) 0, &taskStartStk[TASK_STK_SIZE - 1], START_TASK_PRIO);	// 创建初始任务
@@ -27,13 +29,10 @@ static void taskStart(void* pdata) {
 	OS_ENTER_CRITICAL();	 // 程序进入临界段，无法被中断打断
 
   beepShowSem = OSSemCreate(0);
-  // runSem		= OSSemCreate(0);
-  // manualSem	= OSSemCreate(0);
-  // initSem		= OSSemCreate(0);
-  // disAbleSem	= OSSemCreate(0);
 
 	OSTaskCreate(taskLed, (void*) 0, &taskLedStk[TASK_STK_SIZE - 1], LED_TASK_PRIO);
 	OSTaskCreate(taskBeep, (void*) 0, &taskBeepStk[TASK_STK_SIZE - 1], BEEP_TASK_PRIO);
+	OSTaskCreate(taskRun, (void*) 0, &taskRunStk[TASK_STK_SIZE - 1], BEEP_TASK_PRIO);
 
 	OS_EXIT_CRITICAL();				   // 程序退出临界段，可以被中断打断，在临界段中不要加延时，会死机
 	OSTaskSuspend(START_TASK_PRIO);	   // 根据程序优先级挂起起始任务 每个任务单独一个优先级

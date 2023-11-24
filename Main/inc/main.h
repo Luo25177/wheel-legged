@@ -27,13 +27,10 @@ OS_CPU_SR cpu_sr = 0;
 OS_STK taskStartStk[TASK_STK_SIZE];
 OS_STK taskLedStk[TASK_STK_SIZE];
 OS_STK taskBeepStk[TASK_STK_SIZE];
+OS_STK taskRunStk[TASK_STK_SIZE];
 
 OS_EVENT *beepShowSem;
 u8 beepShowErr;
-
-extern u8 beepShowErr;
-extern OS_EVENT *beepShowSem;
-extern OS_STK taskStartStk[TASK_STK_SIZE];
 
 #define START_TASK_PRIO 5
 static void taskStart(void *pdata);

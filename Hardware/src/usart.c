@@ -4,8 +4,8 @@ Usart* usart1;
 Usart* usart2;
 
 void usart1Init() {
-	usart1			= (Usart*) malloc(sizeof(Usart));
-	usart1->send	= usart1Send;
+	usart1 = (Usart*) malloc(sizeof(Usart));
+	usart1->send = usart1Send;
 	usart1->dmaAble = 1;
 
 	USART_InitTypeDef USART_InitStructure;
@@ -76,8 +76,8 @@ void usart1Init() {
 }
 
 void usart2Init() {
-	usart2			= (Usart*) malloc(sizeof(Usart));
-	usart2->send	= usart2Send;
+	usart2 = (Usart*) malloc(sizeof(Usart));
+	usart2->send = usart2Send;
 	usart2->dmaAble = 1;
 
 	USART_InitTypeDef USART_InitStructure;
