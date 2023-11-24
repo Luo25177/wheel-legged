@@ -1,0 +1,9 @@
+<Resource>
+    <pages>
+        <page name="begin" id="0" />
+    </pages>
+    <images>
+        <image id="0" url="e:\pragma_data\串口屏\visualwheelfoot\images\103944463_p0.jpg" width="480" height="272" crop="0" effect_left="0" effect_top="0" effect_width="480" effect_height="272" size="261120" />
+    </images>
+    <waves />
+</Resource>
