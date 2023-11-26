@@ -11,20 +11,18 @@
 #define M3508FINISHPULSETHRESHOLD 60.f // 电机到位判定的阈值
 
 void DJmotorInit(DJmotor* motor, u8 id) {
-  // 说实话这里不太敢写 while(motor); 主要是也不是很清楚单片机内部分配的空间，如果超出数组范围之后，这个motor是否会是NULL
-  while(motor) {
-    motor->id = id++;
-    motor->n = 0;
-    motor->setZero = false;
-    motor->monitor.timeOut = false;
-    motor->monitor.mode = TORQUE;
-    motor->monitor.enable = false;
-    motor->speedPid = (PID *) malloc(sizeof(PID));
-    motor->pulsePid = (PID *) malloc(sizeof(PID));
+  for (int i = 0; i < 2; i++) {
+    motor[i].id = id++;
+    motor[i].n = 0;
+    motor[i].setZero = false;
+    motor[i].monitor.timeOut = false;
+    motor[i].monitor.mode = POSITION;
+    motor[i].monitor.enable = false;
+    motor[i].speedPid = (PID *) malloc(sizeof(PID));
+    motor[i].pulsePid = (PID *) malloc(sizeof(PID));
     // 增量式PID
-    pidInit(motor->speedPid, 8, 0.25, 0, 0, 0, PIDINC);
-    pidInit(motor->pulsePid, 0.76, 0.1, 0, M3508MAXSPEED, 0, PIDINC);
-    motor++;
+    pidInit(motor[i].speedPid, 8, 0.25, 0, 0, 0, PIDINC);
+    pidInit(motor[i].pulsePid, 0.76, 0.1, 0, M3508MAXSPEED, 0, PIDINC);
   }
 }
 
@@ -47,47 +45,41 @@ void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg) {
   motor[id].real.torque = motor[id].real.current * M3508TTOI;
 }
 
-void DJmotorCommunicate(DJmotor* motor, u8 stdid) {
+void DJmotorCommunicate(DJmotor* motor, u32 stdid) {
   CanTxMsg txmsg;
   txmsg.IDE = CAN_Id_Standard;
   txmsg.RTR = CAN_RTR_DATA;
   txmsg.StdId = stdid;
   txmsg.DLC = 0x08;
 
-  int index = 0;
-  while(motor && index < 8) {
-    BS16ToU8(&motor->set.current, &txmsg.Data[index]);
-    motor++;
-    index += 2;
-  }
+  for (int i = 0; i < 2; i++)
+    BS16ToU8(&motor[i].set.current, &txmsg.Data[i << 1]);
   can2Txmsg->push(can2Txmsg, txmsg);
 }
 
 void DJmotorRun(DJmotor* motor) {
-  DJmotor* m = motor;
-  while(motor) {
-    if(!motor->monitor.enable) {
-      motor->set.current = 0;
+  for (int i = 0; i < 2; i++) {
+    if(!motor[i].monitor.enable) {
+      motor[i].set.current = 0;
       continue;
     }
-    switch (motor->monitor.mode) {
+    switch (motor[i].monitor.mode) {
       case HALT:
-        motor->set.current = 0;
+        motor[i].set.current = 0;
         break;
       case POSITION:
-        motor->pulsePid->target = motor->set.angleDeg * M3508ANGLETOPULSE;
-        motor->speedPid->target = motor->pulsePid->compute(motor->pulsePid, motor->pulseAccumulate);
+        motor[i].pulsePid->target = motor[i].set.angleDeg * M3508ANGLETOPULSE;
+        motor[i].speedPid->target = motor[i].pulsePid->compute(motor[i].pulsePid, motor[i].pulseAccumulate);
       case SPEED:
-        motor->set.current += motor->speedPid->compute(motor->speedPid, motor->pulseAccumulate);
-        limitInRange(s16) (&motor->set.current, M3508MAXCURRENT);
+        motor[i].set.current += motor[i].speedPid->compute(motor[i].speedPid, motor[i].real.velocity);
+        limitInRange(s16) (&motor[i].set.current, M3508MAXCURRENT);
         break;
       case TORQUE:
         break;
       default:
-        motor->set.current = 0;
+        motor[i].set.current = 0;
         break;
     }
-    motor++;
   }
-  DJmotorCommunicate(m, (u8) 0x200);
+  DJmotorCommunicate(motor, (u32) 0x200);
 }

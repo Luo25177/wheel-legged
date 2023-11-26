@@ -36,11 +36,9 @@ typedef struct {
 	float quaternion_data2;
 	float quaternion_data3;
 
-  unsigned char data[98];
-  short datalen;
   bool init;
 }Yesense;
 
-int yesenseAnalyze(Yesense* yesense, unsigned char *data, short len);
+void yesenseReceiveHandler(Yesense* yesense, u8 temp);
 void yesenseInit(Yesense* yesense);
 

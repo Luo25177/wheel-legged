@@ -11,20 +11,20 @@ DJmotor djmotor[2];
 void robotInit() {
   robot = (Robot *) malloc(sizeof(Robot));
 
-  DJmotorInit(djmotor, 1);
   TmotorInit(tmotor, 1);
-
+  DJmotorInit(djmotor, 1);
   yesenseInit(&robot->yesense);
   
+  legInit(&robot->legVir, LEGLEFT, NULL, NULL, NULL);
   legInit(&robot->legL, LEGLEFT, &djmotor[1], &tmotor[2], &tmotor[3]);
   legInit(&robot->legR, LEGRIGHT, &djmotor[0], &tmotor[0], &tmotor[1]);
-  legInit(&robot->legVir, LEGLEFT, NULL, NULL, NULL);
   
   robot->L0pid = (PID *) malloc(sizeof(PID));
   robot->yawpid = (PID *) malloc(sizeof(PID));
   robot->rollpid = (PID *) malloc(sizeof(PID));
   robot->splitpid = (PID *) malloc(sizeof(PID));
   
+  robot->flyflag = false;
   robot->mode = ROBOTNORMAL;
   
   // TODO: 参数暂定 调节
@@ -33,10 +33,11 @@ void robotInit() {
   pidInit(robot->rollpid, 1, 1, 1, 0, 0, PIDPOS);
   pidInit(robot->splitpid, 1, 1, 1, 0, 0, PIDPOS);
   
+  robot->L0Set = 0.2;
   robot->yawpid->target = 0;
   robot->rollpid->target = 0;
   robot->splitpid->target = 0;
-  robot->flyflag = false;
+  
 }
 
 //----
@@ -63,8 +64,8 @@ void updateState() {
 //----
 void balanceMode() {
   robot->legVir.dis.now = (robot->legL.dis.now + robot->legR.dis.now) / 2;
-  robot->legVir.L0.now = (robot->legL.L0.now + robot->legR.L0.now) / 2;
   robot->legVir.dis.dot = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
+  robot->legVir.L0.now = (robot->legL.L0.now + robot->legR.L0.now) / 2;
   robot->legVir.L0.dot = (robot->legL.L0.dot + robot->legR.L0.dot) / 2;
   float L03 = pow(robot->legVir.L0.now, 3);
   float L02 = pow(robot->legVir.L0.now, 2);
@@ -124,6 +125,7 @@ void balanceMode() {
   robot->legL.Fset = FFEEDFORWARD;
   robot->legR.Fset = FFEEDFORWARD;
   // 补偿虚拟力
+  robot->L0pid->target = robot->L0Set;
   float fCompensate = robot->L0pid->compute(robot->L0pid, robot->legVir.L0.now);
   robot->legL.Fset -= fCompensate;
   robot->legR.Fset -= fCompensate;

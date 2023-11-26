@@ -16,7 +16,6 @@
 #include "stm32f4xx_can.h"
 
 #define QUEUEMAXSIZE 10
-
 #define queue(T) queue_##T
 #define newqueue(T) newqueue_##T
 #define deletequeue(T) deletequeue_##T
@@ -35,16 +34,9 @@
 }queue_##T;
 #define ExternNewQueue(T) extern queue_##T *newqueue_##T(int size);
 #define ExternDeleteQueue(T) extern void deletequeue_##T(queue_##T* queue);
-
 Queue(CanRxMsg);
 Queue(CanTxMsg);
 ExternNewQueue(CanRxMsg);
 ExternNewQueue(CanTxMsg);
 ExternDeleteQueue(CanRxMsg);
 ExternDeleteQueue(CanTxMsg);
-
-extern queue(CanRxMsg)* can1RxMsg;
-extern queue(CanTxMsg)* can1TxMsg;
-extern queue(CanRxMsg)* can2RxMsg;
-extern queue(CanTxMsg)* can2TxMsg;
-

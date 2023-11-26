@@ -19,18 +19,22 @@
 #include "os_cfg.h"
 #include "os_cpu.h"
 #include "ucos_ii.h"
+#include "bluetooth.h"
 #include "masterparam.h"
 
 #define TASK_STK_SIZE 256
 
 OS_CPU_SR cpu_sr = 0;
-OS_STK taskStartStk[TASK_STK_SIZE];
+
+u8 beepShowErr;
+OS_EVENT *beepShowSem;
+
+OS_STK taskRunStk[TASK_STK_SIZE];
 OS_STK taskLedStk[TASK_STK_SIZE];
 OS_STK taskBeepStk[TASK_STK_SIZE];
-OS_STK taskRunStk[TASK_STK_SIZE];
+OS_STK taskStartStk[TASK_STK_SIZE];
+OS_STK taskTestStk[TASK_STK_SIZE];
 
-OS_EVENT *beepShowSem;
-u8 beepShowErr;
 
 #define START_TASK_PRIO 5
 static void taskStart(void *pdata);
@@ -43,3 +47,6 @@ static void taskBeep(void *pdata);
 
 #define RUN_TASK_PRIO 6
 static void taskRun(void *pdata);
+
+#define TEST_TASK_PRIO 7
+static void taskTest(void *pdata);

@@ -36,7 +36,7 @@ typedef struct {
 
 extern DJmotor djmotor[2];
 
-void DJmotorInit(DJmotor* motor, u8 id);
-void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg);
-void DJmotorCommunicate(DJmotor* motor, u8 stdid);
 void DJmotorRun(DJmotor* motor);
+void DJmotorInit(DJmotor* motor, u8 id);
+void DJmotorCommunicate(DJmotor* motor, u32 stdid);
+void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg);

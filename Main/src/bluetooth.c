@@ -13,6 +13,8 @@ void blueToothInit() {
   bluetoothmsg->txDataSize = 0;
   bluetoothmsg->txData[0] = HEADCHAR1;
   bluetoothmsg->txData[1] = HEADCHAR2;
+	RobotStateInit(&robotstate);
+  MasterInit(&master);
 }
 
 //----

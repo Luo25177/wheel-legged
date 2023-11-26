@@ -29,12 +29,14 @@
 #define GRAVITY 9.805f
 // 虚拟力前馈
 #define FFEEDFORWARD -0.1f
-// 最小支持力
+// 最小支持力阈值，判断是否离地的支持力的阈值
 #define FORCETHRESHOLD -20.f
-
 #define MAXROBOTSPEED 1.f
 #define MINROBOTLEGLEN 0.1f;
 #define MAXROBOTLEGLEN 0.3f;
+#define MAXROBOTLEGDIFF 0.1f;
+#define MAXROBOTROLL 1.f;
+#define MAXROBOTSPLIT 1;
 
 typedef enum {
   LEGLEFT = (char) -1,

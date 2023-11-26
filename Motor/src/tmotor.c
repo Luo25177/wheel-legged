@@ -19,26 +19,24 @@
 // @param id 
 //----
 void TmotorInit(Tmotor* motor, u8 id) {
-  while(motor) {
+  for (int i = 0; i < 4; i++) {
     // 电机初始参参数
-    motor->id = id;
-    motor->kp = 150;
-    motor->kd = 1.0;
-    motor->set.torque = 0;
-    motor->set.velocity = 0;
-    motor->set.angleDeg = 0;
-    motor->set.angleRad = 0;
-    // 电机初始状态
-    motor->monitor.mode = TORQUE;
-    motor->monitor.enable = false;
-    motor->monitor.timeOut = false;
-    motor->monitor.stuckCnt = 0;
-    motor->monitor.timeOutCnt = 0;
-    motor->monitor.stuckRealse = true;
+    motor[i].id = id;
+    motor[i].kp = 150;
+    motor[i].kd = 1.0;
+    motor[i].set.torque = 0;
+    motor[i].set.velocity = 0;
+    motor[i].set.angleDeg = 0;
+    motor[i].set.angleRad = 0;
+    
+    motor[i].monitor.mode = POSITION;
+    motor[i].monitor.enable = false;
+    motor[i].monitor.timeOut = false;
+    motor[i].monitor.stuckCnt = 0;
+    motor[i].monitor.timeOutCnt = 0;
+    motor[i].monitor.stuckRealse = true;
     // 进入控制模式
-    TmotorStatueControl(TENTERCONTROL, id);
-    ++id;
-    ++motor;
+    TmotorStatueControl(TENTERCONTROL, id++);
   }
 }
 
@@ -73,7 +71,7 @@ void TmotorStatueControl(u8 controlword, u8 id) {
       txmsg.Data[7] = 0xfe;	
       break;
   }
-  CAN_Transmit(CAN1, &txmsg);
+  can1Txmsg->push(can1Txmsg, txmsg);
 }
 
 //----
@@ -155,25 +153,24 @@ void TmotorEnable(Tmotor* motor, u8 controlword) {
 }
 
 void TmotorRun(Tmotor* motor) {
-  while(motor) {
-    if(!motor->monitor.enable) continue;
-    switch(motor->monitor.mode) {
+  for (int i = 0; i < 4; i++) {
+    if(!motor[i].monitor.enable) continue;
+    switch(motor[i].monitor.mode) {
       case HALT:
-        TmotorCommunicate(motor, 0, 0, 0, 0, 0);
+        TmotorCommunicate(&motor[i], 0, 0, 0, 0, 0);
         break;
       case POSITION:
-        TmotorCommunicate(motor, motor->set.angleRad * TRATIO, 0, motor->kp, motor->kd, 0);
+        TmotorCommunicate(&motor[i], motor[i].set.angleRad * TRATIO, 0, motor[i].kp, motor[i].kd, 0);
         break;
       case SPEED:
-        TmotorCommunicate(motor, 0, motor->set.velocity * TRATIO, 0, motor->kp, 0);
+        TmotorCommunicate(&motor[i], 0, motor[i].set.velocity * TRATIO, 0, motor[i].kp, 0);
         break;
       case TORQUE:
-        TmotorCommunicate(motor, 0, 0, motor->set.torque, 0, 0);
+        TmotorCommunicate(&motor[i], 0, 0, motor[i].set.torque, 0, 0);
         break;
       default:
-        TmotorCommunicate(motor, 0, 0, 0, 0, 0);
+        TmotorCommunicate(&motor[i], 0, 0, 0, 0, 0);
         break;
     }
-    motor++;
   }
 }

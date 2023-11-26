@@ -1,3 +1,14 @@
+//----
+// @file yesense.c
+// @author mask <beloved25177@126.com>
+// @brief 这段代码很恶心，我也不想动，只好稍微一改，留个接口，里面的东西就给它尘封了吧
+// @version 1.0
+// @date 2023-11-26
+// 
+// @copyright Copyright (c) 2023
+// 
+//----
+
 #include "yesense.h"
 #include <stddef.h>
 
@@ -283,8 +294,52 @@ int calc_checksum(unsigned char *data, unsigned short len, unsigned short *check
 	}
 
 	*checksum = ((unsigned short)(check_b << 8) | check_a);
-
 	return 0;
+}
+
+u8	  HEAD_FLAG		   = 0;	   // 包头标志位
+u8	  RX_FLAG		   = 0;
+short Data_len		   = 2;
+u8	  Data_Yesense[98] = {0x59, 0x53};
+int	  res			   = 0;
+u8	  n;
+float yaw_last = 0, yaw_now = 0;
+
+void  G_output_infoSet(Yesense* yesense) {
+	yaw_last = yaw_now;
+	yaw_now	 = yesense->yaw.now;
+	if (yaw_now - yaw_last < -100)	  // 发生了突变
+		n += 1;
+	else if (yaw_now - yaw_last > 100)
+		n -= 1;
+	yesense->yaw.now += n * 360;
+}
+
+void yesenseReceiveHandler(Yesense* yesense, u8 temp) {
+	if (RX_FLAG == 1) {
+		Data_len++;
+		Data_Yesense[Data_len - 1] = temp;
+		if (Data_len > 97)	  // 超出范围
+		{
+			Data_len = 2;
+			RX_FLAG	 = 0;
+		}
+	}
+	if (HEAD_FLAG == 1) {
+		if (temp == 0x53)	 // 帧头2
+		{
+			Data_len  -= 2;
+			res	= yesenseAnalyze(yesense, Data_Yesense, Data_len);
+			Data_len   = 2;
+			RX_FLAG	   = 1;
+			HEAD_FLAG  = 0;
+			if (res == 0 || res == 1)
+				G_output_infoSet(yesense);
+		} else if (temp != 0x59)
+			HEAD_FLAG = 0;
+	}
+	if (temp == 0x59)	 // 帧头1
+		HEAD_FLAG = 1;
 }
 
 void yesenseInit(Yesense* yesense) {
@@ -309,6 +364,5 @@ void yesenseInit(Yesense* yesense) {
 	yesense->quaternion_data2 = 0;
 	yesense->quaternion_data3 = 0;
 
-	yesense->datalen = 0;
 	yesense->init = false;
 }

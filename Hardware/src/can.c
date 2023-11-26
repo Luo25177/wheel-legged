@@ -44,15 +44,15 @@ void can1Init() {
 	CAN_InitStructure.CAN_Prescaler = 3;
 	CAN_Init(CAN1, &CAN_InitStructure);
 
-	// CAN_FilterInitStructure.CAN_FilterNumber		 = 1;	 // [14,27]
-	// CAN_FilterInitStructure.CAN_FilterMode			 = CAN_FilterMode_IdList;
-	// CAN_FilterInitStructure.CAN_FilterScale			 = CAN_FilterScale_16bit;
-	// CAN_FilterInitStructure.CAN_FilterIdHigh		 = RRESET_FRONT << 5;
-	// CAN_FilterInitStructure.CAN_FilterIdLow			 = RSTAND_FRONT << 5;
-	// CAN_FilterInitStructure.CAN_FilterMaskIdHigh	 = RDISABLE_FRONT << 5;
-	// CAN_FilterInitStructure.CAN_FilterMaskIdLow		 = RANGLE_FRONT << 5;
-	// CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
-	// CAN_FilterInitStructure.CAN_FilterActivation	 = ENABLE;
+	CAN_FilterInitStructure.CAN_FilterNumber		 = 1;
+	CAN_FilterInitStructure.CAN_FilterMode			 = CAN_FilterMode_IdList;
+	CAN_FilterInitStructure.CAN_FilterScale			 = CAN_FilterScale_16bit;
+	CAN_FilterInitStructure.CAN_FilterIdHigh		 = 0x01 << 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow			 = 0x02 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh	 = 0x03 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow		 = 0x04 << 5;
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
+	CAN_FilterInitStructure.CAN_FilterActivation	 = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
 	CAN_ClearITPendingBit(CAN1, CAN_IT_FMP0);	 // FIFO 0 message pending Interrupt
@@ -109,15 +109,15 @@ void can2Init()
 	CAN_InitStructure.CAN_Prescaler = 3;
 	CAN_Init(CAN2, &CAN_InitStructure);
 
-	// CAN_FilterInitStructure.CAN_FilterNumber		 = 14;	  // [14,27]
-	// CAN_FilterInitStructure.CAN_FilterMode			 = CAN_FilterMode_IdList;
-	// CAN_FilterInitStructure.CAN_FilterScale			 = CAN_FilterScale_16bit;
-	// CAN_FilterInitStructure.CAN_FilterIdHigh		 = RRESET_BEHIND << 5;
-	// CAN_FilterInitStructure.CAN_FilterIdLow			 = RSTAND_BEHIND << 5;
-	// CAN_FilterInitStructure.CAN_FilterMaskIdHigh	 = RDISABLE_BEHIND << 5;
-	// CAN_FilterInitStructure.CAN_FilterMaskIdLow		 = RANGLE_BEGIND << 5;
-	// CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
-	// CAN_FilterInitStructure.CAN_FilterActivation	 = ENABLE;
+	CAN_FilterInitStructure.CAN_FilterNumber		 = 14;
+	CAN_FilterInitStructure.CAN_FilterMode			 = CAN_FilterMode_IdList;
+	CAN_FilterInitStructure.CAN_FilterScale			 = CAN_FilterScale_16bit;
+	CAN_FilterInitStructure.CAN_FilterIdHigh		 = 0x201 << 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow			 = 0x202 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh	 = 0x203 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow		 = 0x204 << 5;
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
+	CAN_FilterInitStructure.CAN_FilterActivation	 = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
 	CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);	 
@@ -144,7 +144,7 @@ void canSend(u8 ctrlWord)
 	if ((ctrlWord & 0x01) && can1Txmsg->pop(can1Txmsg, &msg))
 		CAN_Transmit(CAN1, &msg);
 	if ((ctrlWord & 0x02) && can2Txmsg->pop(can2Txmsg, &msg))
-		CAN_Transmit(CAN1, &msg);
+		CAN_Transmit(CAN2, &msg);
 }
 
 void canCheck() {
