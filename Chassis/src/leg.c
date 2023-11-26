@@ -39,8 +39,8 @@ void legInit(Leg* leg, LegDir dir, DJmotor* wheel, Tmotor* front, Tmotor* behind
 // @param pitch 俯仰角 用于坐标系的转换
 //----
 void Zjie(Leg* leg, float pitch) {
-  leg->angle1 = PI + leg->front->real.angle;
-  leg->angle4 = leg->behind->real.angle;
+  leg->angle1 = PI + leg->front->real.angleRad;
+  leg->angle4 = leg->behind->real.angleRad;
 
   leg->xb = l1 * cos(leg->angle1) - l5 / 2;
   leg->yb = l1 * sin(leg->angle1);

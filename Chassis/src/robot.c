@@ -15,21 +15,24 @@ void robotInit() {
   TmotorInit(tmotor, 1);
 
   yesenseInit(&robot->yesense);
+  
   legInit(&robot->legL, LEGLEFT, &djmotor[1], &tmotor[2], &tmotor[3]);
   legInit(&robot->legR, LEGRIGHT, &djmotor[0], &tmotor[0], &tmotor[1]);
   legInit(&robot->legVir, LEGLEFT, NULL, NULL, NULL);
   
+  robot->L0pid = (PID *) malloc(sizeof(PID));
   robot->yawpid = (PID *) malloc(sizeof(PID));
   robot->rollpid = (PID *) malloc(sizeof(PID));
   robot->splitpid = (PID *) malloc(sizeof(PID));
-  robot->L0pid = (PID *) malloc(sizeof(PID));
+  
   robot->mode = ROBOTNORMAL;
   
   // TODO: 参数暂定 调节
+  pidInit(robot->L0pid, 1, 1, 1, 0, 0, PIDPOS);
   pidInit(robot->yawpid, 1, 1, 1, 0, 0, PIDPOS);
   pidInit(robot->rollpid, 1, 1, 1, 0, 0, PIDPOS);
   pidInit(robot->splitpid, 1, 1, 1, 0, 0, PIDPOS);
-  pidInit(robot->L0pid, 1, 1, 1, 0, 0, PIDPOS);
+  
   robot->yawpid->target = 0;
   robot->rollpid->target = 0;
   robot->splitpid->target = 0;
@@ -46,10 +49,10 @@ void updateState() {
   
   robot->legL.TFnow = robot->legL.front->real.torque;
   robot->legL.TBnow = robot->legL.behind->real.torque;
-  robot->legL.TWheelnow = robot->legL.wheel->currentRead * M3508CURRENTTOTORQUE;
+  robot->legL.TWheelnow = robot->legL.wheel->real.torque;
   robot->legR.TFnow = robot->legR.front->real.torque;
   robot->legR.TBnow = robot->legR.behind->real.torque;
-  robot->legR.TWheelnow = robot->legR.wheel->currentRead * M3508CURRENTTOTORQUE;
+  robot->legR.TWheelnow = robot->legR.wheel->real.torque;
   
   flyCheck();
 }
@@ -163,14 +166,14 @@ void jumpMode() {
 // 
 //----
 void haltMode() {
-  tmotor[0].mode = HALT;
-  tmotor[1].mode = HALT;
-  tmotor[2].mode = HALT;
-  tmotor[3].mode = HALT;
-  djmotor[0].output = 0;
-  djmotor[0].mode = HALT;
-  djmotor[1].output = 0;
-  djmotor[1].mode = HALT;
+  tmotor[0].monitor.mode = HALT;
+  tmotor[1].monitor.mode = HALT;
+  tmotor[2].monitor.mode = HALT;
+  tmotor[3].monitor.mode = HALT;
+  djmotor[0].set.current = 0;
+  djmotor[0].set.current = 0;
+  djmotor[1].set.current = 0;
+  djmotor[1].set.current = 0;
 }
 
 //----

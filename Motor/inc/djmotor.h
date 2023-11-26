@@ -17,50 +17,26 @@
 #include "motorparam.h"
 #include "stm32f4xx_can.h"
 
-#define M3508MAXPULSE	8192
-#define M3508PULSETHRESHOLD 4096
-#define M3508MAXCURRENT	14745
-#define M3508MAXSPEED	8550.f
-#define M3508ZEROSPEED 1000.f	// 寻零或者失能的最大速度
-#define M3508RATIO 19.2f
-#define M3508ANGLETOPULSE	436.90667f // 角度转为编码数
-#define M3508TTOI 2800.f // I = T * K 中的K，将扭矩转为电流
-#define M3508CURRENTTOTORQUE 0.001f // TODO: 预设值
 
 typedef struct {
-  int n;
-  u8 id;
-	u8 mode;
-	bool enable;
- 
-  s16 lockPulse;
 	bool setZero;	   // 是否获得的零点位置脉冲
-  
-  // 超时记录
-	bool timeOut;
-	u32	 timeOutCnt;
-
-	// 反馈数据
-	vs32  pulseAccumulate;
-	float angleRead;	// 角度 累积(deg)
-	
+  u8 id;
+	s16 n; // 累计圈数
+  s16 lockPulse;
+  vs16 lastPulseRead; // 上次读到的脉冲
 	vs16 pulseRead;
-	vs16 speedRead;
-	vs16 currentRead;
 	vs16 temperature;
-	
-  vs16 lastPulseRead;
-	
-	vs16 angleSet;
-  s16 output; // 最终的电流输出
-
-	PID* pulsePid;	  // 获得速度
-	PID* speedPid;	  // 获得电流
+	PID* pulsePid;	  // 位置环获得速度
+	PID* speedPid;	  // 速度环获得电流
+	MotorValue(s16) real; // 读到的数据
+	MotorValue(s16) set; // 设定值
+	MotorMonitor monitor;
+	vs32 pulseAccumulate; // 累计脉冲
 }DJmotor;
 
 extern DJmotor djmotor[2];
 
 void DJmotorInit(DJmotor* motor, u8 id);
-void DJreceiveHandle(DJmotor* motor, CanRxMsg msg);
+void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg);
 void DJmotorCommunicate(DJmotor* motor, u8 stdid);
 void DJmotorRun(DJmotor* motor);

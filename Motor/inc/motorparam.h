@@ -10,6 +10,13 @@
 //----
 #pragma once
 
+#include <stdbool.h>
+#include "stm32f4xx.h"
+
+//----
+// @brief 电机模式
+// 
+//----
 typedef enum {
   HALT,
   POSITION,
@@ -17,3 +24,32 @@ typedef enum {
   TORQUE,
   POSSPEED
 }MotorMode;
+
+//----
+// @brief 监测电机状态
+// 
+//----
+typedef struct {
+  bool stuck;
+  bool enable;
+  bool timeOut;
+  bool stuckRealse;
+  u8 mode;
+  u32 stuckCnt;
+  u32 timeOutCnt;
+}MotorMonitor;
+
+//----
+// @brief 电机数据
+// 
+//----
+#define MotorValueDefine(T) typedef struct {\
+  T torque;\
+  T current;\
+  T velocity;\
+  T angleRad;\
+  float angleDeg;\
+}MotorValue_##T;
+#define MotorValue(T) MotorValue_##T
+MotorValueDefine(float)
+MotorValueDefine(s16)

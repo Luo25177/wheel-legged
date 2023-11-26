@@ -42,13 +42,11 @@ void USART1_IRQHandler(void) {
 		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 		temp = USART_ReceiveData(USART1);
 		blueToothReceive(temp);
-		// controlMsg->receiveData(controlMsg, temp);
 	}
 }
 
 void USART2_IRQHandler(void) {
 	u8 temp;
-
 	if (USART_GetITStatus(USART2, USART_IT_ORE_RX) != RESET) {
 		temp = USART_ReceiveData(USART2);
 		USART_ClearFlag(USART2, USART_FLAG_ORE);	// 清除溢出中断
@@ -56,7 +54,6 @@ void USART2_IRQHandler(void) {
 	if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
 		USART_ClearFlag(USART2, USART_FLAG_RXNE);
 		USART_ClearITPendingBit(USART2, USART_IT_RXNE);
-
 		temp = USART_ReceiveData(USART2);
 		if (RX_FLAG == 1) {
 			Data_len++;
@@ -110,6 +107,7 @@ void CAN1_RX0_IRQHandler(void) {
 	if (CAN_GetITStatus(CAN1, CAN_IT_FMP0) != RESET) {
 		CanRxMsg rxMsg;
 		CAN_Receive(CAN1, CAN_FIFO0, &rxMsg);
+		TmotorreceiveHandle(tmotor, rxMsg);
 	}
 }
 
@@ -119,5 +117,6 @@ void CAN2_RX0_IRQHandler(void) {
 	if (CAN_GetITStatus(CAN2, CAN_IT_FMP0) != RESET) {
 		CanRxMsg rxMsg;
 		CAN_Receive(CAN2, CAN_FIFO0, &rxMsg);
+		DJmotorreceiveHandle(djmotor, rxMsg);
 	}
 }
