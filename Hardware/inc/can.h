@@ -1,12 +1,12 @@
 //----
 // @file can.h
 // @author mask (beloved25177@126.com)
-// @brief 
+// @brief
 // @version 1.0
 // @date 2023-11-12
-// 
+//
 // @copyright Copyright (c) 2023
-// 
+//
 //----
 
 //! RTR一定得设置，不然会发生id错误的情况，并且数据不对
@@ -28,7 +28,7 @@ void can2Check();
 void canSend(u8 ctrlWord);
 void canCheck();
 
-extern queue(CanTxMsg)* can1Txmsg;
-extern queue(CanRxMsg)* can1Rxmsg;
-extern queue(CanTxMsg)* can2Txmsg;
-extern queue(CanRxMsg)* can2Rxmsg;
+extern queue(CanTxMsg) * can1Txmsg;
+extern queue(CanRxMsg) * can1Rxmsg;
+extern queue(CanTxMsg) * can2Txmsg;
+extern queue(CanRxMsg) * can2Rxmsg;

@@ -14,12 +14,12 @@
 #include "misc.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "string.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_dma.h"
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_usart.h"
+#include "string.h"
 
 typedef struct Usart {
 	u8 rxBuff[128];

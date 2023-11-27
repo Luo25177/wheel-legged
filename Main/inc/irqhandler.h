@@ -1,20 +1,20 @@
 //----
 // @file irqhandler.h
 // @author mask <beloved25177@126.com>
-// @brief 
+// @brief
 // @version 1.0
 // @date 2023-11-13
-// 
+//
 // @copyright Copyright (c) 2023
 // @details 对于一些消息接收中断的处理
 //----
 #pragma once
 
+#include "bluetooth.h"
 #include "can.h"
+#include "robot.h"
 #include "tim.h"
 #include "usart.h"
-#include "robot.h"
-#include "bluetooth.h"
 
 void DMA2_Stream7_IRQHandler();
 void DMA1_Stream6_IRQHandler();

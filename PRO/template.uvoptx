@@ -158,27 +158,27 @@
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>robot</ItemText>
+          <ItemText>robot,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>tmotor</ItemText>
+          <ItemText>tmotor,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>can1Txmsg</ItemText>
+          <ItemText>can1Txmsg,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>can2Txmsg</ItemText>
+          <ItemText>can2Txmsg,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>djmotor</ItemText>
+          <ItemText>djmotor,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

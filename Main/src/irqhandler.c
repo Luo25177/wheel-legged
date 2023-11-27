@@ -1,11 +1,9 @@
 #include "irqhandler.h"
 
-
-
 // 数据传输完成，产生中断，检查是否还有没有传输的数据，继续传输
-void DMA2_Stream7_IRQHandler(void) { 
+void DMA2_Stream7_IRQHandler(void) {
 	if (DMA_GetITStatus(DMA2_Stream7, DMA_IT_TCIF7) == SET) {
-		DMA_ClearFlag(DMA2_Stream7, DMA_IT_TCIF7);	  // 清除中断标志
+		DMA_ClearFlag(DMA2_Stream7, DMA_IT_TCIF7);	// 清除中断标志
 		DMA_ClearITPendingBit(DMA2_Stream7, DMA_IT_TCIF7);
 	}
 }
@@ -13,16 +11,16 @@ void DMA2_Stream7_IRQHandler(void) {
 // 数据传输完成,产生中断,检查是否还有没有传输的数据，继续传输
 void DMA1_Stream6_IRQHandler(void) {
 	if (DMA_GetITStatus(DMA1_Stream6, DMA_IT_TCIF6) == SET) {
-		DMA_ClearFlag(DMA1_Stream6, DMA_IT_TCIF6);	  // 清除中断标志
+		DMA_ClearFlag(DMA1_Stream6, DMA_IT_TCIF6);	// 清除中断标志
 		DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6);
 	}
 }
 
 void USART1_IRQHandler(void) {
 	u8 temp;
-	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)	  // 接收寄存器非空
+	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)	// 接收寄存器非空
 	{
-		USART_ClearFlag(USART1, USART_IT_RXNE);	   // USART_FLAG_RXNE        //清除中断标志
+		USART_ClearFlag(USART1, USART_IT_RXNE);	 // USART_FLAG_RXNE        //清除中断标志
 		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 		temp = USART_ReceiveData(USART1);
 		blueToothReceive(temp);
@@ -39,25 +37,25 @@ void USART2_IRQHandler(void) {
 		USART_ClearFlag(USART2, USART_FLAG_RXNE);
 		USART_ClearITPendingBit(USART2, USART_IT_RXNE);
 		temp = USART_ReceiveData(USART2);
- 		yesenseReceiveHandler(&robot->yesense, temp);
+		yesenseReceiveHandler(&robot->yesense, temp);
 	}
 }
- 
-// 1ms 
+
+// 1ms
 void TIM2_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)	// 溢出中断
 	{
-		GolbalTimer++; // 全局计时器 代码的全局时间可都靠这个
+		GolbalTimer++;	// 全局计时器 代码的全局时间可都靠这个
 		canSend(0x3);
 	}
-	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);	   // 清除中断标志位
+	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);	 // 清除中断标志位
 }
 
 // 100ms
 void TIM3_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) == SET) {
 		RobotStateUpdate(&robotstate);
-		blueToothSend(3, (void *) &robotstate, sizeof(RobotState));
+		blueToothSend(3, (void*) &robotstate, sizeof(RobotState));
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }
