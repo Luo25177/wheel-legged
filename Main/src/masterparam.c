@@ -23,11 +23,11 @@ void MasterInit(Master* master) {
 void ControlParamDeal(ControlParam* controlparam) { robot->mode = controlparam->robotmode; }
 
 void HandleParamDeal(HandleParam* handleparam) {
-	robot->vSet							= handleparam->run;
+	robot->vSet						 = (float) (handleparam->run * 0.01);
 	// TODO: 参数暂定
-	robot->L0Set					 += handleparam->height * 0.001;
-	robot->rollpid->target += handleparam->tilt * 0.001;
-	robot->yawpid->target	 += handleparam->turn * 0.001;
+	robot->L0Set					 = (float) (handleparam->height * 0.01);
+	robot->rollpid->target = handleparam->tilt;
+	robot->yawpid->target	 = handleparam->turn;
 }
 
 void RobotStateInit(RobotState* robotstate) {

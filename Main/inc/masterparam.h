@@ -21,10 +21,10 @@
 //
 //----
 typedef struct {
-	s16 run;		 // 跑
-	s16 turn;		 // 后退
-	s16 height;	 // 底盘高度
-	s16 tilt;		 // 底盘倾斜
+	s16 run;		 // 跑 v cm
+	s16 turn;		 // 转弯 deg
+	s16 height;	 // 底盘高度 cm
+	s16 tilt;		 // 底盘倾斜 deg
 } HandleParam;
 
 //----
@@ -32,9 +32,9 @@ typedef struct {
 //
 //----
 typedef struct {
-	bool begin;	 // 开始运行
-	bool stop;	 // 急停 打算做一个功能就是为了防止程序疯跑，再怎么说没有急停开关好用
-	u8	 robotmode;
+	u8 begin;	 // 开始运行
+	u8 stop;	 // 急停 打算做一个功能就是为了防止程序疯跑，再怎么说没有急停开关好用好像没用
+	u8 robotmode;
 } ControlParam;
 
 //----

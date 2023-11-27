@@ -19,7 +19,7 @@
 #include <string.h>
 
 #define HEADCHAR1 0xff
-#define HEADCHAR2 0xff
+#define HEADCHAR2 0xfe
 #define TAILCHAR1 0x0a
 #define TAILCHAR2 0x0d
 

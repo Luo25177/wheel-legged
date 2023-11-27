@@ -21,9 +21,11 @@
 #include "stm32f4xx_usart.h"
 #include "string.h"
 
+#define MAXUSARTDATASIZE 50
+
 typedef struct Usart {
-	u8 rxBuff[128];
-	u8 txBuff[128];
+	u8 rxBuff[MAXUSARTDATASIZE];
+	u8 txBuff[MAXUSARTDATASIZE];
 	u8 dmaAble;
 	void (*send)(u8* data, u8 cnt);
 } Usart;
