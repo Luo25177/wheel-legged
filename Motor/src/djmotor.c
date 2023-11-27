@@ -27,7 +27,10 @@ void DJmotorInit(DJmotor* motor, u8 id) {
 }
 
 void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg) {
-	int id = msg.StdId - 0x201;
+	int id											 = msg.StdId - 0x201;
+	motor[id].monitor.timeOutCnt = 0;
+	if (motor[id].monitor.timeOut)
+		motor[id].monitor.timeOut = false;
 	BU8ToVS16(msg.Data, &motor[id].pulseRead);
 	if (!motor[id].setZero) {
 		motor[id].setZero		= true;
@@ -81,4 +84,13 @@ void DJmotorRun(DJmotor* motor) {
 		}
 	}
 	DJmotorCommunicate(motor, (u32) 0x200);
+}
+
+void DJmotorMonitor(DJmotor* motor) {
+	for (int i = 0; i < 2; i++) {
+		motor[i].monitor.timeOutCnt++;
+		if (motor[i].monitor.timeOutCnt >= 10) {
+			motor[i].monitor.timeOut = true;
+		}
+	}
 }

@@ -42,10 +42,10 @@ void blueToothReceive(u8 data) {
 			bluetoothmsg->gethead = true;
 		}
 	}
-  if(bluetoothmsg->rxDataSize >= BLUETOOTHDATALEN) {
-    			bluetoothmsg->gethead		 = false;
-			bluetoothmsg->rxDataSize = 0;
-  }
+	if (bluetoothmsg->rxDataSize >= BLUETOOTHDATALEN) {
+		bluetoothmsg->gethead		 = false;
+		bluetoothmsg->rxDataSize = 0;
+	}
 }
 
 //----

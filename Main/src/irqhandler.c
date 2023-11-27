@@ -54,6 +54,8 @@ void TIM2_IRQHandler(void) {
 // 100ms
 void TIM3_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) == SET) {
+		DJmotorMonitor(djmotor);
+		TmotorMonitor(tmotor);
 		RobotStateUpdate(&robotstate);
 		blueToothSend(3, (void*) &robotstate, sizeof(RobotState));
 	}

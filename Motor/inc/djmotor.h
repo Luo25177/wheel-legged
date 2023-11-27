@@ -40,3 +40,4 @@ void DJmotorRun(DJmotor* motor);
 void DJmotorInit(DJmotor* motor, u8 id);
 void DJmotorCommunicate(DJmotor* motor, u32 stdid);
 void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg);
+void DJmotorMonitor(DJmotor* motor);

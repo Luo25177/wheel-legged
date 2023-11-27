@@ -34,3 +34,4 @@ void TmotorStatueControl(u8 controlword, u8 id);
 void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg);
 void TmotorCommunicate(Tmotor* motor, float _pos, float _speed, float _torque, float _kp, float _kd);
 void TmotorRun(Tmotor* motor);
+void TmotorMonitor(Tmotor* motor);

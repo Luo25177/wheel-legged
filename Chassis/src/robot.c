@@ -16,8 +16,8 @@ void robotInit() {
 	yesenseInit(&robot->yesense);
 
 	legInit(&robot->legVir, LEGLEFT, NULL, NULL, NULL);
-	legInit(&robot->legL, LEGLEFT, &djmotor[1], &tmotor[2], &tmotor[3]);
 	legInit(&robot->legR, LEGRIGHT, &djmotor[0], &tmotor[0], &tmotor[1]);
+	legInit(&robot->legL, LEGLEFT, &djmotor[1], &tmotor[2], &tmotor[3]);
 
 	robot->L0pid		= (PID*) malloc(sizeof(PID));
 	robot->yawpid		= (PID*) malloc(sizeof(PID));

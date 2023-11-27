@@ -134,11 +134,14 @@ void TmotorCommunicate(Tmotor* motor, float _pos, float _speed, float _torque, f
 // @param msg
 //----
 void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg) {
-	u8	id									= msg.Data[0] - 1;
-	u16 p										= (msg.Data[1] << 8) | msg.Data[2];					// 电机位置
-	u16 v										= (msg.Data[3] << 4) | (msg.Data[4] >> 4);	// 电机速度
-	u16 t										= (msg.Data[4] & 0x0f) << 8 | msg.Data[5];	// 电机扭矩
+	u8	id											 = msg.Data[0] - 1;
+	u16 p												 = (msg.Data[1] << 8) | msg.Data[2];				 // 电机位置
+	u16 v												 = (msg.Data[3] << 4) | (msg.Data[4] >> 4);	 // 电机速度
+	u16 t												 = (msg.Data[4] & 0x0f) << 8 | msg.Data[5];	 // 电机扭矩
 
+	motor[id].monitor.timeOutCnt = 0;
+	if (motor[id].monitor.timeOut)
+		motor[id].monitor.timeOut = false;
 	motor[id].real.angleRad = uint2float(p, P_MIN, P_MAX, 16) * RadToAngle / TRATIO;
 	motor[id].real.velocity = uint2float(v, P_MIN, P_MAX, 12) * RadToAngle / TRATIO;
 	motor[id].real.torque		= uint2float(t, T_MIN, T_MAX, 12);
@@ -172,5 +175,13 @@ void TmotorRun(Tmotor* motor) {
 				TmotorCommunicate(&motor[i], 0, 0, 0, 0, 0);
 				break;
 		}
+	}
+}
+
+void TmotorMonitor(Tmotor* motor) {
+	for (int i = 0; i < 4; i++) {
+		motor[i].monitor.timeOutCnt++;
+		if (motor[i].monitor.timeOutCnt >= 10)
+			motor[i].monitor.timeOut = true;
 	}
 }

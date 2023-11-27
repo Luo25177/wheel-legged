@@ -51,7 +51,7 @@ typedef struct {
 //
 //----
 typedef struct {
-	u8		deviceState;	// 电机状态
+	u8		deviceState;	// 电机状态 0000 0000 : 0 0 WL BL FL WR BR FR
 	float v;
 	float height;
 	float pitch;
