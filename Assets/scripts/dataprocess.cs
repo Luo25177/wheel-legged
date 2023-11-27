@@ -8,41 +8,33 @@ using System.Text;
 
 public class dataprocess
 {
-  static public byte[] rxData = new byte[100];    // 前两个为包头，末端两个为包尾
+  static public byte[] rxData = new byte[50];    // 前两个为包头，末端两个为包尾
+  static public byte[] head = new byte[2];
+  static public byte[] tail = new byte[2];
   static public byte rxDataSize;
-  static public byte getMsgFlag;
+  static public bool getHead;
   static public byte controlMsgHeadChar1 = 0xFF;
   static public byte controlMsgHeadChar2 = 0xFE;
   static public byte controlMsgTailChar1 = 0x0A;
   static public byte controlMsgTailChar2 = 0x0D;
 
-  /// <summary>
-  /// 编码数据
-  /// </summary>
-  /// <typeparam name="T"> 数据类型</typeparam>
-  /// <param name="stru"></param>
-  /// <param name="_head_id"></param>
-  /// <returns></returns>
-  public static byte[] dataEncode<T>(T stru, byte _head_id)
+  public static byte[] dataEncode<T>(T stru, byte _id)
   {
 
     byte[] bys = StructToBytes(stru);
-    byte sum = 0x00;
 
-    byte[] msg_bytes = new byte[bys.Length + 6];
+    byte[] msg_bytes = new byte[bys.Length + 5];
     msg_bytes[0] = controlMsgHeadChar1;
     msg_bytes[1] = controlMsgHeadChar2;
-    msg_bytes[2] = _head_id;
+    msg_bytes[2] = _id;
 
     for (int i = 0; i < bys.Length; i++)
     {
-      sum += bys[i];
       msg_bytes[3 + i] = bys[i];
     }
 
-    msg_bytes[3 + bys.Length] = sum;
-    msg_bytes[3 + bys.Length + 1] = controlMsgTailChar1;
-    msg_bytes[3 + bys.Length + 2] = controlMsgTailChar2;
+    msg_bytes[3 + bys.Length] = controlMsgTailChar1;
+    msg_bytes[3 + bys.Length + 1] = controlMsgTailChar2;
 
     return msg_bytes;
   }
@@ -68,16 +60,14 @@ public class dataprocess
   /// <summary>  
   /// 由byte数组转换为结构体  
   /// </summary>  
-  public T ByteToStructure<T>(byte[] dataBuffer)
+  public static T ByteToStructure<T>(byte[] dataBuffer, int startindex)
   {
-    rxDataSize = 0;
-    getMsgFlag = 0;
     object structure = null;
     int size = Marshal.SizeOf(typeof(T));
     IntPtr allocIntPtr = Marshal.AllocHGlobal(size);
     try
     {
-      Marshal.Copy(dataBuffer, 0, allocIntPtr, size);
+      Marshal.Copy(dataBuffer, startindex, allocIntPtr, size);
       structure = Marshal.PtrToStructure(allocIntPtr, typeof(T));
     }
     finally
@@ -86,5 +76,4 @@ public class dataprocess
     }
     return (T)structure;
   }
-
 }

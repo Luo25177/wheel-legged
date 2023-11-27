@@ -1,4 +1,6 @@
 
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Net.Mime;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,13 +23,14 @@ public class globle : MonoBehaviour
 	public Text robotLog;
 	public InputField deviceName;
 	public GameObject bluetoothUI;
+	public GameObject handleUI;
 	public Image bluetoothFlag;
 	public Sprite[] bluetoothstate;
 
 	public struct ControlMsg
 	{
-		public bool begin;
-		public bool stop;
+		public byte begin;
+		public byte stop;
 		public byte robotmode;
 	};
 
@@ -40,8 +43,8 @@ public class globle : MonoBehaviour
 	};
 	public struct MasterMsg
 	{
-		ControlMsg control;
-		HandleMsg handle;
+		public ControlMsg control;
+		public HandleMsg handle;
 	};
 	public struct RobotMsg
 	{
@@ -54,33 +57,38 @@ public class globle : MonoBehaviour
 	};
 
 	public RobotMsg robotMsg;
-	public bool receiveMsg(byte bt)
+	public MasterMsg master;
+	public void receiveMsg(byte bt)
 	{
-		if (((dataprocess.getMsgFlag & 0xf0) == 0xf0) && ((dataprocess.getMsgFlag & 0x0f) != 0x0f))    // 获得头
+		if (dataprocess.getHead)    // 获得头
 		{
-			dataprocess.rxData[98] = dataprocess.rxData[99];
-			dataprocess.rxData[99] = bt;
-			if (dataprocess.rxData[98] == dataprocess.controlMsgTailChar1 && dataprocess.rxData[99] == dataprocess.controlMsgTailChar2)
-				return true;
+			dataprocess.tail[0] = dataprocess.tail[1];
+			dataprocess.tail[1] = bt;
+			if (dataprocess.tail[0] == dataprocess.controlMsgTailChar1 && dataprocess.tail[1] == dataprocess.controlMsgTailChar2)
+			{
+				robotMsg = dataprocess.ByteToStructure<RobotMsg>(dataprocess.rxData, 1);
+				dataprocess.getHead = false;
+				dataprocess.rxDataSize = 0;
+			}
 			else
 			{
-				dataprocess.rxData[2 + dataprocess.rxDataSize] = bt;
+				dataprocess.rxData[dataprocess.rxDataSize] = bt;
 				dataprocess.rxDataSize++;
 			}
 		}
 		else
 		{
-			dataprocess.rxData[0] = dataprocess.rxData[1];
-			dataprocess.rxData[1] = bt;
-			if (dataprocess.rxData[0] == dataprocess.controlMsgHeadChar1 && dataprocess.rxData[1] == dataprocess.controlMsgHeadChar2)
-				dataprocess.getMsgFlag |= 0xf0;
+			dataprocess.head[0] = dataprocess.head[1];
+			dataprocess.head[1] = bt;
+			if (dataprocess.head[0] == dataprocess.controlMsgHeadChar1 && dataprocess.head[1] == dataprocess.controlMsgHeadChar2)
+				dataprocess.getHead = true;
 		}
-		return false;
+		if (dataprocess.rxDataSize >= 50)
+		{
+			dataprocess.rxDataSize = 0;
+			dataprocess.getHead = false;
+		}
 	}
-	/// <summary>
-	/// Start is called on the frame when a script is enabled just before
-	/// any of the Update methods is called the first time.
-	/// </summary>
 	private void Start()
 	{
 	}
@@ -90,7 +98,10 @@ public class globle : MonoBehaviour
 		Log("Switch To BtUI");
 		try
 		{
-			//BluetoothHelper.BLE = true;
+			// TODO: 初始高度暂定
+			master.handle.height = 20;
+			bluetoothUI.SetActive(true);
+			handleUI.SetActive(false);
 			//获取 BluetoothHelper 实例
 			helper = BluetoothHelper.GetInstance();
 			//打开蓝牙
@@ -104,6 +115,8 @@ public class globle : MonoBehaviour
 				Log("Connected Successfully");
 				helper.StartListening();
 				bluetoothFlag.sprite = bluetoothstate[1];
+				bluetoothButton.image.sprite = bluetoothbuttonstyle[1];
+				hasconnected = true;
 			};
 
 			helper.OnConnectionFailed += () =>
@@ -169,6 +182,8 @@ public class globle : MonoBehaviour
 		if (helper != null)
 			helper.Disconnect();
 		bluetoothFlag.sprite = bluetoothstate[0];
+		bluetoothButton.image.sprite = bluetoothbuttonstyle[0];
+		hasconnected = false;
 	}
 	private int log_num = 0;
 	public void Log(string s)
@@ -181,19 +196,18 @@ public class globle : MonoBehaviour
 		}
 		debugLog.text = debugLog.text + "\n" + s;
 	}
-	void send<T>(byte id, T str)
-	{
-		byte[] msg;
-		byte head_id = id;
-		msg = dataprocess.dataEncode<T>(str, id);
-		helper.SendData(msg);
-	}
 	private void Update()
 	{
-		string Roll = "Roll: " + robotMsg.roll.ToString("F3") + "\n";// 保留三位小数
-		string Pitch = "Pitch: " + robotMsg.pitch.ToString("F3") + "\n";// 保留三位小数
-		string Yaw = "Yaw: " + robotMsg.yaw.ToString("F3") + "\n";// 保留三位小数
-		robotLog.text = robotLog.text = "Robot Log\n" + Roll + Yaw + Pitch;
+		// TODO: 数据更新
+		string Roll = "Roll: " + robotMsg.roll.ToString("F3") + "\n";
+		string Pitch = "Pitch: " + robotMsg.pitch.ToString("F3") + "\n";
+		string Yaw = "Yaw: " + robotMsg.yaw.ToString("F3") + "\n";
+		string Height = "Height: " + robotMsg.height.ToString("F3") + "\n";
+		string V = "V: " + robotMsg.v.ToString("F3") + "\n";
+		robotLog.text = robotLog.text = "Robot Log\n" + Roll + Yaw + Pitch + Height + V;
+		// 摇杆数据更新
+		runforward();
+		swerve();
 	}
 
 	public void on_SwitchUIDd_changed(int value)
@@ -209,6 +223,115 @@ public class globle : MonoBehaviour
 			Log("Switch To HandleUI");
 		}
 	}
+
+	void send<T>(T str, byte id)
+	{
+		byte[] msg = dataprocess.dataEncode<T>(str, id);
+		helper.SendData(msg);
+	}
+
+	int bluetoothbuttonvalue = 0;
+	public Sprite[] bluetoothbuttonstyle;
+	public Button bluetoothButton;
+	bool hasconnected;
+	public void bluetoothButtonFunc()
+	{
+		if (hasconnected)
+			Disconnect();
+		else Connect();
+	}
+
+	int beginbuttonvalue = 0;
+	public Button beginbutton;
+	public void beginButtonFunc()
+	{
+		beginbuttonvalue++;
+		if (beginbuttonvalue % 2 == 1)
+		{
+			beginbutton.image.color = new Color(0, 255, 0);
+			master.control.begin = 1;
+			beginHandleStream();
+		}
+		else
+		{
+			beginbutton.image.color = new Color(255, 0, 0);
+			master.control.begin = 0;
+			stopHandleStream();
+		}
+		send<ControlMsg>(master.control, 1);
+	}
+	// 左倾
+	public void tiltleft()
+	{
+		// TODO: 具体根据传感器数据来规定
+		master.handle.tilt += 1;
+	}
+	// 右倾
+	public void tiltright()
+	{
+		master.handle.tilt -= 1;
+	}
+	// 底盘上抬
+	public void turnup()
+	{
+		master.handle.height += 1;
+	}
+	// 底盘下沉
+	public void turndown()
+	{
+		master.handle.height -= 1;
+	}
+	public VariableJoystick left;
+	public VariableJoystick right;
+	public void runforward()
+	{
+		master.handle.run = (short)(100 * left.Vertical);
+	}
+	public void swerve()
+	{
+		master.handle.turn = (short)(100 * right.Horizontal);
+	}
+
+	Coroutine beginHandleCoroutine;
+	// 开启摇杆输出流
+	public void beginHandleStream()
+	{
+		beginHandleCoroutine = StartCoroutine("handleStream");
+	}
+	// 关闭摇杆输出流
+	public void stopHandleStream()
+	{
+		StopCoroutine(beginHandleCoroutine);
+	}
+	// 摇杆数据输出流
+	IEnumerator handleStream()
+	{
+		while (true)
+		{
+			send<HandleMsg>(master.handle, 2);
+			yield return new WaitForSeconds(0.08f);
+		}
+	}
+
+	public Button changeUIButton;
+	public Sprite[] changeUIstyle;
+	int changeUIvalue;
+	public void changeUIFunc()
+	{
+		changeUIvalue++;
+		if (changeUIvalue % 2 == 1)
+		{
+			bluetoothUI.SetActive(false);
+			handleUI.SetActive(true);
+			Log("Switch To HandleUI");
+			changeUIButton.image.sprite = changeUIstyle[1];
+		}
+		else
+		{
+			bluetoothUI.SetActive(true);
+			handleUI.SetActive(false);
+			Log("Switch To BtUI");
+			changeUIButton.image.sprite = changeUIstyle[0];
+		}
+	}
 }
-
-
