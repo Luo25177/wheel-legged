@@ -26,6 +26,7 @@ public class globle : MonoBehaviour
 	public GameObject handleUI;
 	public Image bluetoothFlag;
 	public Sprite[] bluetoothstate;
+	public Image[] canstate;
 
 	public struct ControlMsg
 	{
@@ -48,7 +49,7 @@ public class globle : MonoBehaviour
 	};
 	public struct RobotMsg
 	{
-		public byte deviceState; // 电机状态
+		public byte deviceState; // 电机状态 0000 0000 : 0 0 WL BL FL WR BR FR
 		public float v;
 		public float height;
 		public float pitch;
@@ -91,6 +92,13 @@ public class globle : MonoBehaviour
 	}
 	private void Start()
 	{
+		master.handle.height = 20;
+		master.handle.run = 0;
+		master.handle.turn = 0;
+		master.handle.tilt = 0;
+		master.control.stop = 1;
+		master.control.begin = 0;
+		master.control.robotmode = 0;
 	}
 
 	private void Awake()
@@ -208,6 +216,7 @@ public class globle : MonoBehaviour
 		// 摇杆数据更新
 		runforward();
 		swerve();
+		canStateUpdate();
 	}
 
 	public void on_SwitchUIDd_changed(int value)
@@ -332,6 +341,16 @@ public class globle : MonoBehaviour
 			handleUI.SetActive(false);
 			Log("Switch To BtUI");
 			changeUIButton.image.sprite = changeUIstyle[0];
+		}
+	}
+	public void canStateUpdate()
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			if ((robotMsg.deviceState & (0x01 << i)) != 0)
+				canstate[i].color = new Color(0, 255, 0);
+			else
+				canstate[i].color = new Color(255, 0, 0);
 		}
 	}
 }

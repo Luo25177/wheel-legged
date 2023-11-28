@@ -14,4 +14,3 @@
   - 4
 - data: 利用memcpy来实现复制
 - tail: 0x0a 0x0d
-
