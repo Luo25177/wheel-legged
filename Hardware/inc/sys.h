@@ -1,161 +1,148 @@
 #ifndef __SYS_H
-#define __SYS_H	 
-#include "stm32f4xx.h" 
+#define __SYS_H
+#include "stm32f4xx.h"
 #include "stm32f4xx_gpio.h"
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌÐòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßÐí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32F407¿ª·¢°å
-//ÏµÍ³Ê±ÖÓ³õÊ¼»¯	
-//°üÀ¨Ê±ÖÓÉèÖÃ/ÖÐ¶Ï¹ÜÀí/GPIOÉèÖÃµÈ
-//ÕýµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2014/5/2
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓÐ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖÝÊÐÐÇÒíµç×Ó¿Æ¼¼ÓÐÏÞ¹«Ë¾ 2014-2024
-//All rights reserved
+//////////////////////////////////////////////////////////////////////////////////
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ñ§Ï°Ê¹ï¿½Ã£ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Í¾
+// ALIENTEK STM32F407ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ÏµÍ³Ê±ï¿½Ó³ï¿½Ê¼ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½Ð¶Ï¹ï¿½ï¿½ï¿½/GPIOï¿½ï¿½ï¿½Ãµï¿½
+// ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½@ALIENTEK
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì³:www.openedv.com
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:2014/5/2
+// ï¿½æ±¾ï¿½ï¿½V1.0
+// ï¿½ï¿½È¨ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½
+// Copyright(C) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Æ¼ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½Ë¾ 2014-2024
+// All rights reserved
 //********************************************************************************
-//ÐÞ¸ÄËµÃ÷
-//ÎÞ
-////////////////////////////////////////////////////////////////////////////////// 
+// ï¿½Þ¸ï¿½Ëµï¿½ï¿½
+// ï¿½ï¿½
+//////////////////////////////////////////////////////////////////////////////////
 
+// 0,ï¿½ï¿½Ö§ï¿½ï¿½ucos
+// 1,Ö§ï¿½ï¿½ucos
+#define SYSTEM_SUPPORT_UCOS 0	 // ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ö§ï¿½ï¿½UCOS
 
-//0,²»Ö§³Öucos
-//1,Ö§³Öucos
-#define SYSTEM_SUPPORT_UCOS		0		//¶¨ÒåÏµÍ³ÎÄ¼þ¼ÐÊÇ·ñÖ§³ÖUCOS
-																	    
-	 
-//Î»´ø²Ù×÷,ÊµÏÖ51ÀàËÆµÄGPIO¿ØÖÆ¹¦ÄÜ
-//¾ßÌåÊµÏÖË¼Ïë,²Î¿¼<<CM3È¨ÍþÖ¸ÄÏ>>µÚÎåÕÂ(87Ò³~92Ò³).M4Í¬M3ÀàËÆ,Ö»ÊÇ¼Ä´æÆ÷µØÖ·±äÁË.
-//IO¿Ú²Ù×÷ºê¶¨Òå
-#define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x2000000+((addr &0xFFFFF)<<5)+(bitnum<<2)) 
-#define MEM_ADDR(addr)  *((volatile unsigned long  *)(addr)) 
-#define BIT_ADDR(addr, bitnum)   MEM_ADDR(BITBAND(addr, bitnum)) 
-//IO¿ÚµØÖ·Ó³Éä
-#define GPIOA_ODR_Addr    (GPIOA_BASE+20) //0x40020014
-#define GPIOB_ODR_Addr    (GPIOB_BASE+20) //0x40020414 
-#define GPIOC_ODR_Addr    (GPIOC_BASE+20) //0x40020814 
-#define GPIOD_ODR_Addr    (GPIOD_BASE+20) //0x40020C14 
-#define GPIOE_ODR_Addr    (GPIOE_BASE+20) //0x40021014 
-#define GPIOF_ODR_Addr    (GPIOF_BASE+20) //0x40021414    
-#define GPIOG_ODR_Addr    (GPIOG_BASE+20) //0x40021814   
-#define GPIOH_ODR_Addr    (GPIOH_BASE+20) //0x40021C14    
-#define GPIOI_ODR_Addr    (GPIOI_BASE+20) //0x40022014     
+// Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Êµï¿½ï¿½51ï¿½ï¿½ï¿½Æµï¿½GPIOï¿½ï¿½ï¿½Æ¹ï¿½ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Ë¼ï¿½ï¿½,ï¿½Î¿ï¿½<<CM3È¨ï¿½ï¿½Ö¸ï¿½ï¿½>>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(87Ò³~92Ò³).M4Í¬M3ï¿½ï¿½ï¿½ï¿½,Ö»ï¿½Ç¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½.
+// IOï¿½Ú²ï¿½ï¿½ï¿½ï¿½ê¶¨ï¿½ï¿½
+#define BITBAND(addr, bitnum)	 ((addr & 0xF0000000) + 0x2000000 + ((addr & 0xFFFFF) << 5) + (bitnum << 2))
+#define MEM_ADDR(addr)				 *((volatile unsigned long*) (addr))
+#define BIT_ADDR(addr, bitnum) MEM_ADDR(BITBAND(addr, bitnum))
+// IOï¿½Úµï¿½Ö·Ó³ï¿½ï¿½
+#define GPIOA_ODR_Addr				 (GPIOA_BASE + 20)	// 0x40020014
+#define GPIOB_ODR_Addr				 (GPIOB_BASE + 20)	// 0x40020414
+#define GPIOC_ODR_Addr				 (GPIOC_BASE + 20)	// 0x40020814
+#define GPIOD_ODR_Addr				 (GPIOD_BASE + 20)	// 0x40020C14
+#define GPIOE_ODR_Addr				 (GPIOE_BASE + 20)	// 0x40021014
+#define GPIOF_ODR_Addr				 (GPIOF_BASE + 20)	// 0x40021414
+#define GPIOG_ODR_Addr				 (GPIOG_BASE + 20)	// 0x40021814
+#define GPIOH_ODR_Addr				 (GPIOH_BASE + 20)	// 0x40021C14
+#define GPIOI_ODR_Addr				 (GPIOI_BASE + 20)	// 0x40022014
 
-#define GPIOA_IDR_Addr    (GPIOA_BASE+16) //0x40020010 
-#define GPIOB_IDR_Addr    (GPIOB_BASE+16) //0x40020410 
-#define GPIOC_IDR_Addr    (GPIOC_BASE+16) //0x40020810 
-#define GPIOD_IDR_Addr    (GPIOD_BASE+16) //0x40020C10 
-#define GPIOE_IDR_Addr    (GPIOE_BASE+16) //0x40021010 
-#define GPIOF_IDR_Addr    (GPIOF_BASE+16) //0x40021410 
-#define GPIOG_IDR_Addr    (GPIOG_BASE+16) //0x40021810 
-#define GPIOH_IDR_Addr    (GPIOH_BASE+16) //0x40021C10 
-#define GPIOI_IDR_Addr    (GPIOI_BASE+16) //0x40022010 
- 
-//IO¿Ú²Ù×÷,Ö»¶Ôµ¥Ò»µÄIO¿Ú!
-//È·±£nµÄÖµÐ¡ÓÚ16!
-#define PAout(n)   BIT_ADDR(GPIOA_ODR_Addr,n)  //Êä³ö 
-#define PAin(n)    BIT_ADDR(GPIOA_IDR_Addr,n)  //ÊäÈë 
+#define GPIOA_IDR_Addr (GPIOA_BASE + 16)	// 0x40020010
+#define GPIOB_IDR_Addr (GPIOB_BASE + 16)	// 0x40020410
+#define GPIOC_IDR_Addr (GPIOC_BASE + 16)	// 0x40020810
+#define GPIOD_IDR_Addr (GPIOD_BASE + 16)	// 0x40020C10
+#define GPIOE_IDR_Addr (GPIOE_BASE + 16)	// 0x40021010
+#define GPIOF_IDR_Addr (GPIOF_BASE + 16)	// 0x40021410
+#define GPIOG_IDR_Addr (GPIOG_BASE + 16)	// 0x40021810
+#define GPIOH_IDR_Addr (GPIOH_BASE + 16)	// 0x40021C10
+#define GPIOI_IDR_Addr (GPIOI_BASE + 16)	// 0x40022010
 
-#define PBout(n)   BIT_ADDR(GPIOB_ODR_Addr,n)  //Êä³ö 
-#define PBin(n)    BIT_ADDR(GPIOB_IDR_Addr,n)  //ÊäÈë 
+// IOï¿½Ú²ï¿½ï¿½ï¿½,Ö»ï¿½Ôµï¿½Ò»ï¿½ï¿½IOï¿½ï¿½!
+// È·ï¿½ï¿½nï¿½ï¿½ÖµÐ¡ï¿½ï¿½16!
+#define PAout(n) BIT_ADDR(GPIOA_ODR_Addr, n)	// ï¿½ï¿½ï¿½
+#define PAin(n)	 BIT_ADDR(GPIOA_IDR_Addr, n)	// ï¿½ï¿½ï¿½ï¿½
 
-#define PCout(n)   BIT_ADDR(GPIOC_ODR_Addr,n)  //Êä³ö 
-#define PCin(n)    BIT_ADDR(GPIOC_IDR_Addr,n)  //ÊäÈë 
+#define PBout(n) BIT_ADDR(GPIOB_ODR_Addr, n)	// ï¿½ï¿½ï¿½
+#define PBin(n)	 BIT_ADDR(GPIOB_IDR_Addr, n)	// ï¿½ï¿½ï¿½ï¿½
 
-#define PDout(n)   BIT_ADDR(GPIOD_ODR_Addr,n)  //Êä³ö 
-#define PDin(n)    BIT_ADDR(GPIOD_IDR_Addr,n)  //ÊäÈë 
+#define PCout(n) BIT_ADDR(GPIOC_ODR_Addr, n)	// ï¿½ï¿½ï¿½
+#define PCin(n)	 BIT_ADDR(GPIOC_IDR_Addr, n)	// ï¿½ï¿½ï¿½ï¿½
 
-#define PEout(n)   BIT_ADDR(GPIOE_ODR_Addr,n)  //Êä³ö 
-#define PEin(n)    BIT_ADDR(GPIOE_IDR_Addr,n)  //ÊäÈë
+#define PDout(n) BIT_ADDR(GPIOD_ODR_Addr, n)	// ï¿½ï¿½ï¿½
+#define PDin(n)	 BIT_ADDR(GPIOD_IDR_Addr, n)	// ï¿½ï¿½ï¿½ï¿½
 
-#define PFout(n)   BIT_ADDR(GPIOF_ODR_Addr,n)  //Êä³ö 
-#define PFin(n)    BIT_ADDR(GPIOF_IDR_Addr,n)  //ÊäÈë
+#define PEout(n) BIT_ADDR(GPIOE_ODR_Addr, n)	// ï¿½ï¿½ï¿½
+#define PEin(n)	 BIT_ADDR(GPIOE_IDR_Addr, n)	// ï¿½ï¿½ï¿½ï¿½
 
-#define PGout(n)   BIT_ADDR(GPIOG_ODR_Addr,n)  //Êä³ö 
-#define PGin(n)    BIT_ADDR(GPIOG_IDR_Addr,n)  //ÊäÈë
+#define PFout(n) BIT_ADDR(GPIOF_ODR_Addr, n)	// ï¿½ï¿½ï¿½
+#define PFin(n)	 BIT_ADDR(GPIOF_IDR_Addr, n)	// ï¿½ï¿½ï¿½ï¿½
 
-#define PHout(n)   BIT_ADDR(GPIOH_ODR_Addr,n)  //Êä³ö 
-#define PHin(n)    BIT_ADDR(GPIOH_IDR_Addr,n)  //ÊäÈë
+#define PGout(n) BIT_ADDR(GPIOG_ODR_Addr, n)	// ï¿½ï¿½ï¿½
+#define PGin(n)	 BIT_ADDR(GPIOG_IDR_Addr, n)	// ï¿½ï¿½ï¿½ï¿½
 
-#define PIout(n)   BIT_ADDR(GPIOI_ODR_Addr,n)  //Êä³ö 
-#define PIin(n)    BIT_ADDR(GPIOI_IDR_Addr,n)  //ÊäÈë
-////////////////////////////////////////////////////////////////////////////////// 
-//Ex_NVIC_Config×¨ÓÃ¶¨Òå
-#define GPIO_A 				0
-#define GPIO_B 				1
-#define GPIO_C				2
-#define GPIO_D 				3
-#define GPIO_E 				4
-#define GPIO_F 				5
-#define GPIO_G 				6 
-#define GPIO_H 				7 
-#define GPIO_I 				8 
+#define PHout(n) BIT_ADDR(GPIOH_ODR_Addr, n)	// ï¿½ï¿½ï¿½
+#define PHin(n)	 BIT_ADDR(GPIOH_IDR_Addr, n)	// ï¿½ï¿½ï¿½ï¿½
 
-#define FTIR   				1  		//ÏÂ½µÑØ´¥·¢
-#define RTIR   				2  		//ÉÏÉýÑØ´¥·¢
+#define PIout(n) BIT_ADDR(GPIOI_ODR_Addr, n)	// ï¿½ï¿½ï¿½
+#define PIin(n)	 BIT_ADDR(GPIOI_IDR_Addr, n)	// ï¿½ï¿½ï¿½ï¿½
+//////////////////////////////////////////////////////////////////////////////////
+// Ex_NVIC_Config×¨ï¿½Ã¶ï¿½ï¿½ï¿½
+#define GPIO_A	 0
+#define GPIO_B	 1
+#define GPIO_C	 2
+#define GPIO_D	 3
+#define GPIO_E	 4
+#define GPIO_F	 5
+#define GPIO_G	 6
+#define GPIO_H	 7
+#define GPIO_I	 8
 
-//GPIOÉèÖÃ×¨ÓÃºê¶¨Òå
-#define GPIO_MODE_IN    	0		//ÆÕÍ¨ÊäÈëÄ£Ê½
-#define GPIO_MODE_OUT		1		//ÆÕÍ¨Êä³öÄ£Ê½
-#define GPIO_MODE_AF		2		//AF¹¦ÄÜÄ£Ê½
-#define GPIO_MODE_AIN		3		//Ä£ÄâÊäÈëÄ£Ê½
+#define FTIR 1	// ï¿½Â½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½
+#define RTIR 2	// ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½
 
-#define GPIO_SPEED_2M		0		//GPIOËÙ¶È2Mhz
-#define GPIO_SPEED_25M		1		//GPIOËÙ¶È25Mhz
-#define GPIO_SPEED_50M		2		//GPIOËÙ¶È50Mhz
-#define GPIO_SPEED_100M		3		//GPIOËÙ¶È100Mhz
+// GPIOï¿½ï¿½ï¿½ï¿½×¨ï¿½Ãºê¶¨ï¿½ï¿½
+#define GPIO_MODE_IN	0	 // ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+#define GPIO_MODE_OUT 1	 // ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ä£Ê½
+#define GPIO_MODE_AF	2	 // AFï¿½ï¿½ï¿½ï¿½Ä£Ê½
+#define GPIO_MODE_AIN 3	 // Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
 
-#define GPIO_PUPD_NONE		0		//²»´øÉÏÏÂÀ­
-#define GPIO_PUPD_PU		1		//ÉÏÀ­
-#define GPIO_PUPD_PD		2		//ÏÂÀ­
-#define GPIO_PUPD_RES		3		//±£Áô 
+#define GPIO_SPEED_2M		0	 // GPIOï¿½Ù¶ï¿½2Mhz
+#define GPIO_SPEED_25M	1	 // GPIOï¿½Ù¶ï¿½25Mhz
+#define GPIO_SPEED_50M	2	 // GPIOï¿½Ù¶ï¿½50Mhz
+#define GPIO_SPEED_100M 3	 // GPIOï¿½Ù¶ï¿½100Mhz
 
-#define GPIO_OTYPE_PP		0		//ÍÆÍìÊä³ö
-#define GPIO_OTYPE_OD		1		//¿ªÂ©Êä³ö 
+#define GPIO_PUPD_NONE 0	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define GPIO_PUPD_PU	 1	// ï¿½ï¿½ï¿½ï¿½
+#define GPIO_PUPD_PD	 2	// ï¿½ï¿½ï¿½ï¿½
+#define GPIO_PUPD_RES	 3	// ï¿½ï¿½ï¿½ï¿½
 
-//GPIOÒý½Å±àºÅ¶¨Òå
-#define PIN0				1<<0
-#define PIN1				1<<1
-#define PIN2				1<<2
-#define PIN3				1<<3
-#define PIN4				1<<4
-#define PIN5				1<<5
-#define PIN6				1<<6
-#define PIN7				1<<7
-#define PIN8				1<<8
-#define PIN9				1<<9
-#define PIN10				1<<10
-#define PIN11				1<<11
-#define PIN12				1<<12
-#define PIN13				1<<13
-#define PIN14				1<<14
-#define PIN15				1<<15 
-////////////////////////////////////////////////////////////////////////////////// 
-u8 Sys_Clock_Set(u32 plln,u32 pllm,u32 pllp,u32 pllq);		//ÏµÍ³Ê±ÖÓÉèÖÃ
-void Stm32_Clock_Init(u32 plln,u32 pllm,u32 pllp,u32 pllq); //Ê±ÖÓ³õÊ¼»¯  
-void Sys_Soft_Reset(void);      							//ÏµÍ³Èí¸´Î»
-void Sys_Standby(void);         							//´ý»úÄ£Ê½ 	
-void MY_NVIC_SetVectorTable(u32 NVIC_VectTab, u32 Offset);	//ÉèÖÃÆ«ÒÆµØÖ·
-void MY_NVIC_PriorityGroupConfig(u8 NVIC_Group);			//ÉèÖÃNVIC·Ö×é
-void MY_NVIC_Init(u8 NVIC_PreemptionPriority,u8 NVIC_SubPriority,u8 NVIC_Channel,u8 NVIC_Group);//ÉèÖÃÖÐ¶Ï
-void Ex_NVIC_Config(u8 GPIOx,u8 BITx,u8 TRIM);				//Íâ²¿ÖÐ¶ÏÅäÖÃº¯Êý(Ö»¶ÔGPIOA~I)
-void GPIO_AF_Set(GPIO_TypeDef* GPIOx,u8 BITx,u8 AFx);		//GPIO¸´ÓÃ¹¦ÄÜÉèÖÃ
-void GPIO_Set(GPIO_TypeDef* GPIOx,u32 BITx,u32 MODE,u32 OTYPE,u32 OSPEED,u32 PUPD);//GPIOÉèÖÃº¯Êý  
-//ÒÔÏÂÎª»ã±àº¯Êý
-void WFI_SET(void);		//Ö´ÐÐWFIÖ¸Áî
-void INTX_DISABLE(void);//¹Ø±ÕËùÓÐÖÐ¶Ï
-void INTX_ENABLE(void);	//¿ªÆôËùÓÐÖÐ¶Ï
-void MSR_MSP(u32 addr);	//ÉèÖÃ¶ÑÕ»µØÖ· 
+#define GPIO_OTYPE_PP 0	 // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define GPIO_OTYPE_OD 1	 // ï¿½ï¿½Â©ï¿½ï¿½ï¿½
+
+// GPIOï¿½ï¿½ï¿½Å±ï¿½Å¶ï¿½ï¿½ï¿½
+#define PIN0	1 << 0
+#define PIN1	1 << 1
+#define PIN2	1 << 2
+#define PIN3	1 << 3
+#define PIN4	1 << 4
+#define PIN5	1 << 5
+#define PIN6	1 << 6
+#define PIN7	1 << 7
+#define PIN8	1 << 8
+#define PIN9	1 << 9
+#define PIN10 1 << 10
+#define PIN11 1 << 11
+#define PIN12 1 << 12
+#define PIN13 1 << 13
+#define PIN14 1 << 14
+#define PIN15 1 << 15
+//////////////////////////////////////////////////////////////////////////////////
+u8	 Sys_Clock_Set(u32 plln, u32 pllm, u32 pllp, u32 pllq);																					 // ÏµÍ³Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void Stm32_Clock_Init(u32 plln, u32 pllm, u32 pllp, u32 pllq);																			 // Ê±ï¿½Ó³ï¿½Ê¼ï¿½ï¿½
+void Sys_Soft_Reset(void);																																					 // ÏµÍ³ï¿½ï¿½ï¿½ï¿½Î»
+void Sys_Standby(void);																																							 // ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+void MY_NVIC_SetVectorTable(u32 NVIC_VectTab, u32 Offset);																					 // ï¿½ï¿½ï¿½ï¿½Æ«ï¿½Æµï¿½Ö·
+void MY_NVIC_PriorityGroupConfig(u8 NVIC_Group);																										 // ï¿½ï¿½ï¿½ï¿½NVICï¿½ï¿½ï¿½ï¿½
+void MY_NVIC_Init(u8 NVIC_PreemptionPriority, u8 NVIC_SubPriority, u8 NVIC_Channel, u8 NVIC_Group);	 // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+void Ex_NVIC_Config(u8 GPIOx, u8 BITx, u8 TRIM);																					// ï¿½â²¿ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½(Ö»ï¿½ï¿½GPIOA~I)
+void GPIO_AF_Set(GPIO_TypeDef* GPIOx, u8 BITx, u8 AFx);																		// GPIOï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void GPIO_Set(GPIO_TypeDef* GPIOx, u32 BITx, u32 MODE, u32 OTYPE, u32 OSPEED, u32 PUPD);	// GPIOï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½àº¯ï¿½ï¿½
+void WFI_SET(void);				// Ö´ï¿½ï¿½WFIÖ¸ï¿½ï¿½
+void INTX_DISABLE(void);	// ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+void INTX_ENABLE(void);		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+void MSR_MSP(u32 addr);		// ï¿½ï¿½ï¿½Ã¶ï¿½Õ»ï¿½ï¿½Ö·
 #endif
-
-
-
-
-
-
-
-
-
-
-

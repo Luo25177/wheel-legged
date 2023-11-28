@@ -1,4 +1,5 @@
-﻿Checks: '-*,
+﻿
+Checks: '-*,
     misc-throw-by-value-catch-by-reference,
     misc-misplaced-const,
     misc-unconventional-assign-operator,
@@ -39,7 +40,7 @@
     readability-deleted-default,
     readability-make-member-function-const,
     readability-misplaced-array-index,
-    readability-non-const-parameter,
+    <!-- readability-non-const-parameter, -->
     readability-qualified-auto,
     readability-redundant-access-specifiers,
     readability-redundant-control-flow,
@@ -171,8 +172,7 @@ CheckOptions:
     value: ''
   - key: readability-identifier-naming.ProtectedMemberPrefix
     value: ''
-  - key: readability-identifier-naming.GlobalVariablePrefix
-    value: g
+
   - key: readability-identifier-naming.GlobalConstantCase
     value: UPPER_CASE
   - key: readability-identifier-naming.GlobalConstantPrefix
@@ -186,7 +186,7 @@ CheckOptions:
   - key: readability-identifier-naming.ProtectedMethodPrefix
     value: ''
   - key: readability-identifier-naming.ParameterCase
-    value: camelCase
+    value: lower_case
   - key: readability-identifier-naming.StructCase
     value: CamelCase
   - key: readability-identifier-naming.TemplateTemplateParameterCase
@@ -203,3 +203,10 @@ CheckOptions:
     value: CamelCase
   - key: readability-identifier-naming.GlobalFunctionCase
     value: CamelCase
+    value: Camel_Snake_Case
+  # - key: readability-identifier-naming.GlobalConstantPointerPrefix
+  #   value: p_
+  # - key: readability-identifier-naming.GlobalPointerPrefix
+  #   value: p_
+  - key: readability-identifier-naming.GlobalVariablePrefix
+    value: g_

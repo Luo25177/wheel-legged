@@ -1,22 +1,20 @@
 #include "keyboard.h"
 
-void keyboardInit()
-{
+void keyboardInit() {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);	 //
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);	 //
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);	 //}
 }
 
-u8 leftboardXscan(void)
-{
-	u8				 leftboardx = 0;
+u8 leftboardXscan(void) {
+	u8							 leftboardx = 0;
 	GPIO_InitTypeDef GPIO_InitStructure;
 	// Y out
-	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-	GPIO_InitStructure.GPIO_Pin	  = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Pin		= GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	// X in
@@ -42,9 +40,8 @@ u8 leftboardXscan(void)
 	return leftboardx;
 }
 
-u8 leftboardYscan(void)
-{
-	u8				 leftboardy = 0;
+u8 leftboardYscan(void) {
+	u8							 leftboardy = 0;
 	GPIO_InitTypeDef GPIO_InitStructure;
 	// Y in
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
@@ -54,11 +51,11 @@ u8 leftboardYscan(void)
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	// X out
-	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-	GPIO_InitStructure.GPIO_Pin	  = GPIO_Pin_2 | GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Pin		= GPIO_Pin_2 | GPIO_Pin_3;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -76,16 +73,15 @@ u8 leftboardYscan(void)
 	return leftboardy;
 }
 
-u8 rightboardXscan(void)
-{
-	u8				 rightboardx = 0;
+u8 rightboardXscan(void) {
+	u8							 rightboardx = 0;
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-	GPIO_InitStructure.GPIO_Pin	  = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Pin		= GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
@@ -115,9 +111,8 @@ u8 rightboardXscan(void)
 	return rightboardx;
 }
 
-u8 rightboardYscan(void)
-{
-	u8				 rightboardy = 0;
+u8 rightboardYscan(void) {
+	u8							 rightboardy = 0;
 	GPIO_InitTypeDef GPIO_InitStructure;
 	// Y in
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
@@ -130,11 +125,11 @@ u8 rightboardYscan(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	// X out
-	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-	GPIO_InitStructure.GPIO_Pin	  = GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Pin		= GPIO_Pin_6;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
@@ -154,8 +149,7 @@ u8 rightboardYscan(void)
 	return rightboardy;
 }
 
-void readLeftBoard()
-{
+void readLeftBoard() {
 	u8 LKEYX = leftboardXscan();
 	u8 LKEYY = leftboardYscan();
 	switch (LKEYY) {
@@ -198,19 +192,23 @@ void readLeftBoard()
 		default:
 			break;
 	}
-	OSSemPost(beepShowSem);
+	if (LKEYX && LKEYY)
+		OSSemPost(beepShowSem);
 }
 
-void readRightBoard()
-{
+void readRightBoard() {
 	u8 RKEYX = rightboardXscan();
 	u8 RKEYY = rightboardYscan();
 	switch (RKEYY) {
 		case 0x01:
 			switch (RKEYX) {
 				case 0x01:
+					master.control.begin = 1;
+					blueToothSend(1, &master.control, sizeof(ControlParam));
 					break;
 				case 0x02:
+					master.control.begin = 0;
+					blueToothSend(1, &master.control, sizeof(ControlParam));
 					break;
 				case 0x04:
 					break;
@@ -247,5 +245,6 @@ void readRightBoard()
 			break;
 	}
 	// TODO: 收到按键消息标志位
-	OSSemPost(beepShowSem);
+	if (RKEYX && RKEYY)
+		OSSemPost(beepShowSem);
 }

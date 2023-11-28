@@ -414,6 +414,11 @@
               <FileType>1</FileType>
               <FilePath>..\Main\src\masterparam.c</FilePath>
             </File>
+            <File>
+              <FileName>irqHandler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Main\src\irqHandler.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
