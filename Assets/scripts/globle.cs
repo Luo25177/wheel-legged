@@ -269,26 +269,36 @@ public class globle : MonoBehaviour
 		}
 		send<ControlMsg>(master.control, 1);
 	}
+	private static short limitInRange(short val, short max, short min)
+	{
+		if (val > max) val = max;
+		if (val < min) val = min;
+		return val;
+	}
 	// 左倾
 	public void tiltleft()
 	{
 		// TODO: 具体根据传感器数据来规定
 		master.handle.tilt += 1;
+		master.handle.tilt = limitInRange(master.handle.tilt, (short)10, (short)-10);
 	}
 	// 右倾
 	public void tiltright()
 	{
 		master.handle.tilt -= 1;
+		master.handle.tilt = limitInRange(master.handle.tilt, (short)10, (short)-10);
 	}
 	// 底盘上抬
 	public void turnup()
 	{
 		master.handle.height += 1;
+		master.handle.height = limitInRange(master.handle.height, (short)35, (short)20);
 	}
 	// 底盘下沉
 	public void turndown()
 	{
 		master.handle.height -= 1;
+		master.handle.height = limitInRange(master.handle.height, (short)35, (short)20);
 	}
 	public VariableJoystick left;
 	public VariableJoystick right;
