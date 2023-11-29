@@ -38,8 +38,8 @@ void tim3Init() {
 	NVIC_InitStructure.NVIC_IRQChannelCmd								 = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	TIM_TimeBaseStructure.TIM_Prescaler			= 84 - 1;			// 84MHZ，分频系数
-	TIM_TimeBaseStructure.TIM_Period				= 10000 - 1;	// 100ms
+	TIM_TimeBaseStructure.TIM_Prescaler			= 84 - 1;			 // 84MHZ，分频系数
+	TIM_TimeBaseStructure.TIM_Period				= 100000 - 1;	 // 100ms
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode		= TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);

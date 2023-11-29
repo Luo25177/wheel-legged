@@ -39,8 +39,11 @@ void LU8ToVS16(u8* u, vs16* s);
 void LF32ToU8(float* f, u8* u);
 void LU8ToF32(u8* u, float* f);
 
+void LS32ToU8(int* i, u8* u);
+void LU8ToS32(u8* u, int* i);
+
 //----
-// @brief 大端模式的数据转换，直接利用union来实现
+// @brief 大端模式的数据转换
 //----
 void BS16ToU8(s16* s, u8* u);
 void BU8ToS16(u8* u, s16* s);
@@ -50,6 +53,9 @@ void BU8ToVS16(u8* u, vs16* s);
 
 void BF32ToU8(float* f, u8* u);
 void BU8ToF32(u8* u, float* f);
+
+void BS32ToU8(int* i, u8* u);
+void BU8ToS32(int* i, u8* u);
 
 #define ExternLimitInRange(T)	 extern void limitInRange_##T(T* val, T limit);
 #define ExternLimitIn2Range(T) extern void limitIn2Range_##T(T* val, T min, T max);

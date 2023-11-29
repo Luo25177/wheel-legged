@@ -18,7 +18,7 @@
 // @brief 电机模式
 //
 //----
-typedef enum { HALT, POSITION, SPEED, TORQUE, POSSPEED } MotorMode;
+typedef enum { HALT, POSITION, SPEED, TORQUE } MotorMode;
 
 //----
 // @brief 监测电机状态
@@ -47,4 +47,5 @@ typedef struct {
 		float angleDeg;         \
 	} MotorValue_##T;
 #define MotorValue(T) MotorValue_##T
-MotorValueDefine(float) MotorValueDefine(s16)
+MotorValueDefine(float);
+MotorValueDefine(s16);

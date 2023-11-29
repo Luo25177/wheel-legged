@@ -22,8 +22,8 @@ void TmotorInit(Tmotor* motor, u8 id) {
 	for (int i = 0; i < 4; i++) {
 		// 电机初始参参数
 		motor[i].id									 = id;
-		motor[i].kp									 = 150;
-		motor[i].kd									 = 1.0;
+		motor[i].kp									 = 80;
+		motor[i].kd									 = 0.66;
 		motor[i].set.torque					 = 0;
 		motor[i].set.velocity				 = 0;
 		motor[i].set.angleDeg				 = 0;
@@ -142,7 +142,7 @@ void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg) {
 	motor[id].monitor.timeOutCnt = 0;
 	if (motor[id].monitor.timeOut)
 		motor[id].monitor.timeOut = false;
-	motor[id].real.angleRad = uint2float(p, P_MIN, P_MAX, 16) * RadToAngle / TRATIO;
+	motor[id].real.angleDeg = uint2float(p, P_MIN, P_MAX, 16) * RadToAngle / TRATIO;
 	motor[id].real.velocity = uint2float(v, P_MIN, P_MAX, 12) * RadToAngle / TRATIO;
 	motor[id].real.torque		= uint2float(t, T_MIN, T_MAX, 12);
 }
@@ -163,10 +163,10 @@ void TmotorRun(Tmotor* motor) {
 				TmotorCommunicate(&motor[i], 0, 0, 0, 0, 0);
 				break;
 			case POSITION:
-				TmotorCommunicate(&motor[i], motor[i].set.angleRad * TRATIO, 0, motor[i].kp, motor[i].kd, 0);
+				TmotorCommunicate(&motor[i], motor[i].set.angleDeg, 0, motor[i].kp, motor[i].kd, 0);
 				break;
 			case SPEED:
-				TmotorCommunicate(&motor[i], 0, motor[i].set.velocity * TRATIO, 0, motor[i].kp, 0);
+				TmotorCommunicate(&motor[i], 0, motor[i].set.velocity, 0, motor[i].kp, 0);
 				break;
 			case TORQUE:
 				TmotorCommunicate(&motor[i], 0, 0, motor[i].set.torque, 0, 0);

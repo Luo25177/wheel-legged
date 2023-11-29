@@ -47,7 +47,7 @@ void can1Init() {
 	CAN_FilterInitStructure.CAN_FilterNumber				 = 1;
 	CAN_FilterInitStructure.CAN_FilterMode					 = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale					 = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh				 = 0x01 << 5;
+	CAN_FilterInitStructure.CAN_FilterIdHigh				 = 0x00 << 5;
 	CAN_FilterInitStructure.CAN_FilterIdLow					 = 0x02 << 5;
 	CAN_FilterInitStructure.CAN_FilterMaskIdHigh		 = 0x03 << 5;
 	CAN_FilterInitStructure.CAN_FilterMaskIdLow			 = 0x04 << 5;
