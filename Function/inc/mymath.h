@@ -15,8 +15,8 @@
 #include "stm32f4xx.h"
 #include "string.h"
 
-#define AngleToRad 0.0174533f
-#define RadToAngle 57.295780f
+#define DegToRad 0.0174533f
+#define RadToDeg 57.295780f
 #define cos(x)		 arm_cos_f32(x)
 #define sin(x)		 arm_sin_f32(x)
 // #define sqrt(x) arm_sqrt_f32(x)

@@ -18,9 +18,8 @@ void DMA1_Stream6_IRQHandler(void) {
 
 void USART1_IRQHandler(void) {
 	u8 temp;
-	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)	// 接收寄存器非空
-	{
-		USART_ClearFlag(USART1, USART_IT_RXNE);	 // USART_FLAG_RXNE        //清除中断标志
+	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
+		USART_ClearFlag(USART1, USART_IT_RXNE);
 		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 		temp = USART_ReceiveData(USART1);
 		blueToothReceive(temp);
@@ -43,10 +42,10 @@ void USART2_IRQHandler(void) {
 
 // 1ms
 void TIM2_IRQHandler(void) {
-	if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)	// 溢出中断
-	{
-		GolbalTimer++;	// 全局计时器 代码的全局时间可都靠这个
+	if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET) {
+		GlobalTimer++;	// 全局计时器 代码的全局时间可都靠这个
 		canSend(0x3);
+		Vofa_Send_JustFloat(robot->legR.Fset, robot->L0pid->output, robot->legR.TFset, robot->legR.TBset, 0);
 	}
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);	 // 清除中断标志位
 }
@@ -57,7 +56,7 @@ void TIM3_IRQHandler(void) {
 		DJmotorMonitor(djmotor);
 		TmotorMonitor(tmotor);
 		RobotStateUpdate(&robotstate);
-		blueToothSend(3, (void*) &robotstate, sizeof(RobotState));
+		// blueToothSend(3, (void*) &robotstate, sizeof(RobotState));
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }

@@ -26,8 +26,9 @@ typedef struct {
 	vs16 lastPulseRead;	 // 上次读到的脉冲
 	vs16 pulseRead;
 	vs16 temperature;
-	PID* pulsePid;				 // 位置环获得速度
-	PID* speedPid;				 // 速度环获得电流
+	PID* pulsePid;	// 位置环获得速度
+	PID* speedPid;	// 速度环获得电流
+	// float angleChange;		 // 角度变化量
 	MotorValue(s16) real;	 // 读到的数据
 	MotorValue(s16) set;	 // 设定值
 	MotorMonitor monitor;

@@ -9,6 +9,7 @@ DJmotor djmotor[2];
 //
 //----
 void robotInit() {
+  // TODO:这段有问题，目前没有很好的解决方法。
 	robot = (Robot*) malloc(sizeof(Robot));
 
 	TmotorInit(tmotor, 1);
@@ -28,12 +29,12 @@ void robotInit() {
 	robot->mode			= ROBOTNORMAL;
 
 	// TODO: 参数暂定 调节
-	pidInit(robot->L0pid, 1, 1, 1, 0, 0, PIDPOS);
-	pidInit(robot->yawpid, 1, 1, 1, 0, 0, PIDPOS);
-	pidInit(robot->rollpid, 1, 1, 1, 0, 0, PIDPOS);
-	pidInit(robot->splitpid, 1, 1, 1, 0, 0, PIDPOS);
+	pidInit(robot->L0pid, 200, 5, 200 , 0, 1000, PIDPOS);
+	pidInit(robot->yawpid, 1, 1, 1, 0, 1000, PIDPOS);
+	pidInit(robot->rollpid, 1, 1, 1, 0, 1000, PIDPOS);
+	pidInit(robot->splitpid, 1, 1, 1, 0, 1000, PIDPOS);
 
-	robot->L0Set						= 0.2;
+	robot->L0Set						= 0.25;
 	robot->yawpid->target		= 0;
 	robot->rollpid->target	= 0;
 	robot->splitpid->target = 0;
@@ -47,9 +48,16 @@ void updateState() {
 	Zjie(&robot->legL, robot->yesense.pitch.now);
 	Zjie(&robot->legR, robot->yesense.pitch.now);
 
+	robot->legL.dis.now		= robot->legL.wheel->real.angleRad * WHEELR;
+	robot->legR.dis.now		= robot->legR.wheel->real.angleRad * WHEELR;
+
+	robot->legL.dis.dot		= robot->legL.wheel->real.velocity * WHEELR * 2 * PI / 60;
+	robot->legR.dis.dot		= robot->legR.wheel->real.velocity * WHEELR * 2 * PI / 60;
+
 	robot->legL.TFnow			= robot->legL.front->real.torque;
 	robot->legL.TBnow			= robot->legL.behind->real.torque;
 	robot->legL.TWheelnow = robot->legL.wheel->real.torque;
+
 	robot->legR.TFnow			= robot->legR.front->real.torque;
 	robot->legR.TBnow			= robot->legR.behind->real.torque;
 	robot->legR.TWheelnow = robot->legR.wheel->real.torque;
@@ -62,18 +70,20 @@ void updateState() {
 //
 //----
 void balanceMode() {
-	robot->legVir.dis.now = (robot->legL.dis.now + robot->legR.dis.now) / 2;
-	robot->legVir.dis.dot = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
-	robot->legVir.L0.now	= (robot->legL.L0.now + robot->legR.L0.now) / 2;
-	robot->legVir.L0.dot	= (robot->legL.L0.dot + robot->legR.L0.dot) / 2;
-	float L03							= pow(robot->legVir.L0.now, 3);
-	float L02							= pow(robot->legVir.L0.now, 2);
-	float L01							= pow(robot->legVir.L0.now, 1);
+	robot->legVir.dis.now		 = (robot->legL.dis.now + robot->legR.dis.now) / 2;
+	robot->legVir.dis.dot		 = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
+	robot->legVir.L0.now		 = (robot->legL.L0.now + robot->legR.L0.now) / 2;
+	robot->legVir.L0.dot		 = (robot->legL.L0.dot + robot->legR.L0.dot) / 2;
+	robot->legVir.angle0.now = (robot->legL.angle0.now + robot->legR.angle0.now) / 2;
+	robot->legVir.angle0.dot = (robot->legL.angle0.dot + robot->legR.angle0.dot) / 2;
+	float L03								 = pow(robot->legVir.L0.now, 3);
+	float L02								 = pow(robot->legVir.L0.now, 2);
+	float L01								 = pow(robot->legVir.L0.now, 1);
 
 	if (robot->flyflag) {
 		for (int col = 0; col < 6; col++) {
 			for (int row = 0; row < 2; row++) {
-				int num = col * 2 + row;
+				int num = (col << 1) + row;
 				if (row == 1 && (col == 0 || col == 1))
 					robot->legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
 				else
@@ -83,7 +93,7 @@ void balanceMode() {
 	} else {
 		for (int col = 0; col < 6; col++) {
 			for (int row = 0; row < 2; row++) {
-				int num										= col * 2 + row;
+				int num										= (col << 1) + row;
 				robot->legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
 			}
 		}
@@ -120,6 +130,7 @@ void balanceMode() {
 	robot->legL.Tpset			 = robot->legVir.U.Tp;
 	robot->legR.Tpset			 = robot->legVir.U.Tp;
 
+	// 前馈力
 	robot->legL.Fset			 = FFEEDFORWARD;
 	robot->legR.Fset			 = FFEEDFORWARD;
 	// 补偿虚拟力
@@ -128,29 +139,32 @@ void balanceMode() {
 	robot->legL.Fset			-= fCompensate;
 	robot->legR.Fset			-= fCompensate;
 	// 旋转补偿
-	float yawCompensate		 = robot->yawpid->compute(robot->yawpid, robot->yesense.yaw.now);
+	float yawCompensate		 = 0; // robot->yawpid->compute(robot->yawpid, robot->yesense.yaw.now);
 	robot->legL.TWheelset -= yawCompensate;
 	robot->legR.TWheelset += yawCompensate;
 	// 劈腿补偿
-	float splitCompensate	 = robot->splitpid->compute(robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
+	float splitCompensate	 = 0;	 // robot->splitpid->compute(robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
 	robot->legL.Tpset			-= splitCompensate;
 	robot->legR.Tpset			+= splitCompensate;
 	// 翻滚角补偿
 	float rollCompensate	 = robot->rollpid->compute(robot->rollpid, robot->yesense.roll.now);
-	robot->legL.Fset			-= splitCompensate;
-	robot->legR.Fset			+= splitCompensate;
+	robot->legL.Fset			+= rollCompensate;
+	robot->legR.Fset			-= rollCompensate;
 
 	VMC(&robot->legL);
 	VMC(&robot->legR);
 
-	// 方向值
-	robot->legL.Fset	*= robot->legL.dir;
-	robot->legL.TFset *= robot->legL.dir;
-	robot->legL.TBset *= robot->legL.dir;
+	// 方向 左侧应当-1 右侧应当1
+	robot->legL.TWheelset *= robot->legL.dir;
+	robot->legL.TFset			*= robot->legL.dir;
+	robot->legL.TBset			*= robot->legL.dir;
 
-	robot->legR.Fset	*= robot->legR.dir;
-	robot->legR.TFset *= robot->legR.dir;
-	robot->legR.TBset *= robot->legR.dir;
+	robot->legR.TWheelset *= robot->legR.dir;
+	robot->legR.TFset			*= robot->legR.dir;
+	robot->legR.TBset			*= robot->legR.dir;
+
+  robot->legR.front->set.torque = robot->legR.TFset;
+  robot->legR.behind->set.torque = robot->legR.TBset;
 }
 
 //----
@@ -166,14 +180,12 @@ void jumpMode() {
 //
 //----
 void haltMode() {
-	tmotor[0].monitor.mode = HALT;
-	tmotor[1].monitor.mode = HALT;
-	tmotor[2].monitor.mode = HALT;
-	tmotor[3].monitor.mode = HALT;
-	djmotor[0].set.current = 0;
-	djmotor[0].set.current = 0;
-	djmotor[1].set.current = 0;
-	djmotor[1].set.current = 0;
+	tmotor[0].monitor.mode	= HALT;
+	tmotor[1].monitor.mode	= HALT;
+	tmotor[2].monitor.mode	= HALT;
+	tmotor[3].monitor.mode	= HALT;
+	djmotor[0].monitor.mode = HALT;
+	djmotor[1].monitor.mode = HALT;
 }
 
 //----

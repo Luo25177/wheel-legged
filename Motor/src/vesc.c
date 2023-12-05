@@ -96,7 +96,7 @@ void VESCReceiveHandle(VESC* vesc, CanRxMsg msg) {
 	if ((msg.ExtId >> 8) == CAN_PACKET_STATUS) {
 		BU8ToF32(msg.Data, &vesc[id].real.velocity);
 		vesc[id].real.velocity /= vesc[id].param.polepairs;
-		int temp								= 0;
+		s16 temp								= 0;
 		BU8ToS16(&msg.Data[4], &temp);
 		vesc[id].real.current = (float) (temp / 10);
 		BU8ToS16(&msg.Data[6], &temp);

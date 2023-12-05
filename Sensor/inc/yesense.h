@@ -11,11 +11,15 @@
 #pragma once
 
 #include "datastruct.h"
+#include "mymath.h"
 #include "tim.h"
 
 #include <stdbool.h>
 
 typedef struct {
+	bool				 init;
+	unsigned int timer;
+
 	float accelx;	 // m/s2
 	float accely;
 	float accelz;
@@ -37,7 +41,6 @@ typedef struct {
 	float quaternion_data2;
 	float quaternion_data3;
 
-	bool init;
 } Yesense;
 
 void yesenseReceiveHandler(Yesense* yesense, u8 temp);

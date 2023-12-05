@@ -62,7 +62,6 @@
 #define ALT_DATA_FACTOR			 0.001f
 #define SPEED_DATA_FACTOR		 0.001f
 
-unsigned int yesenseTimer = 0;
 /*------------------------------------------------Variables define------------------------------------------------*/
 typedef enum { crc_err = -3, data_len_err = -2, para_err = -1, analysis_ok = 0, analysis_done = 1 } analysis_res_t;
 
@@ -94,20 +93,23 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
 				ret							= (unsigned char) 0x1;
 				yesense->accelx = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 				yesense->accely = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
-				yesense->accelz = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
+				yesense->accelz = get_signed_int(data + (SINGLE_DATA_BYTES << 1)) * NOT_MAG_DATA_FACTOR;
 			} else
 				ret = (unsigned char) 0x00;
 		} break;
 
 		case ANGLE_ID: {
 			if (ANGLE_DATA_LEN == len) {
-				ret								 = (unsigned char) 0x1;
-				yesense->roll.dot	 = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
-				yesense->pitch.dot = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
-				yesense->yaw.dot	 = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
+				ret									= (unsigned char) 0x1;
+				yesense->roll.dot		= get_signed_int(data) * NOT_MAG_DATA_FACTOR;
+				yesense->pitch.dot	= get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
+				yesense->yaw.dot		= get_signed_int(data + (SINGLE_DATA_BYTES << 1)) * NOT_MAG_DATA_FACTOR;
+				yesense->yaw.dot	 *= DegToRad;
+				yesense->roll.dot	 *= DegToRad;
+				yesense->pitch.dot *= DegToRad;
 				// TODO: 计算角加速度可以在中断中计算
-				float dt					 = (float) (GolbalTimer - yesenseTimer) / 1000;
-				yesenseTimer			 = GolbalTimer;
+				float dt						= (float) (GlobalTimer - yesense->timer) / 1000;
+				yesense->timer			= GlobalTimer;
 				if (dt != 0) {
 					yesense->roll.ddot		 = (yesense->roll.dot - yesense->roll.lastdot) / dt;
 					yesense->pitch.ddot		 = (yesense->pitch.dot - yesense->pitch.lastdot) / dt;
@@ -125,7 +127,7 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
 				ret						= (unsigned char) 0x1;
 				yesense->magx = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 				yesense->magy = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
-				yesense->magz = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
+				yesense->magz = get_signed_int(data + (SINGLE_DATA_BYTES << 1)) * NOT_MAG_DATA_FACTOR;
 			} else
 				ret = (unsigned char) 0x00;
 		} break;
@@ -135,7 +137,7 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
 				ret							 = (unsigned char) 0x1;
 				yesense->rawMagx = get_signed_int(data) * MAG_RAW_DATA_FACTOR;
 				yesense->rawMagy = get_signed_int(data + SINGLE_DATA_BYTES) * MAG_RAW_DATA_FACTOR;
-				yesense->rawMagz = get_signed_int(data + SINGLE_DATA_BYTES * 2) * MAG_RAW_DATA_FACTOR;
+				yesense->rawMagz = get_signed_int(data + (SINGLE_DATA_BYTES << 1)) * MAG_RAW_DATA_FACTOR;
 			} else
 				ret = (unsigned char) 0x00;
 		} break;
@@ -145,16 +147,19 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
 				ret								 = (unsigned char) 0x1;
 				yesense->pitch.now = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 				yesense->roll.now	 = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
-				yesense->yaw.now	 = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
-				if (0 == yesense->init) {
+				yesense->yaw.now	 = get_signed_int(data + (SINGLE_DATA_BYTES << 1)) * NOT_MAG_DATA_FACTOR;
+				if (!yesense->init) {
 					yaw_start			= yesense->yaw.now;
 					pitch_start		= yesense->pitch.now;
 					roll_start		= yesense->roll.now;
-					yesense->init = 1;
+					yesense->init = true;
 				}
 				yesense->yaw.now	 -= yaw_start;
 				yesense->roll.now	 -= roll_start;
 				yesense->pitch.now -= pitch_start;
+				yesense->yaw.now	 *= DegToRad;
+				yesense->roll.now	 *= DegToRad;
+				yesense->pitch.now *= DegToRad;
 			} else
 				ret = (unsigned char) 0x00;
 		} break;
@@ -163,7 +168,7 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
 				ret												= (unsigned char) 0x1;
 				yesense->quaternion_data0 = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 				yesense->quaternion_data1 = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
-				yesense->quaternion_data2 = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
+				yesense->quaternion_data2 = get_signed_int(data + (SINGLE_DATA_BYTES << 1)) * NOT_MAG_DATA_FACTOR;
 				yesense->quaternion_data3 = get_signed_int(data + SINGLE_DATA_BYTES * 3) * NOT_MAG_DATA_FACTOR;
 			} else
 				ret = (unsigned char) 0x00;
@@ -319,4 +324,5 @@ void yesenseInit(Yesense* yesense) {
 	yesense->quaternion_data3 = 0;
 
 	yesense->init							= false;
+	yesense->timer						= 0;
 }

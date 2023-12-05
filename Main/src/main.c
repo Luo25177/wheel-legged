@@ -31,8 +31,8 @@ static void taskStart(void* pdata) {
 
 	OSTaskCreate(taskLed, (void*) 0, &taskLedStk[TASK_STK_SIZE - 1], LED_TASK_PRIO);
 	OSTaskCreate(taskBeep, (void*) 0, &taskBeepStk[TASK_STK_SIZE - 1], BEEP_TASK_PRIO);
-	// OSTaskCreate(taskRun, (void*) 0, &taskRunStk[TASK_STK_SIZE - 1], RUN_TASK_PRIO);
-	OSTaskCreate(taskTest, (void*) 0, &taskTestStk[TASK_STK_SIZE - 1], TEST_TASK_PRIO);
+	OSTaskCreate(taskRun, (void*) 0, &taskRunStk[TASK_STK_SIZE - 1], RUN_TASK_PRIO);
+	// OSTaskCreate(taskTest, (void*) 0, &taskTestStk[TASK_STK_SIZE - 1], TEST_TASK_PRIO);
 
 	OS_EXIT_CRITICAL();							 // 程序退出临界段，可以被中断打断，在临界段中不要加延时，会死机
 	OSTaskSuspend(START_TASK_PRIO);	 // 根据程序优先级挂起起始任务 每个任务单独一个优先级
@@ -77,6 +77,12 @@ static void taskRun(void* pdata) {
 	while (1) {
 		updateState();
 		if (master.control.begin) {
+			tmotor[0].monitor.enable	= true;
+			tmotor[1].monitor.enable	= true;
+			djmotor[0].monitor.enable = true;
+			tmotor[2].monitor.enable	= true;
+			tmotor[3].monitor.enable	= true;
+			djmotor[1].monitor.enable = true;
 			robotRun();
 		}
 		OSTimeDly(100);
@@ -93,6 +99,6 @@ static void taskTest(void* pdata) {
 	while (1) {
 		TmotorRun(tmotor);
 		DJmotorRun(djmotor);
-		OSTimeDly(100);
+		OSTimeDly(10);
 	}
 }

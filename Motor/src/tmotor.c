@@ -28,8 +28,9 @@ void TmotorInit(Tmotor* motor, u8 id) {
 		motor[i].set.velocity				 = 0;
 		motor[i].set.angleDeg				 = 0;
 		motor[i].set.angleRad				 = 0;
+		motor[i].set.current				 = 0;
 
-		motor[i].monitor.mode				 = POSITION;
+		motor[i].monitor.mode				 = TORQUE;
 		motor[i].monitor.enable			 = false;
 		motor[i].monitor.timeOut		 = false;
 		motor[i].monitor.stuckCnt		 = 0;
@@ -101,14 +102,14 @@ static float uint2float(int x_int, float x_min, float x_max, int bits)	// 整型
 // @param _kd
 //----
 void TmotorCommunicate(Tmotor* motor, float _pos, float _speed, float _torque, float _kp, float _kd) {
-	_pos	 *= AngleToRad * TRATIO;
-	_speed *= AngleToRad * TRATIO;
+	_pos	 *= DegToRad * TRATIO;
+	_speed *= DegToRad * TRATIO;
 
 	u16 p		= float2uint(_pos, P_MIN, P_MAX, 16);
-	u16 v		= float2uint(_speed, P_MIN, P_MAX, 12);
-	u16 t		= float2uint(_torque, P_MIN, P_MAX, 12);
-	u16 kp	= float2uint(_kp, P_MIN, P_MAX, 12);
-	u16 kd	= float2uint(_kd, P_MIN, P_MAX, 12);
+	u16 v		= float2uint(_speed, V_MIN, V_MAX, 12);
+	u16 t		= float2uint(_torque, T_MIN, T_MAX, 12);
+	u16 kp	= float2uint(_kp, KP_MIN, KP_MIN, 12);
+	u16 kd	= float2uint(_kd, KD_MIN, KD_MAX, 12);
 
 	CanTxMsg txmsg;
 	txmsg.StdId		= 0x00 + motor->id;
@@ -142,9 +143,15 @@ void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg) {
 	motor[id].monitor.timeOutCnt = 0;
 	if (motor[id].monitor.timeOut)
 		motor[id].monitor.timeOut = false;
-	motor[id].real.angleDeg = uint2float(p, P_MIN, P_MAX, 16) * RadToAngle / TRATIO;
-	motor[id].real.velocity = uint2float(v, P_MIN, P_MAX, 12) * RadToAngle / TRATIO;
+	motor[id].real.angleDeg = uint2float(p, P_MIN, P_MAX, 16) * RadToDeg / TRATIO;
+	motor[id].real.velocity = uint2float(v, P_MIN, P_MAX, 12) * RadToDeg / TRATIO;
 	motor[id].real.torque		= uint2float(t, T_MIN, T_MAX, 12);
+	if (!motor[id].init) {
+		motor[id].initReadAngle = motor[id].real.angleDeg;
+		motor[id].init					= true;
+	}
+	motor[id].real.angleDeg -= motor[id].initReadAngle;
+	motor[id].real.angleRad	 = motor[id].real.angleDeg * DegToRad;
 }
 
 void TmotorEnable(Tmotor* motor, u8 controlword) {
@@ -156,14 +163,16 @@ void TmotorEnable(Tmotor* motor, u8 controlword) {
 
 void TmotorRun(Tmotor* motor) {
 	for (int i = 0; i < 4; i++) {
-		if (!motor[i].monitor.enable)
+		if (!motor[i].monitor.enable) {
+			motor[i].set.angleDeg = motor[i].real.angleDeg;
 			continue;
+		}
 		switch (motor[i].monitor.mode) {
 			case HALT:
 				TmotorCommunicate(&motor[i], 0, 0, 0, 0, 0);
 				break;
 			case POSITION:
-				TmotorCommunicate(&motor[i], motor[i].set.angleDeg, 0, motor[i].kp, motor[i].kd, 0);
+				TmotorCommunicate(&motor[i], motor[i].set.angleDeg + motor[i].initReadAngle, 0, motor[i].kp, motor[i].kd, 0);
 				break;
 			case SPEED:
 				TmotorCommunicate(&motor[i], 0, motor[i].set.velocity, 0, motor[i].kp, 0);

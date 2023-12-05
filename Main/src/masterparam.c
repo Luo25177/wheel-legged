@@ -5,7 +5,7 @@ RobotState robotstate;
 
 void HandleParamInit(HandleParam* handleparam) {
 	handleparam->run		= 0;
-	handleparam->height = 0;
+	handleparam->height = 20;
 	handleparam->tilt		= 0;
 	handleparam->turn		= 0;
 }
