@@ -9,7 +9,6 @@ DJmotor djmotor[2];
 //
 //----
 void robotInit() {
-  // TODO:这段有问题，目前没有很好的解决方法。
 	robot = (Robot*) malloc(sizeof(Robot));
 
 	TmotorInit(tmotor, 1);
@@ -29,12 +28,12 @@ void robotInit() {
 	robot->mode			= ROBOTNORMAL;
 
 	// TODO: 参数暂定 调节
-	pidInit(robot->L0pid, 200, 5, 200 , 0, 1000, PIDPOS);
+	pidInit(robot->L0pid, 750, 3, 1500, 0, 1000, PIDPOS);
 	pidInit(robot->yawpid, 1, 1, 1, 0, 1000, PIDPOS);
 	pidInit(robot->rollpid, 1, 1, 1, 0, 1000, PIDPOS);
 	pidInit(robot->splitpid, 1, 1, 1, 0, 1000, PIDPOS);
 
-	robot->L0Set						= 0.25;
+	robot->L0Set						= 0.35;
 	robot->yawpid->target		= 0;
 	robot->rollpid->target	= 0;
 	robot->splitpid->target = 0;
@@ -72,9 +71,13 @@ void updateState() {
 void balanceMode() {
 	robot->legVir.dis.now		 = (robot->legL.dis.now + robot->legR.dis.now) / 2;
 	robot->legVir.dis.dot		 = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
-	robot->legVir.L0.now		 = (robot->legL.L0.now + robot->legR.L0.now) / 2;
-	robot->legVir.L0.dot		 = (robot->legL.L0.dot + robot->legR.L0.dot) / 2;
-	robot->legVir.angle0.now = (robot->legL.angle0.now + robot->legR.angle0.now) / 2;
+	robot->legVir.L0.now		 = robot->legR.L0.now;
+	robot->legVir.L0.dot		 = robot->legR.L0.dot;
+	robot->legVir.angle0.now = robot->legR.angle0.now;
+
+	// robot->legVir.L0.now		 = (robot->legL.L0.now + robot->legR.L0.now) / 2;
+	// robot->legVir.L0.dot		 = (robot->legL.L0.dot + robot->legR.L0.dot) / 2;
+	// robot->legVir.angle0.now = (robot->legL.angle0.now + robot->legR.angle0.now) / 2;
 	robot->legVir.angle0.dot = (robot->legL.angle0.dot + robot->legR.angle0.dot) / 2;
 	float L03								 = pow(robot->legVir.L0.now, 3);
 	float L02								 = pow(robot->legVir.L0.now, 2);
@@ -139,7 +142,7 @@ void balanceMode() {
 	robot->legL.Fset			-= fCompensate;
 	robot->legR.Fset			-= fCompensate;
 	// 旋转补偿
-	float yawCompensate		 = 0; // robot->yawpid->compute(robot->yawpid, robot->yesense.yaw.now);
+	float yawCompensate		 = 0;	 // robot->yawpid->compute(robot->yawpid, robot->yesense.yaw.now);
 	robot->legL.TWheelset -= yawCompensate;
 	robot->legR.TWheelset += yawCompensate;
 	// 劈腿补偿
@@ -147,7 +150,7 @@ void balanceMode() {
 	robot->legL.Tpset			-= splitCompensate;
 	robot->legR.Tpset			+= splitCompensate;
 	// 翻滚角补偿
-	float rollCompensate	 = robot->rollpid->compute(robot->rollpid, robot->yesense.roll.now);
+	float rollCompensate	 = 0;	 // robot->rollpid->compute(robot->rollpid, robot->yesense.roll.now);
 	robot->legL.Fset			+= rollCompensate;
 	robot->legR.Fset			-= rollCompensate;
 
@@ -155,16 +158,16 @@ void balanceMode() {
 	VMC(&robot->legR);
 
 	// 方向 左侧应当-1 右侧应当1
-	robot->legL.TWheelset *= robot->legL.dir;
-	robot->legL.TFset			*= robot->legL.dir;
-	robot->legL.TBset			*= robot->legL.dir;
+	robot->legL.TWheelset					 *= robot->legL.dir;
+	robot->legL.TFset							 *= robot->legL.dir;
+	robot->legL.TBset							 *= robot->legL.dir;
 
-	robot->legR.TWheelset *= robot->legR.dir;
-	robot->legR.TFset			*= robot->legR.dir;
-	robot->legR.TBset			*= robot->legR.dir;
+	robot->legR.TWheelset					 *= robot->legR.dir;
+	robot->legR.TFset							 *= robot->legR.dir;
+	robot->legR.TBset							 *= robot->legR.dir;
 
-  robot->legR.front->set.torque = robot->legR.TFset;
-  robot->legR.behind->set.torque = robot->legR.TBset;
+	robot->legR.front->set.torque		= robot->legR.TFset;
+	robot->legR.behind->set.torque	= robot->legR.TBset;
 }
 
 //----

@@ -133,7 +133,6 @@ void VMC(Leg* leg) {
 												l1 * sin(leg->angle0.now + leg->angle3) * sin(leg->angle1 - leg->angle2) / (leg->L0.now * sin(leg->angle2 - leg->angle3)),
 												l4 * cos(leg->angle0.now + leg->angle2) * sin(leg->angle3 - leg->angle4) / sin(leg->angle2 - leg->angle3),
 												l4 * sin(leg->angle0.now + leg->angle2) * sin(leg->angle3 - leg->angle4) / (leg->L0.now * sin(leg->angle2 - leg->angle3)) };
-	// TODO:方向上 可能有点问题
 	leg->TFset				= trans[0][0] * leg->Fset + trans[0][1] * leg->Tpset;
 	leg->TBset				= trans[1][0] * leg->Fset + trans[1][1] * leg->Tpset;
 }

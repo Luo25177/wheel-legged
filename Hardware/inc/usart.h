@@ -26,7 +26,6 @@
 typedef struct Usart {
 	u8 rxBuff[MAXUSARTDATASIZE];
 	u8 txBuff[MAXUSARTDATASIZE];
-	u8 dmaAble;
 	void (*send)(u8* data, u8 cnt);
 } Usart;
 

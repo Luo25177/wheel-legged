@@ -36,7 +36,7 @@ void RobotStateInit(RobotState* robotstate) {
 	robotstate->roll	 = 0;
 	robotstate->v			 = 0;
 	// TODO: 参数暂定
-	robotstate->height = 0.2;
+	robotstate->height = 0.35;
 }
 
 void RobotStateUpdate(RobotState* robotstate) {

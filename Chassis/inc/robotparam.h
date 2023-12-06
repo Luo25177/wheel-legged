@@ -22,7 +22,6 @@
 #define l5		 0.24f
 #define WHEELR 0.65f
 
-// TODO: 重量测定和参数计算
 #define MASSL1					0.272f
 #define MASSL2					0.704f
 #define MASSL3					0.703f

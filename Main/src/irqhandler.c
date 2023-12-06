@@ -22,7 +22,7 @@ void USART1_IRQHandler(void) {
 		USART_ClearFlag(USART1, USART_IT_RXNE);
 		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 		temp = USART_ReceiveData(USART1);
-		blueToothReceive(temp);
+		// blueToothReceive(temp);
 	}
 }
 
@@ -45,7 +45,6 @@ void TIM2_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET) {
 		GlobalTimer++;	// 全局计时器 代码的全局时间可都靠这个
 		canSend(0x3);
-		Vofa_Send_JustFloat(robot->legR.Fset, robot->L0pid->output, robot->legR.TFset, robot->legR.TBset, 0);
 	}
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);	 // 清除中断标志位
 }
@@ -56,6 +55,11 @@ void TIM3_IRQHandler(void) {
 		DJmotorMonitor(djmotor);
 		TmotorMonitor(tmotor);
 		RobotStateUpdate(&robotstate);
+
+		Vofa_Send_JustFloat((float) robot->legR.Fset, (float) robot->L0pid->output, (float) robot->legR.L0.now, (float) robot->L0Set,
+												(float) robot->legR.Fnow);
+		// Vofa_Send_JustFloat((float) robot->legL.Fset, (float) robot->L0pid->output, (float) robot->legL.L0.now, (float) robot->L0Set, 0);
+		// Vofa_Send_JustFloat();
 		// blueToothSend(3, (void*) &robotstate, sizeof(RobotState));
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);

@@ -107,7 +107,6 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
 				yesense->yaw.dot	 *= DegToRad;
 				yesense->roll.dot	 *= DegToRad;
 				yesense->pitch.dot *= DegToRad;
-				// TODO: 计算角加速度可以在中断中计算
 				float dt						= (float) (GlobalTimer - yesense->timer) / 1000;
 				yesense->timer			= GlobalTimer;
 				if (dt != 0) {
