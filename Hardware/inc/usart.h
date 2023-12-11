@@ -21,7 +21,7 @@
 #include "stm32f4xx_usart.h"
 #include "string.h"
 
-#define MAXUSARTDATASIZE 50
+#define MAXUSARTDATASIZE 70
 
 typedef struct Usart {
 	u8 rxBuff[MAXUSARTDATASIZE];

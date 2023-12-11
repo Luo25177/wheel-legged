@@ -12,4 +12,4 @@
 #include "mymath.h"
 #include "usart.h"
 
-void Vofa_Send_JustFloat(float data1, float data2, float data3, float data4, float data5);
+void vofaJustFloat(float data1, float data2, float data3, float data4, float data5);

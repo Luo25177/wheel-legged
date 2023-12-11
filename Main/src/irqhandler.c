@@ -56,10 +56,11 @@ void TIM3_IRQHandler(void) {
 		TmotorMonitor(tmotor);
 		RobotStateUpdate(&robotstate);
 
-		Vofa_Send_JustFloat((float) robot->legR.Fset, (float) robot->L0pid->output, (float) robot->legR.L0.now, (float) robot->L0Set,
-												(float) robot->legR.Fnow);
-		// Vofa_Send_JustFloat((float) robot->legL.Fset, (float) robot->L0pid->output, (float) robot->legL.L0.now, (float) robot->L0Set, 0);
-		// Vofa_Send_JustFloat();
+		// vofaJustFloat((float) robot->legR.Fset, (float) robot->L0pid->output, (float) robot->legR.L0.now, (float) robot->L0Set,
+		// 										(float) robot->legR.Fnow);
+		// vofaJustFloat((float) robot->legL.Fset, (float) robot->L0pid->output, (float) robot->legL.L0.now, (float) robot->L0Set, 0);
+
+		// vofaJustFloat();
 		// blueToothSend(3, (void*) &robotstate, sizeof(RobotState));
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);

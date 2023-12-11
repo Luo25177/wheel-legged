@@ -385,14 +385,14 @@
           <GroupName>MASTER</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Main\src\main.c</FilePath>
-            </File>
-            <File>
               <FileName>irqhandler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Main\src\irqhandler.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Main\src\main.c</FilePath>
             </File>
             <File>
               <FileName>bluetooth.c</FileName>
@@ -438,6 +438,11 @@
               <FileName>vofa.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Function\src\vofa.c</FilePath>
+            </File>
+            <File>
+              <FileName>btoscilloscope.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Function\src\btoscilloscope.c</FilePath>
             </File>
           </Files>
         </Group>

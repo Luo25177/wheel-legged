@@ -54,6 +54,7 @@ void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg) {
 	motor[id].pulseAccumulate = motor[id].n * M3508MAXPULSE + motor[id].pulseRead - motor[id].lockPulse;
 	motor[id].real.angleDeg		= motor[id].pulseAccumulate / M3508ANGLETOPULSE;
 	motor[id].real.torque			= (float) (motor[id].real.current * M3508ITOT);
+	motor[id].real.angleRad		= motor[id].real.angleDeg * DegToRad;
 }
 
 void DJmotorCommunicate(DJmotor* motor, u32 stdid) {
@@ -87,6 +88,7 @@ void DJmotorRun(DJmotor* motor) {
 				break;
 			case TORQUE:
 				motor[i].set.current = (s16) (motor[i].set.torque * M3508TTOI);
+				limitInRange(s16)(&motor[i].set.current, M3508MAXCURRENT);
 				break;
 			default:
 				motor[i].set.current = 0;

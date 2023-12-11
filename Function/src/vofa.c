@@ -8,7 +8,7 @@ void FloatTo4Byte(float* f, u8* buff) {
 	*(++buff) = p_float[2];
 	*(++buff) = p_float[3];
 }
-void Vofa_Send_JustFloat(float data1, float data2, float data3, float data4, float data5) {
+void vofaJustFloat(float data1, float data2, float data3, float data4, float data5) {
 	u8 SendData[24] = { 0 };
 	FloatTo4Byte(&data1, &SendData[0]);
 	FloatTo4Byte(&data2, &SendData[4]);

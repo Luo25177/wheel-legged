@@ -9,8 +9,8 @@
 #define KP_MAX 500.0f
 #define KD_MIN 0.0f	 // KD极限（N-m/rad/s）
 #define KD_MAX 5.0f
-#define T_MIN	 -18.0f	 // 扭矩极限（Nm）
-#define T_MAX	 18.0f
+#define T_MIN	 -12.0f	 // 扭矩极限（Nm）
+#define T_MAX	 12.0f
 #define TRATIO 7.643f
 //----
 // @brief 初始化
@@ -39,6 +39,9 @@ void TmotorInit(Tmotor* motor, u8 id) {
 		// 进入控制模式
 		TmotorStatueControl(TENTERCONTROL, id++);
 	}
+  for(int i = 5; i <= 8; i++) {
+    TmotorStatueControl(TENTERCONTROL, i);
+  }
 }
 
 //----

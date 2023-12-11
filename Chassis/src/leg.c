@@ -101,26 +101,16 @@ void Njie(Leg* leg, float xc, float yc) {
 	leg->angle1set = 2 * atan2((A + sqrt(A * A + B * B - C * C)), (B - C));
 	if (leg->angle1set < 0)
 		leg->angle1set += 2 * PI;
-
-	// nije_5(&angle1, (void *)0, x, y, l1, l6, l3, l4, l5); //利用L1,L6计算c1;
 	m							 = l1 * cos(leg->angle1set);
 	n							 = l1 * sin(leg->angle1set);
 	b							 = 0;
-	// x1 = l2 / l6 * ((x - m) * cos(b) - (y - n) * sin(b)) + m;
-	// y1 = l2 / l6 * ((x - m) * sin(b) + (y - n) * cos(b)) + n; //得到闭链五杆端点的坐标
 	x1						 = ((xc - m) * cos(b) - (yc - n) * sin(b)) + m;
 	y1						 = ((xc - m) * sin(b) + (yc - n) * cos(b)) + n;	 // 得到闭链五杆端点的坐标
 
 	A							 = 2 * y1 * l4;
 	B							 = 2 * l4 * (x1 - l5 / 2);
-	// c = l3 * l3 + 2 * l5 * x1 - l4 * l4 - l5 * l5 - x1 * x1 - y1 * y1;
 	C							 = l3 * l3 + l5 * x1 - l4 * l4 - l5 * l5 / 4 - x1 * x1 - y1 * y1;
 	leg->angle4set = 2 * atan2((A - sqrt(A * A + B * B - C * C)), (B - C));
-
-	// TODO: 根据初始角度来纠正设定角度
-	// leg->angle1set = PI - leg->angle1set - PI / 3;
-	// leg->angle4set -= PI / 3;
-	// nije_5((void *)0, &angle2, x1, y1, l1, l2, l3, l4, l5);        //计算c4 ,
 }
 
 //----
@@ -157,6 +147,6 @@ void INVMC(Leg* leg) {
 													(l4 * cos(leg->angle0.now + leg->angle2) * sin(leg->angle0.now + leg->angle3) * sin(leg->angle3 - leg->angle4) -
 													 l4 * cos(leg->angle0.now + leg->angle3) * sin(leg->angle0.now + leg->angle2) * sin(leg->angle3 - leg->angle4)) };
 
-	leg->Fnow					= trans[0][0] * leg->TFnow + trans[0][1] * leg->TBnow;
-	leg->Tpnow				= trans[1][0] * leg->TFnow + trans[1][1] * leg->TBnow;
+	leg->Fnow					= (trans[0][0] * leg->TFnow + trans[0][1] * leg->TBnow) * leg->dir;
+	leg->Tpnow				= (trans[1][0] * leg->TFnow + trans[1][1] * leg->TBnow) * leg->dir;
 }

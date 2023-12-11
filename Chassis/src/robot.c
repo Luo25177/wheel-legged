@@ -28,10 +28,10 @@ void robotInit() {
 	robot->mode			= ROBOTNORMAL;
 
 	// TODO: 参数暂定 调节
-	pidInit(robot->L0pid, 750, 3, 1500, 0, 1000, PIDPOS);
+	pidInit(robot->L0pid, 750, 2, 1500, 0, 1000, PIDPOS);
 	pidInit(robot->yawpid, 1, 1, 1, 0, 1000, PIDPOS);
 	pidInit(robot->rollpid, 1, 1, 1, 0, 1000, PIDPOS);
-	pidInit(robot->splitpid, 1, 1, 1, 0, 1000, PIDPOS);
+	pidInit(robot->splitpid, 0.2, 0, 0, 10, 1000, PIDPOS);
 
 	robot->L0Set						= 0.35;
 	robot->yawpid->target		= 0;
@@ -71,36 +71,33 @@ void updateState() {
 void balanceMode() {
 	robot->legVir.dis.now		 = (robot->legL.dis.now + robot->legR.dis.now) / 2;
 	robot->legVir.dis.dot		 = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
-	robot->legVir.L0.now		 = robot->legR.L0.now;
-	robot->legVir.L0.dot		 = robot->legR.L0.dot;
-	robot->legVir.angle0.now = robot->legR.angle0.now;
-
-	// robot->legVir.L0.now		 = (robot->legL.L0.now + robot->legR.L0.now) / 2;
-	// robot->legVir.L0.dot		 = (robot->legL.L0.dot + robot->legR.L0.dot) / 2;
-	// robot->legVir.angle0.now = (robot->legL.angle0.now + robot->legR.angle0.now) / 2;
+	robot->legVir.L0.now		 = (robot->legL.L0.now + robot->legR.L0.now) / 2;
+	robot->legVir.L0.dot		 = (robot->legL.L0.dot + robot->legR.L0.dot) / 2;
+	robot->legVir.angle0.now = (robot->legL.angle0.now + robot->legR.angle0.now) / 2;
 	robot->legVir.angle0.dot = (robot->legL.angle0.dot + robot->legR.angle0.dot) / 2;
+
 	float L03								 = pow(robot->legVir.L0.now, 3);
 	float L02								 = pow(robot->legVir.L0.now, 2);
 	float L01								 = pow(robot->legVir.L0.now, 1);
 
-	if (robot->flyflag) {
-		for (int col = 0; col < 6; col++) {
-			for (int row = 0; row < 2; row++) {
-				int num = (col << 1) + row;
-				if (row == 1 && (col == 0 || col == 1))
-					robot->legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
-				else
-					robot->legVir.K[row][col] = 0;
-			}
-		}
-	} else {
-		for (int col = 0; col < 6; col++) {
-			for (int row = 0; row < 2; row++) {
-				int num										= (col << 1) + row;
+	//	if (robot->flyflag) {
+	for (int col = 0; col < 6; col++) {
+		for (int row = 0; row < 2; row++) {
+			int num = (col << 1) + row;
+			if (row == 1 && (col == 0 || col == 1))
 				robot->legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
-			}
+			else
+				robot->legVir.K[row][col] = 0;
 		}
 	}
+	//	} else {
+	//		for (int col = 0; col < 6; col++) {
+	//			for (int row = 0; row < 2; row++) {
+	//				int num										= (col << 1) + row;
+	//				robot->legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+	//			}
+	//		}
+	//	}
 	robot->legVir.X.theta			= robot->legVir.angle0.now;
 	robot->legVir.X.thetadot	= robot->legVir.angle0.dot;
 	robot->legVir.X.x					= robot->legVir.dis.now;
@@ -146,18 +143,18 @@ void balanceMode() {
 	robot->legL.TWheelset -= yawCompensate;
 	robot->legR.TWheelset += yawCompensate;
 	// 劈腿补偿
-	float splitCompensate	 = 0;	 // robot->splitpid->compute(robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
+	float splitCompensate	 = 0;  // twiceIncCompute(robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now, robot->legL.angle0.dot - robot->legR.angle0.dot);
 	robot->legL.Tpset			-= splitCompensate;
 	robot->legR.Tpset			+= splitCompensate;
 	// 翻滚角补偿
 	float rollCompensate	 = 0;	 // robot->rollpid->compute(robot->rollpid, robot->yesense.roll.now);
-	robot->legL.Fset			+= rollCompensate;
-	robot->legR.Fset			-= rollCompensate;
+	robot->legL.Fset			-= rollCompensate;
+	robot->legR.Fset			+= rollCompensate;
 
 	VMC(&robot->legL);
 	VMC(&robot->legR);
 
-	// 方向 左侧应当-1 右侧应当1
+	// 方向
 	robot->legL.TWheelset					 *= robot->legL.dir;
 	robot->legL.TFset							 *= robot->legL.dir;
 	robot->legL.TBset							 *= robot->legL.dir;
@@ -168,6 +165,32 @@ void balanceMode() {
 
 	robot->legR.front->set.torque		= robot->legR.TFset;
 	robot->legR.behind->set.torque	= robot->legR.TBset;
+	robot->legR.wheel->set.torque		= robot->legR.TWheelset;
+
+	robot->legL.front->set.torque		= robot->legL.TFset;
+	robot->legL.behind->set.torque	= robot->legL.TBset;
+	robot->legL.wheel->set.torque		= robot->legL.TWheelset;
+
+	// float data[12];
+	// data[0]	 = robot->legR.angle0.now;
+	// data[1]	 = robot->legR.Fset;
+	// data[2]	 = robot->legR.Tpset;
+	// data[3]	 = robot->legR.TFset;
+	// data[4]	 = robot->legR.TBset;
+	// data[5]	 = robot->legR.TWheelset;
+	// data[6]	 = robot->legL.angle0.now;
+	// data[7]	 = robot->legL.Fset;
+	// data[8]	 = robot->legL.Tpset;
+	// data[9]	 = robot->legL.TFset;
+	// data[10] = robot->legL.TBset;
+	// data[11] = robot->legL.TWheelset;
+	float data[5];
+	data[0] = robot->legL.angle0.now - robot->legR.angle0.now;
+	data[1] = robot->splitpid->output;
+	data[2] = robot->legL.Tpset;
+	data[3] = robot->legR.Tpset;
+	data[4] = 0;
+	oscilloscope(data, 5);
 }
 
 //----
@@ -198,22 +221,30 @@ void haltMode() {
 void flyCheck() {
 	INVMC(&robot->legL);
 	INVMC(&robot->legR);
-	float rzwdd = robot->yesense.accelz - robot->legR.L0.ddot * cos(robot->legR.angle0.now) +
-								2.0 * robot->legR.angle0.dot * robot->legR.L0.dot * sin(robot->legR.angle0.now) +
-								robot->legR.L0.now * robot->legR.angle0.ddot * sin(robot->legR.angle0.now) +
-								robot->legR.L0.now * robot->legR.angle0.dot * robot->legR.angle0.dot * cos(robot->legR.angle0.now);
-	float lzwdd = robot->yesense.accelz - robot->legL.L0.ddot * cos(robot->legL.angle0.now) +
-								2.0 * robot->legL.angle0.dot * robot->legL.L0.dot * sin(robot->legL.angle0.now) +
-								robot->legL.L0.now * robot->legL.angle0.ddot * sin(robot->legL.angle0.now) +
-								robot->legL.L0.now * robot->legL.angle0.dot * robot->legL.angle0.dot * cos(robot->legL.angle0.now);
+	float lp		= robot->legL.Fnow * cos(robot->legL.angle0.now) + robot->legL.Tpnow * sin(robot->legL.angle0.now) / robot->legL.L0.now;
+	float rp		= robot->legR.Fnow * cos(robot->legR.angle0.now) + robot->legR.Tpnow * sin(robot->legR.angle0.now) / robot->legR.L0.now;
 
-	robot->legR.normalforce = MASSWHEEL * rzwdd + GRAVITY * MASSWHEEL + robot->legR.Fnow * cos(robot->legR.angle0.now) +
-														robot->legR.TWheelnow * sin(robot->legR.angle0.now) / robot->legR.L0.now;
-	robot->legL.normalforce = MASSWHEEL * lzwdd + GRAVITY * MASSWHEEL + robot->legL.Fnow * cos(robot->legL.angle0.now) +
-														robot->legL.TWheelnow * sin(robot->legL.angle0.now) / robot->legL.L0.now;
-	float force = (robot->legL.normalforce + robot->legR.normalforce) / 2;
+	float zmdd	= robot->yesense.accelz * cos(robot->yesense.pitch.now) - robot->yesense.accelx * sin(robot->yesense.pitch.now);
 
-	if (force > FORCETHRESHOLD)
+	float lzwdd = zmdd - robot->legL.L0.ddot * cos(robot->legL.angle0.now) + 2 * robot->legL.L0.dot + robot->legL.angle0.dot * sin(robot->legL.angle0.now) + robot->legL.L0.now * robot->legL.angle0.ddot * sin(robot->legL.angle0.now) + robot->legL.L0.now * robot->legL.angle0.dot * robot->legL.angle0.dot * cos(robot->legL.angle0.now);
+	float rzwdd = zmdd - robot->legR.L0.ddot * cos(robot->legR.angle0.now) + 2 * robot->legR.L0.dot + robot->legR.angle0.dot * sin(robot->legR.angle0.now) + robot->legR.L0.now * robot->legR.angle0.ddot * sin(robot->legR.angle0.now) + robot->legR.L0.now * robot->legR.angle0.dot * robot->legR.angle0.dot * cos(robot->legR.angle0.now);
+	;
+
+	// float rzwdd = robot->yesense.accelz - robot->legR.L0.ddot * cos(robot->legR.angle0.now) +
+	// 							2.0 * robot->legR.angle0.dot * robot->legR.L0.dot * sin(robot->legR.angle0.now) +
+	// 							robot->legR.L0.now * robot->legR.angle0.ddot * sin(robot->legR.angle0.now) +
+	// 							robot->legR.L0.now * robot->legR.angle0.dot * robot->legR.angle0.dot * cos(robot->legR.angle0.now);
+	// float lzwdd = robot->yesense.accelz - robot->legL.L0.ddot * cos(robot->legL.angle0.now) +
+	// 							2.0 * robot->legL.angle0.dot * robot->legL.L0.dot * sin(robot->legL.angle0.now) +
+	// 							robot->legL.L0.now * robot->legL.angle0.ddot * sin(robot->legL.angle0.now) +
+	// 							robot->legL.L0.now * robot->legL.angle0.dot * robot->legL.angle0.dot * cos(robot->legL.angle0.now);
+
+	robot->legR.normalforce = rp + MASSWHEEL * (GRAVITY + rzwdd);
+	robot->legL.normalforce = lp + MASSWHEEL * (GRAVITY + lzwdd);
+
+	float force							= (robot->legL.normalforce + robot->legR.normalforce) / 2;
+
+	if (force < 20)
 		robot->flyflag = true;
 	else
 		robot->flyflag = false;

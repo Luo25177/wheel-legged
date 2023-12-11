@@ -69,6 +69,27 @@ float TposCompute(PID* pid, float input) {
 }
 
 //----
+// @brief 二次控制，同时控制位置和速度
+//
+// @param pid
+// @param input
+// @param inputdot
+// @return float
+//----
+float twiceIncCompute(PID* pid, float input, float inputdot) {
+	pid->err[0]	 = pid->target - input;
+	float errdot = 0 - inputdot;
+	pid->output	 = pid->kp * pid->err[0] + pid->kd * errdot;
+	if (pid->ki) {
+		pid->accErr += inputdot;
+		limitInRange(float)(&pid->accErr, pid->accErrLimit);
+		pid->output += pid->ki * pid->accErr;
+	}
+	limitInRange(float)(&pid->output, pid->outputLimit);
+	return pid->output;
+}
+
+//----
 // @brief PID初始化，设置kp,ki,kd 选定pid模式
 //
 // @param pid

@@ -141,7 +141,7 @@ void canSend(u8 ctrlWord) {
 	if ((ctrlWord & 0x01) && can1Txmsg->pop(can1Txmsg, &msg))
 		CAN_Transmit(CAN1, &msg);
 	if ((ctrlWord & 0x02) && can2Txmsg->pop(can2Txmsg, &msg))
-		CAN_Transmit(CAN2, &msg);
+ 		CAN_Transmit(CAN2, &msg);
 }
 
 void canCheck() { }

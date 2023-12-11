@@ -42,4 +42,6 @@ float posCompute(PID* pid, float input);
 float TincCompute(PID* pid, float input);
 float TposCompute(PID* pid, float input);
 
+float twiceIncCompute(PID* pid, float input, float inputdot);
+
 void pidInit(PID* pid, float kp, float ki, float kd, float outputLimit, float accErrLimit, pidMode mode);

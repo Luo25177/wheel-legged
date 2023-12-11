@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "btoscilloscope.h"
 #include "leg.h"
 #include "yesense.h"
 typedef struct {
