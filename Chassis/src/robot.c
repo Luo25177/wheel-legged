@@ -126,11 +126,11 @@ void balanceMode() {
 											 robot->legVir.K[1][3] * (robot->legVir.Xd.v - robot->legVir.X.v) +
 											 robot->legVir.K[1][4] * (robot->legVir.Xd.pitch - robot->legVir.X.pitch) +
 											 robot->legVir.K[1][5] * (robot->legVir.Xd.pitchdot - robot->legVir.X.pitchdot);
-	robot->legL.TWheelset	 = robot->legVir.U.Twheel;
-	robot->legR.TWheelset	 = robot->legVir.U.Twheel;
+	robot->legL.TWheelset	 = robot->legVir.U.Twheel / 2;
+	robot->legR.TWheelset	 = robot->legVir.U.Twheel / 2;
 
-	robot->legL.Tpset			 = robot->legVir.U.Tp;
-	robot->legR.Tpset			 = robot->legVir.U.Tp;
+	robot->legL.Tpset			 = robot->legVir.U.Tp / 2;
+	robot->legR.Tpset			 = robot->legVir.U.Tp / 2;
 
 	// 前馈力
 	robot->legL.Fset			 = FFEEDFORWARD;
