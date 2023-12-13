@@ -7,8 +7,11 @@
 // @param dir 腿的方向
 //----
 void legInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind) {
-	leg->Fset = FFEEDFORWARD;	 // 虚拟力设定值的初始化
-	leg->dir	= dir;
+	leg->Fset	 = FFEEDFORWARD;	// 虚拟力设定值的初始化
+	leg->dir	 = dir;
+
+	leg->L0pid = (PID*) malloc(sizeof(PID));
+	pidInit(leg->L0pid, 700, 2, 2000, 0, 1000, PIDPOS);
 
 	datastructInit(&leg->dis, 0, 0, 0, 0);
 	// TODO: L0 初始位置 angle0的初始值
@@ -57,7 +60,7 @@ void Zjie(Leg* leg, float pitch) {
 	float C0		= pow(l2, 2) + pow(lbd, 2) - pow(l3, 2);
 	float D0		= pow(l3, 2) + pow(lbd, 2) - pow(l2, 2);
 	leg->angle2 = 2 * atan2((B0 + sqrt(pow(A0, 2) + pow(B0, 2) - pow(C0, 2))), (A0 + C0));
-	leg->angle3 = PI - 2 * atan2((B0 + sqrt(pow(A0, 2) + pow(B0, 2) - pow(D0, 2))), (A0 + D0));
+	leg->angle3 = PI - 2 * atan2((-B0 + sqrt(pow(A0, 2) + pow(B0, 2) - pow(D0, 2))), (A0 + D0));
 	leg->xc			= leg->xb + l2 * cos(leg->angle2);
 	leg->yc			= leg->yb + l2 * sin(leg->angle2);
 
@@ -69,7 +72,6 @@ void Zjie(Leg* leg, float pitch) {
 	float cor_XY_then[2][1];
 	cor_XY_then[0][0] = cos(pitch) * leg->xc - sin(pitch) * leg->yc;
 	cor_XY_then[1][0] = sin(pitch) * leg->xc + cos(pitch) * leg->yc;
-	leg->angle0.last	= leg->angle0.now;
 	leg->angle0.now		= atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
 
 	if (dt > 0) {

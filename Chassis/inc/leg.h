@@ -50,6 +50,7 @@ typedef struct {
 	float TWheelset;
 	float normalforce;	// 地面对机器人的实际支持力
 	float K[2][6];
+	PID*	L0pid;	// 虚拟力的pid 是腿长的控制
 } Leg;
 
 void legInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind);

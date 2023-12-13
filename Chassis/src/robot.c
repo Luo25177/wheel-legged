@@ -19,7 +19,6 @@ void robotInit() {
 	legInit(&robot->legR, LEGRIGHT, &djmotor[0], &tmotor[0], &tmotor[1]);
 	legInit(&robot->legL, LEGLEFT, &djmotor[1], &tmotor[2], &tmotor[3]);
 
-	robot->L0pid		= (PID*) malloc(sizeof(PID));
 	robot->yawpid		= (PID*) malloc(sizeof(PID));
 	robot->rollpid	= (PID*) malloc(sizeof(PID));
 	robot->splitpid = (PID*) malloc(sizeof(PID));
@@ -28,15 +27,16 @@ void robotInit() {
 	robot->mode			= ROBOTNORMAL;
 
 	// TODO: 参数暂定 调节
-	pidInit(robot->L0pid, 750, 2, 1500, 0, 1000, PIDPOS);
 	pidInit(robot->yawpid, 1, 1, 1, 0, 1000, PIDPOS);
 	pidInit(robot->rollpid, 1, 1, 1, 0, 1000, PIDPOS);
-	pidInit(robot->splitpid, 0.2, 0, 0, 10, 1000, PIDPOS);
+	pidInit(robot->splitpid, 1, 0, 0, 0, 1000, PIDPOS);
 
-	robot->L0Set						= 0.35;
-	robot->yawpid->target		= 0;
-	robot->rollpid->target	= 0;
-	robot->splitpid->target = 0;
+	robot->L0Set							= 0.32;
+	robot->yawpid->target			= 0;
+	robot->rollpid->target		= 0;
+	robot->splitpid->target		= 0;
+	robot->legL.L0pid->target = robot->L0Set;
+	robot->legR.L0pid->target = robot->L0Set;
 }
 
 //----
@@ -47,19 +47,28 @@ void updateState() {
 	Zjie(&robot->legL, robot->yesense.pitch.now);
 	Zjie(&robot->legR, robot->yesense.pitch.now);
 
-	robot->legL.dis.now		= robot->legL.wheel->real.angleRad * WHEELR;
-	robot->legR.dis.now		= robot->legR.wheel->real.angleRad * WHEELR;
+	robot->legL.dis.now			 = robot->legL.wheel->real.angleRad * WHEELR;
+	robot->legR.dis.now			 = robot->legR.wheel->real.angleRad * WHEELR;
 
-	robot->legL.dis.dot		= robot->legL.wheel->real.velocity * WHEELR * 2 * PI / 60;
-	robot->legR.dis.dot		= robot->legR.wheel->real.velocity * WHEELR * 2 * PI / 60;
+	robot->legL.dis.dot			 = robot->legL.wheel->real.velocity * WHEELR * 2 * PI / 60;
+	robot->legR.dis.dot			 = robot->legR.wheel->real.velocity * WHEELR * 2 * PI / 60;
 
-	robot->legL.TFnow			= robot->legL.front->real.torque;
-	robot->legL.TBnow			= robot->legL.behind->real.torque;
-	robot->legL.TWheelnow = robot->legL.wheel->real.torque;
+	robot->legVir.dis.now		 = (robot->legL.dis.now + robot->legR.dis.now) / 2;
+	robot->legVir.dis.dot		 = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
 
-	robot->legR.TFnow			= robot->legR.front->real.torque;
-	robot->legR.TBnow			= robot->legR.behind->real.torque;
-	robot->legR.TWheelnow = robot->legR.wheel->real.torque;
+	//	TODO 暂时用作调试
+	robot->legVir.L0.now		 = robot->legL.L0.now;
+	robot->legVir.L0.dot		 = robot->legL.L0.dot;
+	robot->legVir.angle0.now = robot->legL.angle0.now;
+	robot->legVir.angle0.dot = robot->legL.angle0.dot;
+
+	robot->legL.TFnow				 = robot->legL.front->real.torque;
+	robot->legL.TBnow				 = robot->legL.behind->real.torque;
+	robot->legL.TWheelnow		 = robot->legL.wheel->real.torque;
+
+	robot->legR.TFnow				 = robot->legR.front->real.torque;
+	robot->legR.TBnow				 = robot->legR.behind->real.torque;
+	robot->legR.TWheelnow		 = robot->legR.wheel->real.torque;
 
 	flyCheck();
 }
@@ -69,16 +78,9 @@ void updateState() {
 //
 //----
 void balanceMode() {
-	robot->legVir.dis.now		 = (robot->legL.dis.now + robot->legR.dis.now) / 2;
-	robot->legVir.dis.dot		 = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
-	robot->legVir.L0.now		 = (robot->legL.L0.now + robot->legR.L0.now) / 2;
-	robot->legVir.L0.dot		 = (robot->legL.L0.dot + robot->legR.L0.dot) / 2;
-	robot->legVir.angle0.now = (robot->legL.angle0.now + robot->legR.angle0.now) / 2;
-	robot->legVir.angle0.dot = (robot->legL.angle0.dot + robot->legR.angle0.dot) / 2;
-
-	float L03								 = pow(robot->legVir.L0.now, 3);
-	float L02								 = pow(robot->legVir.L0.now, 2);
-	float L01								 = pow(robot->legVir.L0.now, 1);
+	float L03 = pow(robot->legVir.L0.now, 3);
+	float L02 = pow(robot->legVir.L0.now, 2);
+	float L01 = pow(robot->legVir.L0.now, 1);
 
 	//	if (robot->flyflag) {
 	for (int col = 0; col < 6; col++) {
@@ -100,8 +102,8 @@ void balanceMode() {
 	//	}
 	robot->legVir.X.theta			= robot->legVir.angle0.now;
 	robot->legVir.X.thetadot	= robot->legVir.angle0.dot;
-	robot->legVir.X.x					= robot->legVir.dis.now;
-	robot->legVir.X.v					= robot->legVir.dis.dot;
+	robot->legVir.X.x					= 0;	// robot->legVir.dis.now;
+	robot->legVir.X.v					= 0;	// robot->legVir.dis.dot;
 	robot->legVir.X.pitch			= robot->yesense.pitch.now;
 	robot->legVir.X.pitchdot	= robot->yesense.pitch.dot;
 
@@ -134,22 +136,22 @@ void balanceMode() {
 	robot->legL.Fset			 = FFEEDFORWARD;
 	robot->legR.Fset			 = FFEEDFORWARD;
 	// 补偿虚拟力
-	robot->L0pid->target	 = robot->L0Set;
-	float fCompensate			 = robot->L0pid->compute(robot->L0pid, robot->legVir.L0.now);
-	robot->legL.Fset			-= fCompensate;
-	robot->legR.Fset			-= fCompensate;
-	// 旋转补偿
-	float yawCompensate		 = 0;	 // robot->yawpid->compute(robot->yawpid, robot->yesense.yaw.now);
-	robot->legL.TWheelset -= yawCompensate;
-	robot->legR.TWheelset += yawCompensate;
-	// 劈腿补偿
-	float splitCompensate	 = 0;  // twiceIncCompute(robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now, robot->legL.angle0.dot - robot->legR.angle0.dot);
-	robot->legL.Tpset			-= splitCompensate;
-	robot->legR.Tpset			+= splitCompensate;
-	// 翻滚角补偿
-	float rollCompensate	 = 0;	 // robot->rollpid->compute(robot->rollpid, robot->yesense.roll.now);
-	robot->legL.Fset			-= rollCompensate;
-	robot->legR.Fset			+= rollCompensate;
+	float lfCompensate		 = robot->legL.L0pid->compute(robot->legL.L0pid, robot->legL.L0.now);
+	float rfCompensate		 = robot->legR.L0pid->compute(robot->legR.L0pid, robot->legR.L0.now);
+	robot->legL.Fset			-= lfCompensate;
+	robot->legR.Fset			-= rfCompensate;
+	// // 旋转补偿
+	// float yawCompensate		 = 0;	 // robot->yawpid->compute(robot->yawpid, robot->yesense.yaw.now);
+	// robot->legL.TWheelset -= yawCompensate;
+	// robot->legR.TWheelset += yawCompensate;
+	// // 劈腿补偿
+	// float splitCompensate	 = 0;	 // robot->splitpid->compute(robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
+	// robot->legL.Tpset			-= splitCompensate;
+	// robot->legR.Tpset			+= splitCompensate;
+	// // 翻滚角补偿
+	// float rollCompensate	 = 0;	 // robot->rollpid->compute(robot->rollpid, robot->yesense.roll.now);
+	// robot->legL.Fset			-= rollCompensate;
+	// robot->legR.Fset			+= rollCompensate;
 
 	VMC(&robot->legL);
 	VMC(&robot->legR);
@@ -184,13 +186,6 @@ void balanceMode() {
 	// data[9]	 = robot->legL.TFset;
 	// data[10] = robot->legL.TBset;
 	// data[11] = robot->legL.TWheelset;
-	float data[5];
-	data[0] = robot->legL.angle0.now - robot->legR.angle0.now;
-	data[1] = robot->splitpid->output;
-	data[2] = robot->legL.Tpset;
-	data[3] = robot->legR.Tpset;
-	data[4] = 0;
-	oscilloscope(data, 5);
 }
 
 //----
@@ -221,14 +216,13 @@ void haltMode() {
 void flyCheck() {
 	INVMC(&robot->legL);
 	INVMC(&robot->legR);
-	float lp		= robot->legL.Fnow * cos(robot->legL.angle0.now) + robot->legL.Tpnow * sin(robot->legL.angle0.now) / robot->legL.L0.now;
-	float rp		= robot->legR.Fnow * cos(robot->legR.angle0.now) + robot->legR.Tpnow * sin(robot->legR.angle0.now) / robot->legR.L0.now;
+	float lp								= robot->legL.Fnow * cos(robot->legL.angle0.now) + robot->legL.Tpnow * sin(robot->legL.angle0.now) / robot->legL.L0.now;
+	float rp								= robot->legR.Fnow * cos(robot->legR.angle0.now) + robot->legR.Tpnow * sin(robot->legR.angle0.now) / robot->legR.L0.now;
 
-	float zmdd	= robot->yesense.accelz * cos(robot->yesense.pitch.now) - robot->yesense.accelx * sin(robot->yesense.pitch.now);
+	float zmdd							= robot->yesense.accelz * cos(robot->yesense.pitch.now) - robot->yesense.accelx * sin(robot->yesense.pitch.now);
 
-	float lzwdd = zmdd - robot->legL.L0.ddot * cos(robot->legL.angle0.now) + 2 * robot->legL.L0.dot + robot->legL.angle0.dot * sin(robot->legL.angle0.now) + robot->legL.L0.now * robot->legL.angle0.ddot * sin(robot->legL.angle0.now) + robot->legL.L0.now * robot->legL.angle0.dot * robot->legL.angle0.dot * cos(robot->legL.angle0.now);
-	float rzwdd = zmdd - robot->legR.L0.ddot * cos(robot->legR.angle0.now) + 2 * robot->legR.L0.dot + robot->legR.angle0.dot * sin(robot->legR.angle0.now) + robot->legR.L0.now * robot->legR.angle0.ddot * sin(robot->legR.angle0.now) + robot->legR.L0.now * robot->legR.angle0.dot * robot->legR.angle0.dot * cos(robot->legR.angle0.now);
-	;
+	float lzwdd							= zmdd - robot->legL.L0.ddot * cos(robot->legL.angle0.now) + 2 * robot->legL.L0.dot + robot->legL.angle0.dot * sin(robot->legL.angle0.now) + robot->legL.L0.now * robot->legL.angle0.ddot * sin(robot->legL.angle0.now) + robot->legL.L0.now * robot->legL.angle0.dot * robot->legL.angle0.dot * cos(robot->legL.angle0.now);
+	float rzwdd							= zmdd - robot->legR.L0.ddot * cos(robot->legR.angle0.now) + 2 * robot->legR.L0.dot + robot->legR.angle0.dot * sin(robot->legR.angle0.now) + robot->legR.L0.now * robot->legR.angle0.ddot * sin(robot->legR.angle0.now) + robot->legR.L0.now * robot->legR.angle0.dot * robot->legR.angle0.dot * cos(robot->legR.angle0.now);
 
 	// float rzwdd = robot->yesense.accelz - robot->legR.L0.ddot * cos(robot->legR.angle0.now) +
 	// 							2.0 * robot->legR.angle0.dot * robot->legR.L0.dot * sin(robot->legR.angle0.now) +
@@ -255,7 +249,6 @@ void flyCheck() {
 //
 //----
 void robotRun() {
-	updateState();
 	switch (robot->mode) {
 		case ROBOTNORMAL:
 			balanceMode();

@@ -26,7 +26,6 @@ typedef struct {
 	PID* yawpid;		// 角速度控制
 	PID* rollpid;		// 翻滚角控制
 	PID* splitpid;	// 双腿劈叉控制
-	PID* L0pid;			// 虚拟力的pid 是腿长的控制
 
 	RobotRunMode mode;
 

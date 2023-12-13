@@ -62,6 +62,13 @@ void TIM3_IRQHandler(void) {
 
 		// vofaJustFloat();
 		// blueToothSend(3, (void*) &robotstate, sizeof(RobotState));
+		float data[5];
+		data[0] = robot->legL.L0.now;
+		data[1] = robot->legL.L0pid->target;
+		data[2] = robot->legL.L0pid->output;
+		data[3] = robot->legL.Fset;
+		data[4] = robot->legL.Tpset;
+		oscilloscope(data, 5);
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }
