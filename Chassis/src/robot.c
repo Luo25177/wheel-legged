@@ -216,6 +216,8 @@ void haltMode() {
 void flyCheck() {
 	INVMC(&robot->legL);
 	INVMC(&robot->legR);
+
+	// 要计算轮子所受的地面的支持力，也就是FN，且FN=F+Gw 其中F应当时轮子给机体的支持力，其实就是地面给的支持力用于轮子的重力和上层机构的支持力，而对于lp是机体对轮子的力，所以要反向
 	float lp								= robot->legL.Fnow * cos(robot->legL.angle0.now) + robot->legL.Tpnow * sin(robot->legL.angle0.now) / robot->legL.L0.now;
 	float rp								= robot->legR.Fnow * cos(robot->legR.angle0.now) + robot->legR.Tpnow * sin(robot->legR.angle0.now) / robot->legR.L0.now;
 
@@ -233,8 +235,8 @@ void flyCheck() {
 	// 							robot->legL.L0.now * robot->legL.angle0.ddot * sin(robot->legL.angle0.now) +
 	// 							robot->legL.L0.now * robot->legL.angle0.dot * robot->legL.angle0.dot * cos(robot->legL.angle0.now);
 
-	robot->legR.normalforce = rp + MASSWHEEL * (GRAVITY + rzwdd);
-	robot->legL.normalforce = lp + MASSWHEEL * (GRAVITY + lzwdd);
+	robot->legR.normalforce = -rp + MASSWHEEL * (GRAVITY + rzwdd);
+	robot->legL.normalforce = -lp + MASSWHEEL * (GRAVITY + lzwdd);
 
 	float force							= (robot->legL.normalforce + robot->legR.normalforce) / 2;
 
