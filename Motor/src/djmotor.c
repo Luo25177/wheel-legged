@@ -12,7 +12,7 @@
 #define M3508FINISHPULSETHRESHOLD 60.f						 // 电机到位判定的阈值
 
 void DJmotorInit(DJmotor* motor, u8 id) {
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 2; ++i) {
 		motor[i].id							 = id++;
 		motor[i].n							 = 0;
 		motor[i].setZero				 = false;
@@ -44,9 +44,9 @@ void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg) {
 		motor[id].lastPulseRead = motor[id].pulseRead;
 	}
 	if ((motor[id].pulseRead - motor[id].lastPulseRead) > M3508PULSETHRESHOLD)
-		motor[id].n--;
+		--motor[id].n;
 	else if ((motor[id].lastPulseRead - motor[id].pulseRead) > M3508PULSETHRESHOLD)
-		motor[id].n++;
+		++motor[id].n;
 	motor[id].lastPulseRead = motor[id].pulseRead;
 	BU8ToVS16(msg.Data + 2, &motor[id].real.velocity);
 	BU8ToVS16(msg.Data + 4, &motor[id].real.current);
@@ -64,12 +64,12 @@ void DJmotorCommunicate(DJmotor* motor, u32 stdid) {
 	txmsg.StdId = stdid;
 	txmsg.DLC		= 0x08;
 
-	for (int i = 0; i < 2; i++) BS16ToU8(&motor[i].set.current, &txmsg.Data[i << 1]);
+	for (int i = 0; i < 2; ++i) BS16ToU8(&motor[i].set.current, &txmsg.Data[i << 1]);
 	can2Txmsg->push(can2Txmsg, txmsg);
 }
 
 void DJmotorRun(DJmotor* motor) {
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 2; ++i) {
 		if (!motor[i].monitor.enable) {
 			motor[i].set.current = 0;
 			continue;
@@ -99,8 +99,8 @@ void DJmotorRun(DJmotor* motor) {
 }
 
 void DJmotorMonitor(DJmotor* motor) {
-	for (int i = 0; i < 2; i++) {
-		motor[i].monitor.timeOutCnt++;
+	for (int i = 0; i < 2; ++i) {
+		++motor[i].monitor.timeOutCnt;
 		if (motor[i].monitor.timeOutCnt >= 10) {
 			motor[i].monitor.timeOut = true;
 		}

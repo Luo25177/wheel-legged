@@ -33,7 +33,7 @@ typedef enum {
 } CAN_PACKET_ID_Enum;
 
 void VESCInit(VESC* vesc, u8 id) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; ++i) {
 		vesc[i].monitor.stuckRealse = true;
 		vesc[i].monitor.mode				= POSITION;
 		vesc[i].monitor.enable			= false;
@@ -50,7 +50,7 @@ void VESCInit(VESC* vesc, u8 id) {
 }
 
 void VESCCommunicate(VESC* vesc) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; ++i) {
 		CanTxMsg txmsg;
 		txmsg.DLC = 4;
 		txmsg.RTR = CAN_RTR_DATA;
@@ -84,8 +84,8 @@ void VESCCommunicate(VESC* vesc) {
 }
 
 void VESCMonitor(VESC* vesc) {
-	for (int i = 0; i < 4; i++) {
-		vesc[i].monitor.timeOutCnt++;
+	for (int i = 0; i < 4; ++i) {
+		++vesc[i].monitor.timeOutCnt;
 		if (vesc[i].monitor.timeOutCnt >= 10)
 			vesc[i].monitor.timeOut = true;
 	}
@@ -111,7 +111,7 @@ void VESCReceiveHandle(VESC* vesc, CanRxMsg msg) {
 }
 
 void VESCRun(VESC* vesc) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; ++i) {
 		CanTxMsg txmsg;
 		txmsg.DLC = 4;
 		txmsg.RTR = CAN_RTR_DATA;

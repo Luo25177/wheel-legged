@@ -19,7 +19,7 @@
 // @param id
 //----
 void TmotorInit(Tmotor* motor, u8 id) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; ++i) {
 		// 电机初始参参数
 		motor[i].id									 = id;
 		motor[i].kp									 = 80;
@@ -39,9 +39,9 @@ void TmotorInit(Tmotor* motor, u8 id) {
 		// 进入控制模式
 		TmotorStatueControl(TENTERCONTROL, id++);
 	}
-  for(int i = 5; i <= 8; i++) {
-    TmotorStatueControl(TENTERCONTROL, i);
-  }
+	for (int i = 5; i <= 8; ++i) {
+		TmotorStatueControl(TENTERCONTROL, i);
+	}
 }
 
 //----
@@ -165,7 +165,7 @@ void TmotorEnable(Tmotor* motor, u8 controlword) {
 }
 
 void TmotorRun(Tmotor* motor) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; ++i) {
 		if (!motor[i].monitor.enable) {
 			motor[i].set.angleDeg = motor[i].real.angleDeg;
 			continue;
@@ -191,8 +191,8 @@ void TmotorRun(Tmotor* motor) {
 }
 
 void TmotorMonitor(Tmotor* motor) {
-	for (int i = 0; i < 4; i++) {
-		motor[i].monitor.timeOutCnt++;
+	for (int i = 0; i < 4; ++i) {
+		++motor[i].monitor.timeOutCnt;
 		if (motor[i].monitor.timeOutCnt >= 10)
 			motor[i].monitor.timeOut = true;
 	}

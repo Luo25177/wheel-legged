@@ -63,7 +63,11 @@
 #define SPEED_DATA_FACTOR		 0.001f
 
 /*------------------------------------------------Variables define------------------------------------------------*/
-typedef enum { crc_err = -3, data_len_err = -2, para_err = -1, analysis_ok = 0, analysis_done = 1 } analysis_res_t;
+typedef enum { crc_err			 = -3,
+							 data_len_err	 = -2,
+							 para_err			 = -1,
+							 analysis_ok	 = 0,
+							 analysis_done = 1 } analysis_res_t;
 
 typedef struct {
 	unsigned char	 header1; /*0x59*/
@@ -221,8 +225,8 @@ int yesenseAnalyze(Yesense* yesense, unsigned char* data, short len) {
 				pos					+= payload->data_len + sizeof(payload_data_t);
 				payload_len -= payload->data_len + sizeof(payload_data_t);
 			} else {
-				pos++;
-				payload_len--;
+				++pos;
+				--payload_len;
 			}
 		}
 		return analysis_ok;
@@ -246,7 +250,7 @@ int calc_checksum(unsigned char* data, unsigned short len, unsigned short* check
 	if (NULL == data || 0 == len || NULL == checksum)
 		return -1;
 
-	for (i = 0; i < len; i++) {
+	for (i = 0; i < len; ++i) {
 		check_a += data[i];
 		check_b += check_a;
 	}
@@ -275,7 +279,7 @@ void G_output_infoSet(Yesense* yesense) {
 
 void yesenseReceiveHandler(Yesense* yesense, u8 temp) {
 	if (RX_FLAG == 1) {
-		Data_len++;
+		++Data_len;
 		Data_Yesense[Data_len - 1] = temp;
 		if (Data_len > 97)	// 超出范围
 		{

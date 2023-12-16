@@ -21,7 +21,7 @@ void led8Show(unsigned char Data) {
 	unsigned char i, val;
 	Data %= 17;	 // 防止输入形参超出LED_table数组，造成非法访问
 	val		= ledTable[Data];
-	for (i = 0; i < 8; i++) {
+	for (i = 0; i < 8; ++i) {
 		Reset_LED8CLK;
 		if (val & 0x01)
 			Set_LED8DATA;

@@ -9,10 +9,9 @@ void oscilloscope(float* data, u8 size) {
 	int sz	 = (size << 2) + 1;
 	memcpy(&txmsg[1], data, 4 * size);
 	int sum = 0;
-	for (int i = 1; i < sz; i++) 
-  {
-    sum += txmsg[i];
-  }
+	for (int i = 1; i < sz; ++i) {
+		sum += txmsg[i];
+	}
 	txmsg[sz++] = sum & 0xff;
 	txmsg[sz++] = TAILCHAR;
 	usart1->send(txmsg, sz);
