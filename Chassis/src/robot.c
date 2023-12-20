@@ -19,56 +19,37 @@ void robotInit() {
 	legInit(&robot->legR, LEGRIGHT, &djmotor[0], &tmotor[0], &tmotor[1]);
 	legInit(&robot->legL, LEGLEFT, &djmotor[1], &tmotor[2], &tmotor[3]);
 
-	robot->yawpid		= (PID*) malloc(sizeof(PID));
-	robot->rollpid	= (PID*) malloc(sizeof(PID));
-	robot->splitpid = (PID*) malloc(sizeof(PID));
-
-	robot->flyflag	= false;
-	robot->mode			= ROBOTNORMAL;
+	robot->flyflag = false;
+	robot->mode		 = ROBOTNORMAL;
 
 	// TODO: 参数暂定 调节
-	pidInit(robot->yawpid, 1, 1, 1, 0, 1000, PIDPOS);
-	pidInit(robot->rollpid, 1, 1, 1, 0, 1000, PIDPOS);
-	pidInit(robot->splitpid, 1, 0, 0, 0, 1000, PIDPOS);
+	pidInit(&robot->yawpid, 1, 1, 1, 0, 1000, PIDPOS);
+	pidInit(&robot->rollpid, 1, 1, 1, 0, 1000, PIDPOS);
+	pidInit(&robot->splitpid, 100, 0, 1000, 0, 1000, PIDPOS);
 
-	robot->L0Set							= 0.32;
-	robot->yawpid->target			= 0;
-	robot->rollpid->target		= 0;
-	robot->splitpid->target		= 0;
-	robot->legL.L0pid->target = robot->L0Set;
-	robot->legR.L0pid->target = robot->L0Set;
+	robot->L0Set						 = 0.32;
+	robot->yawpid.target		 = 0;
+	robot->rollpid.target		 = 0;
+	robot->splitpid.target	 = 0;
+	robot->legL.L0pid.target = robot->L0Set;
+	robot->legR.L0pid.target = robot->L0Set;
 }
 
 //----
-// @brief 状态量更新和一些检查 对控制器的输入量就不在这里做处理了，毕竟这个运行频率有点高
+// @brief 状态量更新和一些检查
 //
 //----
 void updateState() {
+	legUpdate(&robot->legL);
+	legUpdate(&robot->legR);
 	Zjie(&robot->legL, robot->yesense.pitch.now);
 	Zjie(&robot->legR, robot->yesense.pitch.now);
 
-	robot->legL.dis.now			 = robot->legL.wheel->real.angleRad * WHEELR;
-	robot->legR.dis.now			 = robot->legR.wheel->real.angleRad * WHEELR;
-
-	robot->legL.dis.dot			 = robot->legL.wheel->real.velocity * WHEELR * 2 * PI / 60;
-	robot->legR.dis.dot			 = robot->legR.wheel->real.velocity * WHEELR * 2 * PI / 60;
-
-	robot->legVir.dis.now		 = (robot->legL.dis.now + robot->legR.dis.now) / 2;
-	robot->legVir.dis.dot		 = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
-
-	//	TODO 暂时用作调试
-	robot->legVir.L0.now		 = robot->legL.L0.now;
-	robot->legVir.L0.dot		 = robot->legL.L0.dot;
-	robot->legVir.angle0.now = robot->legL.angle0.now;
-	robot->legVir.angle0.dot = robot->legL.angle0.dot;
-
-	robot->legL.TFnow				 = robot->legL.front->real.torque;
-	robot->legL.TBnow				 = robot->legL.behind->real.torque;
-	robot->legL.TWheelnow		 = robot->legL.wheel->real.torque;
-
-	robot->legR.TFnow				 = robot->legR.front->real.torque;
-	robot->legR.TBnow				 = robot->legR.behind->real.torque;
-	robot->legR.TWheelnow		 = robot->legR.wheel->real.torque;
+	robot->legVir.dis.now = (robot->legL.dis.now + robot->legR.dis.now) / 2;
+	robot->legVir.dis.dot = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
+	robot->legVir.angle1	= (robot->legL.angle1 + robot->legR.angle1) / 2;
+	robot->legVir.angle4	= (robot->legL.angle4 + robot->legR.angle4) / 2;
+	Zjie(&robot->legVir, robot->yesense.pitch.now);
 
 	flyCheck();
 }
@@ -102,8 +83,8 @@ void balanceMode() {
 	//	}
 	robot->legVir.X.theta			= robot->legVir.angle0.now;
 	robot->legVir.X.thetadot	= robot->legVir.angle0.dot;
-	robot->legVir.X.x					= 0;	// robot->legVir.dis.now;
-	robot->legVir.X.v					= 0;	// robot->legVir.dis.dot;
+	robot->legVir.X.x					= robot->legVir.dis.now;
+	robot->legVir.X.v					= robot->legVir.dis.dot;
 	robot->legVir.X.pitch			= robot->yesense.pitch.now;
 	robot->legVir.X.pitchdot	= robot->yesense.pitch.dot;
 
@@ -126,6 +107,7 @@ void balanceMode() {
 											 robot->legVir.K[1][3] * (robot->legVir.Xd.v - robot->legVir.X.v) +
 											 robot->legVir.K[1][4] * (robot->legVir.Xd.pitch - robot->legVir.X.pitch) +
 											 robot->legVir.K[1][5] * (robot->legVir.Xd.pitchdot - robot->legVir.X.pitchdot);
+
 	robot->legL.TWheelset	 = robot->legVir.U.Twheel / 2;
 	robot->legR.TWheelset	 = robot->legVir.U.Twheel / 2;
 
@@ -136,8 +118,8 @@ void balanceMode() {
 	robot->legL.Fset			 = FFEEDFORWARD;
 	robot->legR.Fset			 = FFEEDFORWARD;
 	// 补偿虚拟力
-	float lfCompensate		 = robot->legL.L0pid->compute(robot->legL.L0pid, robot->legL.L0.now);
-	float rfCompensate		 = robot->legR.L0pid->compute(robot->legR.L0pid, robot->legR.L0.now);
+	float lfCompensate		 = robot->legL.L0pid.compute(&robot->legL.L0pid, robot->legL.L0.now);
+	float rfCompensate		 = robot->legR.L0pid.compute(&robot->legR.L0pid, robot->legR.L0.now);
 	robot->legL.Fset			-= lfCompensate;
 	robot->legR.Fset			-= rfCompensate;
 	// // 旋转补偿
@@ -145,9 +127,9 @@ void balanceMode() {
 	// robot->legL.TWheelset -= yawCompensate;
 	// robot->legR.TWheelset += yawCompensate;
 	// // 劈腿补偿
-	// float splitCompensate	 = 0;	 // robot->splitpid->compute(robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
-	// robot->legL.Tpset			-= splitCompensate;
-	// robot->legR.Tpset			+= splitCompensate;
+	float splitCompensate	 = robot->splitpid.compute(&robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
+	robot->legL.Tpset			-= splitCompensate;
+	robot->legR.Tpset			+= splitCompensate;
 	// // 翻滚角补偿
 	// float rollCompensate	 = 0;	 // robot->rollpid->compute(robot->rollpid, robot->yesense.roll.now);
 	// robot->legL.Fset			-= rollCompensate;
@@ -214,9 +196,6 @@ void haltMode() {
 //
 //----
 void flyCheck() {
-	INVMC(&robot->legL);
-	INVMC(&robot->legR);
-
 	// 要计算轮子所受的地面的支持力，也就是FN，且FN=F+Gw 其中F应当时轮子给机体的支持力，其实就是地面给的支持力用于轮子的重力和上层机构的支持力，而对于lp是机体对轮子的力，所以要反向
 	float lp								= robot->legL.Fnow * cos(robot->legL.angle0.now) + robot->legL.Tpnow * sin(robot->legL.angle0.now) / robot->legL.L0.now;
 	float rp								= robot->legR.Fnow * cos(robot->legR.angle0.now) + robot->legR.Tpnow * sin(robot->legR.angle0.now) / robot->legR.L0.now;
@@ -226,21 +205,12 @@ void flyCheck() {
 	float lzwdd							= zmdd - robot->legL.L0.ddot * cos(robot->legL.angle0.now) + 2 * robot->legL.L0.dot + robot->legL.angle0.dot * sin(robot->legL.angle0.now) + robot->legL.L0.now * robot->legL.angle0.ddot * sin(robot->legL.angle0.now) + robot->legL.L0.now * robot->legL.angle0.dot * robot->legL.angle0.dot * cos(robot->legL.angle0.now);
 	float rzwdd							= zmdd - robot->legR.L0.ddot * cos(robot->legR.angle0.now) + 2 * robot->legR.L0.dot + robot->legR.angle0.dot * sin(robot->legR.angle0.now) + robot->legR.L0.now * robot->legR.angle0.ddot * sin(robot->legR.angle0.now) + robot->legR.L0.now * robot->legR.angle0.dot * robot->legR.angle0.dot * cos(robot->legR.angle0.now);
 
-	// float rzwdd = robot->yesense.accelz - robot->legR.L0.ddot * cos(robot->legR.angle0.now) +
-	// 							2.0 * robot->legR.angle0.dot * robot->legR.L0.dot * sin(robot->legR.angle0.now) +
-	// 							robot->legR.L0.now * robot->legR.angle0.ddot * sin(robot->legR.angle0.now) +
-	// 							robot->legR.L0.now * robot->legR.angle0.dot * robot->legR.angle0.dot * cos(robot->legR.angle0.now);
-	// float lzwdd = robot->yesense.accelz - robot->legL.L0.ddot * cos(robot->legL.angle0.now) +
-	// 							2.0 * robot->legL.angle0.dot * robot->legL.L0.dot * sin(robot->legL.angle0.now) +
-	// 							robot->legL.L0.now * robot->legL.angle0.ddot * sin(robot->legL.angle0.now) +
-	// 							robot->legL.L0.now * robot->legL.angle0.dot * robot->legL.angle0.dot * cos(robot->legL.angle0.now);
-
 	robot->legR.normalforce = -rp + MASSWHEEL * (GRAVITY + rzwdd);
 	robot->legL.normalforce = -lp + MASSWHEEL * (GRAVITY + lzwdd);
 
 	float force							= (robot->legL.normalforce + robot->legR.normalforce) / 2;
 
-	if (force < 20)
+	if (force < FORCETHRESHOLD)
 		robot->flyflag = true;
 	else
 		robot->flyflag = false;

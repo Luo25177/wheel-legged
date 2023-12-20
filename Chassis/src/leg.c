@@ -7,36 +7,51 @@
 // @param dir 腿的方向
 //----
 void legInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind) {
-	leg->Fset	 = FFEEDFORWARD;	// 虚拟力设定值的初始化
-	leg->dir	 = dir;
+	leg->dir = dir;
 
-	leg->L0pid = (PID*) malloc(sizeof(PID));
-	pidInit(leg->L0pid, 700, 2, 2000, 0, 1000, PIDPOS);
+	pidInit(&leg->L0pid, 550, 2, 2500, 0, 1000, PIDPOS);
 
 	datastructInit(&leg->dis, 0, 0, 0, 0);
-	// TODO: L0 初始位置 angle0的初始值
 	datastructInit(&leg->L0, 0, 0, 0, 0);
 	datastructInit(&leg->angle0, 0, 0, 0, 0);
 
-	leg->Fnow									= leg->Fset;
-	leg->Tpset								= 0;
-	leg->TFset								= 0;
-	leg->TBset								= 0;
-	leg->TWheelset						= 0;
-	leg->normalforce					= leg->Fset;
-	leg->timer								= 0;
-
-	// 电机绑定
 	leg->wheel								= wheel;
 	leg->front								= front;
 	leg->behind								= behind;
 
-	leg->front->initSetAngle	= 203.2 * DegToRad;
-	leg->behind->initSetAngle = -2.23 * DegToRad;
+	leg->Fset									= 0;
+	leg->Tpset								= 0;
+	leg->TFset								= 0;
+	leg->TBset								= 0;
+	leg->TWheelset						= 0;
+
+	leg->timer								= 0;
+
+	leg->normalforce					= 0;
+	// 电机绑定
+	leg->front->initSetAngle	= FrontAngleInit;
+	leg->behind->initSetAngle = BehindAngleInit;
 
 	inputInit(&leg->X);
 	inputInit(&leg->Xd);
 	outputInit(&leg->U);
+}
+
+//----
+// @brief 腿部状态量更新
+//
+// @param leg
+//----
+void legUpdate(Leg* leg) {
+	leg->angle1		 = (float) (leg->front->initSetAngle + (leg->front->real.angleRad * leg->dir));
+	leg->angle4		 = (float) (leg->behind->initSetAngle + (leg->behind->real.angleRad * leg->dir));
+	leg->dis.now	 = (float) leg->wheel->real.angleRad * WHEELR * leg->dir;
+	leg->dis.dot	 = (float) leg->wheel->real.velocity * RPMTORAD * WHEELR * leg->dir;
+
+	leg->TFnow		 = leg->front->real.torque * leg->dir;
+	leg->TBnow		 = leg->behind->real.torque * leg->dir;
+	leg->TWheelnow = leg->wheel->real.torque * leg->dir;
+	INVMC(leg);
 }
 
 //----
@@ -46,10 +61,6 @@ void legInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind) {
 // @param pitch 俯仰角 用于坐标系的转换
 //----
 void Zjie(Leg* leg, float pitch) {
-	// TODO: 电机角度 左侧应当是 1，右侧应当是 -1
-	leg->angle1 = leg->front->initSetAngle + (leg->front->real.angleRad * leg->dir);
-	leg->angle4 = leg->behind->initSetAngle + (leg->behind->real.angleRad * leg->dir);
-
 	leg->xb			= l1 * cos(leg->angle1) - l5 / 2;
 	leg->yb			= l1 * sin(leg->angle1);
 	leg->xd			= l5 / 2 + l4 * cos(leg->angle4);
@@ -63,9 +74,6 @@ void Zjie(Leg* leg, float pitch) {
 	leg->angle3 = PI - 2 * atan2((-B0 + sqrt(pow(A0, 2) + pow(B0, 2) - pow(D0, 2))), (A0 + D0));
 	leg->xc			= leg->xb + l2 * cos(leg->angle2);
 	leg->yc			= leg->yb + l2 * sin(leg->angle2);
-
-	float dt		= (float) (GlobalTimer - leg->timer) / 1000;
-	leg->timer	= GlobalTimer;
 	leg->L0.now = sqrt(pow(leg->xc, 2) + pow(leg->yc, 2));
 
 	// 乘以pitch的旋转矩阵
@@ -73,6 +81,9 @@ void Zjie(Leg* leg, float pitch) {
 	cor_XY_then[0][0] = cos(pitch) * leg->xc - sin(pitch) * leg->yc;
 	cor_XY_then[1][0] = sin(pitch) * leg->xc + cos(pitch) * leg->yc;
 	leg->angle0.now		= atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
+
+	float dt					= (float) (GlobalTimer - leg->timer) / 1000;
+	leg->timer				= GlobalTimer;
 
 	if (dt > 0) {
 		leg->L0.dot					= (leg->L0.now - leg->L0.last) / dt;
@@ -149,6 +160,6 @@ void INVMC(Leg* leg) {
 													(l4 * cos(leg->angle0.now + leg->angle2) * sin(leg->angle0.now + leg->angle3) * sin(leg->angle3 - leg->angle4) -
 													 l4 * cos(leg->angle0.now + leg->angle3) * sin(leg->angle0.now + leg->angle2) * sin(leg->angle3 - leg->angle4)) };
 
-	leg->Fnow					= (trans[0][0] * leg->TFnow + trans[0][1] * leg->TBnow) * leg->dir;
-	leg->Tpnow				= (trans[1][0] * leg->TFnow + trans[1][1] * leg->TBnow) * leg->dir;
+	leg->Fnow					= trans[0][0] * leg->TFnow + trans[0][1] * leg->TBnow;
+	leg->Tpnow				= trans[1][0] * leg->TFnow + trans[1][1] * leg->TBnow;
 }

@@ -14,6 +14,8 @@
 
 #include <stdbool.h>
 
+#define RPMTORAD 0.104719f
+
 //----
 // @brief 电机模式
 //
