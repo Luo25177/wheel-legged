@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="run.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="car.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="leg.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="robotparam.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="mymath.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="datastruct.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pid.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="yesense.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="inc">
+      <UniqueIdentifier>{028addee-316e-4a31-b2c9-fc843ec55cd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bee63d27-453b-4bb2-9048-3441780c65f6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="car.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="pid.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="mymath.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="leg.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="robotparam.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="datastruct.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="yesense.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
