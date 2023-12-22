@@ -22,7 +22,7 @@ void robotInit() {
 	pidInit(&car.rollpid, 100, 0, 1000, 0, 1000, PIDPOS);
 	pidInit(&car.splitpid, 100, 0, 300, 0, 1000, PIDPOS);
 
-	car.L0Set							= 0.36;
+	car.L0Set							= 0.40;
 	car.yawpid.target			= 0;
 	car.rollpid.target		= 0;
 	car.splitpid.target		= 0;
@@ -98,11 +98,11 @@ void balanceMode() {
 	car.legVir.X.pitch = car.yesense.pitch.now;
 	car.legVir.X.pitchdot = car.yesense.pitch.dot;
 
-	static float vd = 0.00;
+	static float vd = 0.0;
 	car.legVir.Xd.theta		= 0;
 	car.legVir.Xd.thetadot = 0;
-	car.legVir.Xd.x += vd;// car.legVir.dis.now;
-	car.legVir.Xd.v = 0;// car.legVir.dis.dot;
+	car.legVir.Xd.x += vd;
+	car.legVir.Xd.v = 0;
 	car.legVir.Xd.pitch	= 0;
 	car.legVir.Xd.pitchdot = 0;
 

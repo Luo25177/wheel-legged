@@ -1,51 +1,20 @@
-﻿  leg.c
-D:\Desktop\轮足\controllers\my_controller\leg.c(10,26): warning C4305: “=”: 从“double”到“float”截断
-D:\Desktop\轮足\controllers\my_controller\leg.c(31,16): warning C4013: “wb_robot_get_device”未定义；假设外部返回 int
-D:\Desktop\轮足\controllers\my_controller\leg.c(31,16): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(32,17): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(33,16): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(34,23): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(35,24): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(36,23): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(39,16): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(40,17): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(41,16): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(42,23): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(43,24): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(44,23): warning C4244: “=”: 从“int”转换到“WbDeviceTag”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(67,66): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(81,36): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(82,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(83,21): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(84,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(90,18): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(91,19): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(92,22): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(93,22): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(95,16): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(99,43): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(100,43): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(101,21): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(85,15): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(88,39): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(89,39): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(127,21): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(130,16): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(131,16): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(133,53): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(134,53): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(139,21): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(148,97): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(149,86): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(150,86): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(151,86): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(163,95): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(166,83): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(169,97): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\leg.c(172,98): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+﻿  car.c
+D:\Desktop\轮足\controllers\my_controller\car.c(25,24): warning C4305: “=”: 从“double”到“float”截断
+D:\Desktop\轮足\controllers\my_controller\car.c(39,35): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(40,35): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(41,35): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(42,35): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(72,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(73,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(74,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(201,61): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(202,61): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(204,69): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(206,212): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(207,212): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
   正在生成代码
-  1 of 24 functions ( 4.2%) were compiled, the rest were copied from previous compilation.
+  0 of 24 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   my_controller.vcxproj -> D:\Desktop\轮足\controllers\my_controller\my_controller.exe

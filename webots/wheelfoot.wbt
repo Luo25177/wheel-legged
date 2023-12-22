@@ -20,7 +20,7 @@ Background {
   ]
 }
 Robot {
-  translation 0 0.49 0
+  translation 0 0.39 0
   children [
     Accelerometer {
       translation 0 0.1 0
@@ -45,7 +45,7 @@ Robot {
           ]
           endPoint Solid {
             translation -2.1743761486492958e-07 -3.6512407704960235e-06 3.26797883198892e-09
-            rotation 0.9224849739987262 0.3774308181263203 0.0810398067314192 1.1151007970493858e-07
+            rotation 0.9224849739987263 0.37743081812632034 0.08103980673141921 1.1151007970493858e-07
             children [
               DEF 小腿连接处 Transform {
                 translation 0.2 0 0.01
