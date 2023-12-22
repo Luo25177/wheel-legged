@@ -24,9 +24,7 @@ void legInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind) {
 	leg->TFset								= 0;
 	leg->TBset								= 0;
 	leg->TWheelset						= 0;
-
 	leg->timer								= 0;
-
 	leg->normalforce					= 0;
 	// 电机绑定
 	leg->front->initSetAngle	= FrontAngleInit;
@@ -47,10 +45,9 @@ void legUpdate(Leg* leg) {
 	leg->angle4		 = (float) (leg->behind->initSetAngle + (leg->behind->real.angleRad * leg->dir));
 	leg->dis.now	 = (float) leg->wheel->real.angleRad * WHEELR * leg->dir;
 	leg->dis.dot	 = (float) leg->wheel->real.velocity * RPMTORAD * WHEELR * leg->dir;
-
-	leg->TFnow		 = leg->front->real.torque * leg->dir;
-	leg->TBnow		 = leg->behind->real.torque * leg->dir;
-	leg->TWheelnow = leg->wheel->real.torque * leg->dir;
+	leg->TFnow		 = (float) leg->front->real.torque * leg->dir;
+	leg->TBnow		 = (float) leg->behind->real.torque * leg->dir;
+	leg->TWheelnow = (float) leg->wheel->real.torque * leg->dir;
 	INVMC(leg);
 }
 
@@ -140,7 +137,6 @@ void VMC(Leg* leg) {
 	leg->TBset				= trans[1][0] * leg->Fset + trans[1][1] * leg->Tpset;
 }
 
-// TODO: 没测试过不一定没问题
 //----
 // @brief 逆向VMC解算 实际电机扭矩->虚拟力
 //

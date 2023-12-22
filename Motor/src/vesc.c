@@ -44,7 +44,7 @@ void VESCInit(VESC* vesc, u8 id) {
 		vesc[i].set.torque					= 0;
 		vesc[i].param.duty					= 0.1;
 		vesc[i].id									= id++;
-		// TODO:
+		// TODO: 电机参数
 		vesc[i].param.polepairs			= VESCU10POLEPAIR;
 	}
 }

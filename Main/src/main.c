@@ -67,7 +67,7 @@ static void taskBeep(void* pdata) {
 }
 
 //----
-// @brief 开始运行
+// @brief 开始运行 	0.67215ms
 //
 // @param pdata
 //----
@@ -84,7 +84,7 @@ static void taskRun(void* pdata) {
 			djmotor[1].monitor.enable = true;
 			robotRun();
 		}
-		OSTimeDly(100);
+		OSTimeDly(200);
 	}
 }
 

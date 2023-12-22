@@ -111,12 +111,12 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
 				yesense->yaw.dot	 *= DegToRad;
 				yesense->roll.dot	 *= DegToRad;
 				yesense->pitch.dot *= DegToRad;
-				float dt						= (float) (GlobalTimer - yesense->timer) / 1000;
+				float dt						= 1000 / (float) (GlobalTimer - yesense->timer);
 				yesense->timer			= GlobalTimer;
 				if (dt != 0) {
-					yesense->roll.ddot		 = (yesense->roll.dot - yesense->roll.lastdot) / dt;
-					yesense->pitch.ddot		 = (yesense->pitch.dot - yesense->pitch.lastdot) / dt;
-					yesense->yaw.ddot			 = (yesense->yaw.dot - yesense->yaw.lastdot) / dt;
+					yesense->roll.ddot		 = (yesense->roll.dot - yesense->roll.lastdot) * dt;
+					yesense->pitch.ddot		 = (yesense->pitch.dot - yesense->pitch.lastdot) * dt;
+					yesense->yaw.ddot			 = (yesense->yaw.dot - yesense->yaw.lastdot) * dt;
 					yesense->roll.lastdot	 = yesense->roll.dot;
 					yesense->pitch.lastdot = yesense->pitch.dot;
 					yesense->yaw.lastdot	 = yesense->yaw.dot;
@@ -172,7 +172,7 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
 				yesense->quaternion_data0 = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 				yesense->quaternion_data1 = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
 				yesense->quaternion_data2 = get_signed_int(data + (SINGLE_DATA_BYTES << 1)) * NOT_MAG_DATA_FACTOR;
-				yesense->quaternion_data3 = get_signed_int(data + SINGLE_DATA_BYTES * 3) * NOT_MAG_DATA_FACTOR;
+				yesense->quaternion_data3 = get_signed_int(data + +SINGLE_DATA_BYTES + (SINGLE_DATA_BYTES << 1)) * NOT_MAG_DATA_FACTOR;
 			} else
 				ret = (unsigned char) 0x00;
 		} break;

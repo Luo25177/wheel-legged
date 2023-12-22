@@ -97,7 +97,7 @@ void usart2Init() {
 	GPIO_InitStructure.GPIO_PuPd	= GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	USART_InitStructure.USART_BaudRate						= 115200;
+	USART_InitStructure.USART_BaudRate						= 921600;
 	USART_InitStructure.USART_WordLength					= USART_WordLength_8b;
 	USART_InitStructure.USART_stopBits						= USART_stopBits_1;
 	USART_InitStructure.USART_Parity							= USART_Parity_No;
