@@ -30,8 +30,8 @@ void can1Init() {
 	CAN_DeInit(CAN1);
 	CAN_StructInit(&CAN_InitStructure);
 
-	CAN_InitStructure.CAN_TTCM = DISABLE;	 // 非时间触发通道模式
-	CAN_InitStructure.CAN_ABOM = DISABLE;	 // 软件对CAN_MCR寄存器的INRQ位置1，随后清0，一旦监测到128次连续11位的隐性位，就退出离线状态
+	CAN_InitStructure.CAN_TTCM			= DISABLE;					// 非时间触发通道模式
+	CAN_InitStructure.CAN_ABOM			= DISABLE;					// 软件对CAN_MCR寄存器的INRQ位置1，随后清0，一旦监测到128次连续11位的隐性位，就退出离线状态
 	CAN_InitStructure.CAN_AWUM			= DISABLE;					// 睡眠模式由软件唤醒
 	CAN_InitStructure.CAN_NART			= DISABLE;					// 禁止报文自动发送，即只发送一次，无论结果如何
 	CAN_InitStructure.CAN_RFLM			= DISABLE;					// 报文不锁定，新的覆盖旧的
@@ -93,8 +93,8 @@ void can2Init() {
 	CAN_StructInit(&CAN_InitStructure);
 
 	/* CAN cell init */
-	CAN_InitStructure.CAN_TTCM = DISABLE;	 // 非时间触发通道模式
-	CAN_InitStructure.CAN_ABOM = DISABLE;	 // 软件对CAN_MCR寄存器的INRQ位置1，随后清0，一旦监测到128次连续11位的隐性位，就退出离线状态
+	CAN_InitStructure.CAN_TTCM			= DISABLE;					// 非时间触发通道模式
+	CAN_InitStructure.CAN_ABOM			= DISABLE;					// 软件对CAN_MCR寄存器的INRQ位置1，随后清0，一旦监测到128次连续11位的隐性位，就退出离线状态
 	CAN_InitStructure.CAN_AWUM			= DISABLE;					// 睡眠模式由软件唤醒
 	CAN_InitStructure.CAN_NART			= DISABLE;					// 禁止报文自动发送，即只发送一次，无论结果如何
 	CAN_InitStructure.CAN_RFLM			= DISABLE;					// 报文不锁定，新的覆盖旧的
@@ -138,10 +138,13 @@ void can2Init() {
 //----
 void canSend(u8 ctrlWord) {
 	CanTxMsg msg;
-	if ((ctrlWord & 0x01) && can1Txmsg->pop(can1Txmsg, &msg))
-		CAN_Transmit(CAN1, &msg);
-	if ((ctrlWord & 0x02) && can2Txmsg->pop(can2Txmsg, &msg))
- 		CAN_Transmit(CAN2, &msg);
+	int			 i = 2;	 // 每次发送两条控制消息
+	while (i--) {
+		if ((ctrlWord & 0x01) && can1Txmsg->pop(can1Txmsg, &msg))
+			CAN_Transmit(CAN1, &msg);
+		if ((ctrlWord & 0x02) && can2Txmsg->pop(can2Txmsg, &msg))
+			CAN_Transmit(CAN2, &msg);
+	}
 }
 
 void canCheck() { }
