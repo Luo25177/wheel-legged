@@ -25,7 +25,7 @@ void robotInit() {
 	// TODO: 参数暂定 调节
 	pidInit(&robot->yawpid, 1, 1, 1, 0, 1000, PIDPOS);
 	pidInit(&robot->rollpid, 1, 1, 1, 0, 1000, PIDPOS);
-	pidInit(&robot->splitpid, 100, 0, 1000, 0, 1000, PIDPOS);
+	pidInit(&robot->splitpid, 100, 0, 800, 0, 1000, PIDPOS);
 
 	robot->L0Set						 = 0.32;
 	robot->yawpid.target		 = 0;
@@ -49,6 +49,7 @@ void updateState() {
 	robot->legVir.dis.dot = (robot->legL.dis.dot + robot->legR.dis.dot) / 2;
 	robot->legVir.angle1	= (robot->legL.angle1 + robot->legR.angle1) / 2;
 	robot->legVir.angle4	= (robot->legL.angle4 + robot->legR.angle4) / 2;
+
 	Zjie(&robot->legVir, robot->yesense.pitch.now);
 
 	flyCheck();
@@ -127,9 +128,9 @@ void balanceMode() {
 	// robot->legL.TWheelset -= yawCompensate;
 	// robot->legR.TWheelset += yawCompensate;
 	// // 劈腿补偿
-	float splitCompensate	 = robot->splitpid.compute(&robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
-	robot->legL.Tpset			-= splitCompensate;
-	robot->legR.Tpset			+= splitCompensate;
+	// float splitCompensate	 = robot->splitpid.compute(&robot->splitpid, robot->legL.angle0.now - robot->legR.angle0.now);
+	// robot->legL.Tpset			-= splitCompensate;
+	// robot->legR.Tpset			+= splitCompensate;
 	// // 翻滚角补偿
 	// float rollCompensate	 = 0;	 // robot->rollpid->compute(robot->rollpid, robot->yesense.roll.now);
 	// robot->legL.Fset			-= rollCompensate;

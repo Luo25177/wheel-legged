@@ -9,7 +9,7 @@
 void legInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind) {
 	leg->dir = dir;
 
-	pidInit(&leg->L0pid, 550, 2, 2500, 0, 1000, PIDPOS);
+	pidInit(&leg->L0pid, 500, 2.2, 1600, 0, 1000, PIDPOS);
 
 	datastructInit(&leg->dis, 0, 0, 0, 0);
 	datastructInit(&leg->L0, 0, 0, 0, 0);

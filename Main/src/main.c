@@ -84,7 +84,7 @@ static void taskRun(void* pdata) {
 			djmotor[1].monitor.enable = true;
 			robotRun();
 		}
-		OSTimeDly(200);
+		OSTimeDly(100);
 	}
 }
 
