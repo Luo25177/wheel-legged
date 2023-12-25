@@ -20,7 +20,7 @@ Il2 = 0.001368 * 2;
 Il3 = Il2;
 Il4 = Il1;
 
-num_data = 90;
+num_data = 30;
 L_lib = [];
 K_lib = cell(2,6);%创造一个空的2*6的cell数组
 for i = 1:2
@@ -29,7 +29,7 @@ for i = 1:2
    end
 end
 for i = 1 : 1 : num_data
-    theta = -30 + i;
+    theta = 59 + i;
     syms theta1 theta2 theta3 theta4 theta5 pitch;
     syms xa ya xb yb xd yd xc yc xe ye;
     syms xl1 yl1 xl2 yl2 xl3 yl3 xl4 yl4 xp yp Ip;

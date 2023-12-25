@@ -10,7 +10,7 @@ void legInit(Leg* leg, int dir) {
 	leg->Fset = -61.90455385;	 // 虚拟力设定值的初始化
 	leg->dir	= dir;
 
-	pidInit(&leg->L0pid, 2000, 50, 12000, 0, 1000, PIDPOS);
+	pidInit(&leg->L0pid, 2000, 50, 35000, 0, 1000, PIDPOS);
 
 	datastructInit(&leg->dis, 0, 0, 0, 0);
 	// TODO: L0 初始位置 angle0的初始值
@@ -51,6 +51,7 @@ void legInit(Leg* leg, int dir) {
 	wb_position_sensor_enable(leg->frontEncoder, timestep);
 	wb_position_sensor_enable(leg->behindEncoder, timestep);
 	wb_position_sensor_enable(leg->wheelEncoder, timestep);
+	wb_motor_set_velocity(leg->wheel, 0);
 
 	inputInit(&leg->X);
 	inputInit(&leg->Xd);

@@ -44,8 +44,8 @@
 #define LEGLEFT					(int) 1
 #define LEGRIGHT				(int) -1
 
-#define timestep 8
-#define dt			 0.008f
+#define timestep 5
+#define dt			 0.005f
 
 #define InitAngle1 5.0 / 6.0 * PI
 #define InitAngle4 1.0 / 6.0 * PI

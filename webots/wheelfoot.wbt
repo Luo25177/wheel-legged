@@ -1,14 +1,15 @@
 #VRML_SIM R2021a utf8
 WorldInfo {
-  basicTimeStep 4
+  basicTimeStep 5
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.15895278197126944 0.9738772158688558 0.16216405740829298 4.665934319383837
-  position -8.937531731390296 2.8547026654799255 2.159866105885963
+  orientation 0.19711541443196623 0.9614419243367892 0.1917679314194259 4.700571605362375
+  position -17.47478540601801 6.498327689869569 2.9671224687218922
   follow "solid"
 }
 Floor {
+  size 20 20
   appearance Parquetry {
     type "chequered"
     colorOverride 1 0.666667 0.498039
@@ -20,8 +21,11 @@ Background {
   ]
 }
 Robot {
-  translation 0 0.39 0
+  translation 0 0.39 -2.68
   children [
+    Camera {
+      rotation 0 1 0 3.14159
+    }
     Accelerometer {
       translation 0 0.1 0
       name "accel"
@@ -661,4 +665,49 @@ Robot {
     mass 0.001
   }
   controller "<extern>"
+}
+Solid {
+  translation 0.51 0 0
+  rotation 0 1 0 3.14159
+  children [
+    DEF 飞坡 Shape {
+      appearance Appearance {
+        material Material {
+          ambientIntensity 1
+          diffuseColor 1 1 1
+          emissiveColor 0.666667 0.666667 0.498039
+          shininess 0.21
+          specularColor 0.88 0.88 0.88
+        }
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate {
+          point [
+            0 0 -1.144802
+            0 0 0
+            0 0.350001 -1.144802
+            1 0 -1.144802
+            1 0 0
+            1 0.350001 -1.144802
+          ]
+        }
+        normal Normal {
+          vector [
+            -1 0 0
+            0 -1 0
+            0 0 -1
+            0 0.956305 0.292372
+            1 0 0
+          ]
+        }
+        coordIndex [
+          3, 4, 0, -1, 0, 4, 1, -1, 5, 3, 2, -1, 2, 3, 0, -1, 4, 5, 1, -1, 1, 5, 2, -1, 3, 5, 4, -1, 1, 2, 0, -1
+        ]
+        normalIndex [
+          1, 1, 1, -1, 1, 1, 1, -1, 2, 2, 2, -1, 2, 2, 2, -1, 3, 3, 3, -1, 3, 3, 3, -1, 4, 4, 4, -1, 0, 0, 0, -1
+        ]
+      }
+    }
+  ]
+  boundingObject USE 飞坡
 }

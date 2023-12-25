@@ -1,7 +1,7 @@
 #include "car.h"
 
 Car					 car;
-static float vd = 0.0;
+float vd = 0;
 
 //----
 // @brief 初始化
@@ -18,9 +18,9 @@ void robotInit() {
 	car.mode		= ROBOTNORMAL;
 
 	// TODO: 参数暂定 调节
-	pidInit(&car.yawpid, 1, 0, 4, 0, 1000, PIDPOS);
+	pidInit(&car.yawpid, 3, 0, 0, 0, 0, PIDPOS);
 	pidInit(&car.rollpid, 100, 0, 1000, 0, 1000, PIDPOS);
-	pidInit(&car.splitpid, 100, 0, 300, 0, 1000, PIDPOS);
+	pidInit(&car.splitpid, 100, 0, 1000, 0, 1000, PIDPOS);
 
 	car.L0Set							= 0.30;
 	car.yawpid.target			= 0;
@@ -104,6 +104,7 @@ void balanceMode() {
 	car.legVir.Xd.v					= 0;
 	car.legVir.Xd.pitch			= 0;
 	car.legVir.Xd.pitchdot	= 0;
+	vd												= 0;
 
 	car.legVir.U.Twheel			= car.legVir.K[0][0] * (car.legVir.Xd.theta - car.legVir.X.theta) +
 												car.legVir.K[0][1] * (car.legVir.Xd.thetadot - car.legVir.X.thetadot) +
@@ -132,8 +133,8 @@ void balanceMode() {
 	car.legL.Fset					-= lfCompensate;
 	car.legR.Fset					-= rfCompensate;
 	// 旋转补偿
-	car.yawpid.target			 = 0;
-	float yawCompensate		 = car.yawpid.compute(&car.yawpid, car.yesense.yaw.now);
+	float yawCompensate		 = car.yawpid.compute(&car.yawpid, car.yesense.yaw.dot);
+	car.yawpid.target				= 0;
 	car.legL.TWheelset		-= yawCompensate;
 	car.legR.TWheelset		+= yawCompensate;
 	//// 劈腿补偿
@@ -160,8 +161,6 @@ void balanceMode() {
 	limitInRange(float)(&car.legR.TWheelset, 10);
 
 	static int t = 0;
-	// wb_motor_set_position(car.legL.wheel, t);
-	// wb_motor_set_position(car.legR.wheel, t--);
 
 	wb_motor_set_torque(car.legL.front, car.legL.TFset);
 	wb_motor_set_torque(car.legL.behind, car.legL.TBset);
@@ -178,6 +177,8 @@ void balanceMode() {
 //----
 static float time = 0;
 void				 jumpMode() {
+	car.legL.L0pid.target = 0.37;
+	car.legR.L0pid.target = 0.37;
 	if (time < kickTime) {
 		float k					= time / kickTime;
 		float setpointx = jumpPonint[0][0] * (1 - k) + jumpPonint[1][0] * k;
