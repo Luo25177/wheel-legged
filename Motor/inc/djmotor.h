@@ -18,6 +18,8 @@
 
 #include <stdlib.h>
 
+#define M3508RPMTORAD 0.000138155f
+
 typedef struct {
 	bool setZero;	 // 是否获得的零点位置脉冲
 	u8	 id;

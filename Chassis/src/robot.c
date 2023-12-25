@@ -23,7 +23,7 @@ void robotInit() {
 	// TODO: 参数暂定 调节
 	pidInit(&robot.yawpid, 1, 1, 1, 0, 1000, PIDPOS);
 	pidInit(&robot.rollpid, 1, 1, 1, 0, 1000, PIDPOS);
-	pidInit(&robot.splitpid, 80, 0, 2000, 0, 1000, PIDPOS);
+	pidInit(&robot.splitpid, 80, 0, 1000, 0, 1000, PIDPOS);
 
 	robot.L0Set							= 0.35;
 	robot.yawpid.target			= 0;
@@ -89,8 +89,8 @@ void balanceMode() {
 	//	}
 	robot.legVir.X.theta		 = robot.legVir.angle0.now;
 	robot.legVir.X.thetadot	 = robot.legVir.angle0.dot;
-	robot.legVir.X.x				 = 0;	 // robot.legVir.dis.now;
-	robot.legVir.X.v				 = 0;	 // robot.legVir.dis.dot;
+	robot.legVir.X.x				 = robot.legVir.dis.now;
+	robot.legVir.X.v				 = robot.legVir.dis.dot;
 	robot.legVir.X.pitch		 = robot.yesense.pitch.now;
 	robot.legVir.X.pitchdot	 = robot.yesense.pitch.dot;
 
@@ -172,7 +172,7 @@ void balanceMode() {
 //
 //----
 void jumpMode() {
-	// TODO: 待做 再研究一下子
+	// TODO: 待做 再研究一下子 可以使用贝塞尔曲线来做？还是直接做线性差值？
 }
 
 //----
