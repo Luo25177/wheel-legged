@@ -13,30 +13,31 @@
 #pragma once
 
 #include "datastruct.h"
-#include "robotparam.h"
 #include "pid.h"
+#include "robotparam.h"
+
 #include <webots/motor.h>
 #include <webots/position_sensor.h>
 
 typedef struct {
 	int dir;
 
-	WbDeviceTag	wheel;
-	WbDeviceTag	front;
-	WbDeviceTag	behind;
-	
-	WbDeviceTag	wheelEncoder;
-	WbDeviceTag	frontEncoder;
-	WbDeviceTag	behindEncoder;
+	WbDeviceTag wheel;
+	WbDeviceTag front;
+	WbDeviceTag behind;
+
+	WbDeviceTag wheelEncoder;
+	WbDeviceTag frontEncoder;
+	WbDeviceTag behindEncoder;
 
 	Input			 X, Xd;
 	Output		 U;
 	datastruct angle0;
 	datastruct L0;
 	datastruct dis;
-	// ÎåÁ¬¸Ë×ø±êÏµÏÂµÄ×ø±ê£¬Ô­µãÔÚÎåÁ¬¸ËµÄÖÐ´¹ÏßÉÏ
-	float			 angle1, angle2, angle3, angle4;	// ½Ç¶È¼ÆËãÖµºÍ¶ÁÈ¡µ½µÄÕæÊµÖµ£¬ÊÇºÍÍ¼ÖÐµÄÒ»Ò»¶ÔÓ¦
-	float			 angle1set, angle4set;						// ½Ç¶ÈÉè¶¨Öµ£¬ÊÇÔÚ³õÊ¼½Ç¶ÈÖ®ÉÏµÄÉè¶¨Öµ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½Âµï¿½ï¿½ï¿½ï¿½ê£¬Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½
+	float			 angle1, angle2, angle3, angle4;	// ï¿½Ç¶È¼ï¿½ï¿½ï¿½Öµï¿½Í¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÊµÖµï¿½ï¿½ï¿½Çºï¿½Í¼ï¿½Ðµï¿½Ò»Ò»ï¿½ï¿½Ó¦
+	float			 angle1set, angle4set;						// ï¿½Ç¶ï¿½ï¿½è¶¨Öµï¿½ï¿½ï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½Ç¶ï¿½Ö®ï¿½Ïµï¿½ï¿½è¶¨Öµ
 
 	float xa, ya;
 	float xb, yb;
@@ -48,14 +49,14 @@ typedef struct {
 	float TFnow;
 	float TBnow;
 	float TWheelnow;
-	float Fset;		// ÐéÄâÁ¦
-	float Tpset;	// ¹Ø½Ú´¦Å¤¾Ø
+	float Fset;		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	float Tpset;	// ï¿½Ø½Ú´ï¿½Å¤ï¿½ï¿½
 	float TFset;
 	float TBset;
 	float TWheelset;
-	float normalforce;	// µØÃæ¶Ô»úÆ÷ÈËµÄÊµ¼ÊÖ§³ÖÁ¦
+	float normalforce;	// ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½ï¿½Ëµï¿½Êµï¿½ï¿½Ö§ï¿½ï¿½ï¿½ï¿½
 	float K[2][6];
-	PID	L0pid;	// ÐéÄâÁ¦µÄpid ÊÇÍÈ³¤µÄ¿ØÖÆ
+	PID		L0pid;	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pid ï¿½ï¿½ï¿½È³ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½
 } Leg;
 
 void legInit(Leg* leg, int dir);
@@ -64,5 +65,3 @@ void Zjie(Leg* leg, float pitch);
 void Njie(Leg* leg, float xc, float yc);
 void VMC(Leg* leg);
 void INVMC(Leg* leg);
-
-

@@ -21,4 +21,3 @@ typedef struct {
 } datastruct;
 
 void datastructInit(datastruct* data, const float _now, const float _last, const float _dot, const float _ddot);
-

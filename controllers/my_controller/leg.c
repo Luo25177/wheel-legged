@@ -7,44 +7,43 @@
 // @param dir 腿的方向
 //----
 void legInit(Leg* leg, int dir) {
-	leg->Fset = -61.90455385;	// 虚拟力设定值的初始化
-	leg->dir	 = dir;
+	leg->Fset = -61.90455385;	 // 虚拟力设定值的初始化
+	leg->dir	= dir;
 
-	pidInit(&leg->L0pid, 2000, 50, 10000, 0, 1000, PIDPOS);
+	pidInit(&leg->L0pid, 2000, 50, 12000, 0, 1000, PIDPOS);
 
 	datastructInit(&leg->dis, 0, 0, 0, 0);
 	// TODO: L0 初始位置 angle0的初始值
 	datastructInit(&leg->L0, 0, 0, 0, 0);
 	datastructInit(&leg->angle0, 0, 0, 0, 0);
 
-	leg->Fnow									= leg->Fset;
-	leg->Tpset								= 0;
-	leg->TFset								= 0;
-	leg->TBset								= 0;
-	leg->TWheelset						= 0;
-	leg->normalforce					= leg->Fset;
+	leg->Fnow				 = leg->Fset;
+	leg->Tpset			 = 0;
+	leg->TFset			 = 0;
+	leg->TBset			 = 0;
+	leg->TWheelset	 = 0;
+	leg->normalforce = leg->Fset;
 
 	// 电机绑定
-	switch (leg->dir)
-	{
-	case LEGLEFT:
-		leg->front = wb_robot_get_device("MotorFL");
-		leg->behind = wb_robot_get_device("MotorBL");
-		leg->wheel = wb_robot_get_device("MotorWheelL");
-		leg->frontEncoder = wb_robot_get_device("EncoderFL");
-		leg->behindEncoder = wb_robot_get_device("EncoderBL");
-		leg->wheelEncoder = wb_robot_get_device("EncoderWheelL");
-		break;
-	case LEGRIGHT:
-		leg->front = wb_robot_get_device("MotorFR");
-		leg->behind = wb_robot_get_device("MotorBR");
-		leg->wheel = wb_robot_get_device("MotorWheelR");
-		leg->frontEncoder = wb_robot_get_device("EncoderFR");
-		leg->behindEncoder = wb_robot_get_device("EncoderBR");
-		leg->wheelEncoder = wb_robot_get_device("EncoderWheelR");
-		break;
-	default:
-		break;
+	switch (leg->dir) {
+		case LEGLEFT:
+			leg->front				 = wb_robot_get_device("MotorFL");
+			leg->behind				 = wb_robot_get_device("MotorBL");
+			leg->wheel				 = wb_robot_get_device("MotorWheelL");
+			leg->frontEncoder	 = wb_robot_get_device("EncoderFL");
+			leg->behindEncoder = wb_robot_get_device("EncoderBL");
+			leg->wheelEncoder	 = wb_robot_get_device("EncoderWheelL");
+			break;
+		case LEGRIGHT:
+			leg->front				 = wb_robot_get_device("MotorFR");
+			leg->behind				 = wb_robot_get_device("MotorBR");
+			leg->wheel				 = wb_robot_get_device("MotorWheelR");
+			leg->frontEncoder	 = wb_robot_get_device("EncoderFR");
+			leg->behindEncoder = wb_robot_get_device("EncoderBR");
+			leg->wheelEncoder	 = wb_robot_get_device("EncoderWheelR");
+			break;
+		default:
+			break;
 	}
 	wb_motor_enable_torque_feedback(leg->front, timestep);
 	wb_motor_enable_torque_feedback(leg->behind, timestep);
@@ -64,8 +63,8 @@ void legInit(Leg* leg, int dir) {
 // @param leg
 //---
 void legUpdate(Leg* leg) {
-	leg->dis.now = -wb_position_sensor_get_value(leg->wheelEncoder) * WHEELR;
-	leg->dis.dot = (leg->dis.now - leg->dis.last) / dt;
+	leg->dis.now	= wb_position_sensor_get_value(leg->wheelEncoder) * WHEELR;
+	leg->dis.dot	= (leg->dis.now - leg->dis.last) / dt;
 	leg->dis.last = leg->dis.now;
 }
 
@@ -96,9 +95,9 @@ void Zjie(Leg* leg, float pitch) {
 
 	// 乘以pitch的旋转矩阵
 	float cor_XY_then[2][1];
-	cor_XY_then[0][0] = cos(pitch) * leg->xc - sin(pitch) * leg->yc;
-	cor_XY_then[1][0] = sin(pitch) * leg->xc + cos(pitch) * leg->yc;
-	leg->angle0.now		= atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
+	cor_XY_then[0][0]		= cos(pitch) * leg->xc - sin(pitch) * leg->yc;
+	cor_XY_then[1][0]		= sin(pitch) * leg->xc + cos(pitch) * leg->yc;
+	leg->angle0.now			= atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
 
 	leg->L0.dot					= (leg->L0.now - leg->L0.last) / dt;
 	leg->L0.ddot				= (leg->L0.dot - leg->L0.lastdot) / dt;
@@ -124,19 +123,22 @@ void Njie(Leg* leg, float xc, float yc) {
 	A							 = 2 * l1 * yc;
 	B							 = 2 * l1 * (xc + l5 / 2);
 	C							 = l2 * l2 - l1 * l1 - xc * xc - yc * yc - l5 * l5 / 4 + xc * l5;
-	leg->angle1set = 2 * atan2((A + sqrt(A * A + B * B - C * C)), (B - C));
+	leg->angle1set = 2 * atan((A + sqrt(A * A + B * B - C * C)) / (B - C));
 	if (leg->angle1set < 0)
 		leg->angle1set += 2 * PI;
-	m							 = l1 * cos(leg->angle1set);
-	n							 = l1 * sin(leg->angle1set);
-	b							 = 0;
-	x1						 = ((xc - m) * cos(b) - (yc - n) * sin(b)) + m;
-	y1						 = ((xc - m) * sin(b) + (yc - n) * cos(b)) + n;	 // 得到闭链五杆端点的坐标
+	m								= l1 * cos(leg->angle1set);
+	n								= l1 * sin(leg->angle1set);
+	b								= 0;
+	x1							= ((xc - m) * cos(b) - (yc - n) * sin(b)) + m;
+	y1							= ((xc - m) * sin(b) + (yc - n) * cos(b)) + n;	// 得到闭链五杆端点的坐标
 
-	A							 = 2 * y1 * l4;
-	B							 = 2 * l4 * (x1 - l5 / 2);
-	C							 = l3 * l3 + l5 * x1 - l4 * l4 - l5 * l5 / 4 - x1 * x1 - y1 * y1;
-	leg->angle4set = 2 * atan2((A - sqrt(A * A + B * B - C * C)), (B - C));
+	A								= 2 * y1 * l4;
+	B								= 2 * l4 * (x1 - l5 / 2);
+	C								= l3 * l3 + l5 * x1 - l4 * l4 - l5 * l5 / 4 - x1 * x1 - y1 * y1;
+	leg->angle4set	= 2 * atan((A - sqrt(A * A + B * B - C * C)) / (B - C));
+
+	leg->angle1set -= InitAngle1;
+	leg->angle4set	= InitAngle4 - leg->angle4set;
 }
 
 //----

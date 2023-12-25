@@ -3,7 +3,7 @@
 //----
 // @file robotparam.h
 // @author mask <beloved25177@126.com>
-// @brief »úÆ÷ÈËËùÐèÒªµÄËùÓÐ²ÎÊýµÄ¶¨Òå£¬µ«ÊÇ²»ÍêÈ«£¬»¹ÐèÒª²â¶¨
+// @brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½å£¬ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½â¶¨
 // @version 1.0
 // @date 2023-11-13
 //
@@ -12,7 +12,7 @@
 //----
 #pragma once
 
-// ³õÊ¼×´Ì¬£º
+// ï¿½ï¿½Ê¼×´Ì¬ï¿½ï¿½
 // angle4 -23.2
 // angle1 183.23
 #define l1		 0.20f
@@ -31,9 +31,9 @@
 #define MASSLEG					0.26857f
 #define MASSWHEEL				0.70686f
 #define GRAVITY					9.805f
-// ÐéÄâÁ¦Ç°À¡
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½
 #define FFEEDFORWARD		-64.59885f
-// ×îÐ¡Ö§³ÖÁ¦ãÐÖµ£¬ÅÐ¶ÏÊÇ·ñÀëµØµÄÖ§³ÖÁ¦µÄãÐÖµ
+// ï¿½ï¿½Ð¡Ö§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Øµï¿½Ö§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 #define FORCETHRESHOLD	-20.f
 #define MAXROBOTSPEED		1.f
 #define MINROBOTLEGLEN	0.16f;
@@ -44,12 +44,20 @@
 #define LEGLEFT					(int) 1
 #define LEGRIGHT				(int) -1
 
-#define timestep 10
-#define dt 0.01f
+#define timestep 8
+#define dt			 0.008f
 
-typedef enum { ROBOTNORMAL = 0, ROBOTJUMP, ROBOTHALT } RobotRunMode;
+#define InitAngle1 5.0 / 6.0 * PI
+#define InitAngle4 1.0 / 6.0 * PI
 
-typedef struct {
+typedef enum {
+	ROBOTNORMAL = 0,
+	ROBOTJUMP,
+	ROBOTHALT
+} RobotRunMode;
+
+typedef struct
+{
 	float theta;
 	float thetadot;
 	float x;
@@ -58,7 +66,8 @@ typedef struct {
 	float pitchdot;
 } Input;
 
-typedef struct {
+typedef struct
+{
 	float Tp;
 	float Twheel;
 } Output;
@@ -66,5 +75,8 @@ typedef struct {
 void inputInit(Input* input);
 void outputInit(Output* output);
 
-extern float		Kcoeff[12][4];
+extern float Kcoeff[12][4];
 
+float jumpPonint[2][2];
+float kickTime;
+float shrinkTime;

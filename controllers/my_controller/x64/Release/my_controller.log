@@ -1,20 +1,21 @@
 ﻿  car.c
-D:\Desktop\轮足\controllers\my_controller\car.c(25,24): warning C4305: “=”: 从“double”到“float”截断
-D:\Desktop\轮足\controllers\my_controller\car.c(39,35): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\car.c(40,35): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\car.c(41,35): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\car.c(42,35): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\car.c(72,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(4,14): warning C4305: “初始化”: 从“double”到“float”截断
+D:\Desktop\轮足\controllers\my_controller\car.c(26,24): warning C4305: “=”: 从“double”到“float”截断
+D:\Desktop\轮足\controllers\my_controller\car.c(40,31): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(41,31): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(42,31): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(43,31): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
 D:\Desktop\轮足\controllers\my_controller\car.c(73,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
 D:\Desktop\轮足\controllers\my_controller\car.c(74,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\car.c(201,61): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\car.c(202,61): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\car.c(204,69): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\car.c(206,212): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足\controllers\my_controller\car.c(207,212): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(75,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(223,61): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(224,61): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(226,69): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(228,212): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足\controllers\my_controller\car.c(229,212): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
   正在生成代码
-  0 of 24 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  3 of 28 functions (10.7%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   my_controller.vcxproj -> D:\Desktop\轮足\controllers\my_controller\my_controller.exe

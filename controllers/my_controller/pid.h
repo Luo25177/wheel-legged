@@ -7,7 +7,7 @@
 // @date 2023-11-12
 //
 // @copyright Copyright (c) 2023
-// @details 一些比较常用的pid
+// @details 一些锟饺较筹拷锟矫碉拷pid
 //----
 #pragma once
 
@@ -46,5 +46,3 @@ float TposCompute(PID* pid, float input);
 float twiceIncCompute(PID* pid, float input, float inputdot);
 
 void pidInit(PID* pid, float kp, float ki, float kd, float outputLimit, float accErrLimit, pidMode mode);
-
-

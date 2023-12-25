@@ -1,8 +1,8 @@
 #pragma once
-#include "pid.h"
-#include "yesense.h"
-#include "robotparam.h"
 #include "leg.h"
+#include "pid.h"
+#include "robotparam.h"
+#include "yesense.h"
 
 typedef struct {
 	bool flyflag;
@@ -12,23 +12,25 @@ typedef struct {
 	Leg			legVir;
 	Yesense yesense;
 
-	// ÒÔÏÂËÄ¸öPIDÊä³ö½á¹û¾ùÎªÁ¦
-	PID yawpid;		// ½ÇËÙ¶È¿ØÖÆ
-	PID rollpid;		// ·­¹ö½Ç¿ØÖÆ
-	PID splitpid;	// Ë«ÍÈÅü²æ¿ØÖÆ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½PIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
+	PID yawpid;		 // ï¿½ï¿½ï¿½Ù¶È¿ï¿½ï¿½ï¿½
+	PID rollpid;	 // ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½
+	PID splitpid;	 // Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	RobotRunMode mode;
 
-	float L0Set;	// Éè¶¨ÍÈ³¤£¬Ò²¾ÍÊÇµ±Ç°Á½ÌõÍÈµÄÆ½¾ùÍÈ³¤
+	float L0Set;	// ï¿½è¶¨ï¿½È³ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½Çµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½Æ½ï¿½ï¿½ï¿½È³ï¿½
 	float xSet;
 	float vSet;
+
+	float force;
 } Car;
-	
+
 extern Car car;
-void robotInit();
-void updateState();
-void balanceMode();
-void jumpMode();
-void haltMode();
-void flyCheck();
-void robotRun();
+void			 robotInit();
+void			 updateState();
+void			 balanceMode();
+void			 jumpMode();
+void			 haltMode();
+void			 flyCheck();
+void			 robotRun();

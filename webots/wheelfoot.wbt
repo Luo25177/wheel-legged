@@ -1,11 +1,11 @@
 #VRML_SIM R2021a utf8
 WorldInfo {
-  basicTimeStep 5
+  basicTimeStep 4
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.11886351981165534 0.9857702203434471 0.11886351981165529 4.698057477219769
-  position -3.8479152146787103 0.8464965694765471 0.3142987533409254
+  orientation 0.15895278197126944 0.9738772158688558 0.16216405740829298 4.665934319383837
+  position -8.937531731390296 2.8547026654799255 2.159866105885963
   follow "solid"
 }
 Floor {
@@ -44,8 +44,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -2.1743761486492958e-07 -3.6512407704960235e-06 3.26797883198892e-09
-            rotation 0.9224849739987263 0.37743081812632034 0.08103980673141921 1.1151007970493858e-07
+            translation -2.1743761486492768e-07 -3.651240770496007e-06 3.26797883198889e-09
+            rotation 0 0 1 0
             children [
               DEF 小腿连接处 Transform {
                 translation 0.2 0 0.01
@@ -60,6 +60,7 @@ Robot {
                       children [
                         DEF 轮子连接 Transform {
                           translation 0.4 0 0.01
+                          rotation 0 1 0 3.14159
                           children [
                             DEF 小腿铰接 HingeJoint {
                               jointParameters HingeJointParameters {
@@ -83,7 +84,7 @@ Robot {
                                 }
                               ]
                               endPoint DEF 轮子 Solid {
-                                rotation 0 0 1 0
+                                rotation 0 1 0 3.14159
                                 children [
                                   DEF 轮子 Shape {
                                     appearance Appearance {
@@ -221,8 +222,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -2.1743695395649102e-07 -3.651241956767298e-06 6.978440103555539e-09
-            rotation -0.9416400341431166 -0.32987396869154306 0.06706124721954526 8.940696716308595e-08
+            translation -2.1743695395649134e-07 -3.6512419567673234e-06 6.978440103555572e-09
+            rotation 0 0 1 0
             children [
               DEF 小腿连接处 Transform {
                 translation 0.2 0 -0.01
@@ -237,6 +238,7 @@ Robot {
                       children [
                         DEF 轮子连接 Transform {
                           translation 0.4 0 -0.05
+                          rotation 1 0 0 3.14159
                           children [
                             DEF 小腿铰接 HingeJoint {
                               jointParameters HingeJointParameters {
@@ -260,7 +262,7 @@ Robot {
                                 }
                               ]
                               endPoint Solid {
-                                rotation 0 0 1 0
+                                rotation 1 0 0 3.14159
                                 children [
                                   DEF 轮子 Shape {
                                     appearance Appearance {
@@ -398,8 +400,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -2.1733533871101549e-07 -3.6492087656566514e-06 3.2229787172433036e-09
-            rotation -0.938050717449691 -0.34067828562752056 0.06323888988599774 8.429369702178807e-08
+            translation -2.1733533871101353e-07 -3.6492087656566624e-06 3.2229787172433028e-09
+            rotation 0 0 1 0
             children [
               DEF 小腿连接处 Transform {
                 translation 0.2 0 -0.01
@@ -510,8 +512,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -2.1733476098594692e-07 -3.6492071108999555e-06 7.006492497296762e-09
-            rotation 0.9910418231067091 0.08976854405780174 0.09888232072050539 1.1542389828584842e-07
+            translation -2.173347609859488e-07 -3.6492071108999724e-06 7.00649249729677e-09
+            rotation 0 0 1 0
             children [
               DEF 小腿连接处 Transform {
                 translation 0.2 0 0.01
