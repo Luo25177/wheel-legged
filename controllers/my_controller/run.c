@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
 	while (wb_robot_step(timestep) != -1) {
 		updateState();
 		robotRun();
-		fprintf(fp, "%f\t%f\n", car.legVir.dis.now, car.legVir.dis.dot);
+		fprintf(fp, "%f\t%f\n", car.yesense.z, car.force);
 		int key = wb_keyboard_get_key();
 		switch (key) {
 			case ' ':

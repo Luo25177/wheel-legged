@@ -117,25 +117,18 @@ void Zjie(Leg* leg, float pitch) {
 // @param yc
 //----
 void Njie(Leg* leg, float xc, float yc) {
-	float m, n, b, x1, y1;
 	float A, B, C;
 
-	A							 = 2 * l1 * yc;
-	B							 = 2 * l1 * (xc + l5 / 2);
-	C							 = l2 * l2 - l1 * l1 - xc * xc - yc * yc - l5 * l5 / 4 + xc * l5;
-	leg->angle1set = 2 * atan((A + sqrt(A * A + B * B - C * C)) / (B - C));
-	if (leg->angle1set < 0)
-		leg->angle1set += 2 * PI;
-	m								= l1 * cos(leg->angle1set);
-	n								= l1 * sin(leg->angle1set);
-	b								= 0;
-	x1							= ((xc - m) * cos(b) - (yc - n) * sin(b)) + m;
-	y1							= ((xc - m) * sin(b) + (yc - n) * cos(b)) + n;	// 得到闭链五杆端点的坐标
-
-	A								= 2 * y1 * l4;
-	B								= 2 * l4 * (x1 - l5 / 2);
-	C								= l3 * l3 + l5 * x1 - l4 * l4 - l5 * l5 / 4 - x1 * x1 - y1 * y1;
-	leg->angle4set	= 2 * atan((A - sqrt(A * A + B * B - C * C)) / (B - C));
+	A							 = 2 * (xc + l5 / 2) * l1;
+	B							 = 2 * yc * l1;
+	C							 = (xc + l5 / 2) * (xc + l5 / 2) + yc * yc + l1 * l1 - l2 * l2;
+	leg->angle1set = 2 * atan2((B + sqrt(A * A + B * B - C * C)), (A + C));
+	A							 = 2 * l4 * (xc - l5 / 2);
+	B							 = 2 * l4 * yc;
+	C							 = (xc - l5 / 2) * (xc - l5 / 2) + l4 * l4 + yc * yc - l3 * l3;
+	leg->angle4set = 2 * atan2((B - sqrt(A * A + B * B - C * C)), (A + C));
+	if (leg->angle4set < 0)
+		leg->angle4set += 2 * PI;
 
 	leg->angle1set -= InitAngle1;
 	leg->angle4set	= InitAngle4 - leg->angle4set;

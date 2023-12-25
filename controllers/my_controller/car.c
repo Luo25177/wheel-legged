@@ -1,7 +1,7 @@
 #include "car.h"
 
 Car					 car;
-static float vd = 0.010;
+static float vd = 0.0;
 
 //----
 // @brief ≥ı ºªØ
