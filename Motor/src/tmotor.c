@@ -144,6 +144,7 @@ void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg) {
 	u16 t												 = (msg.Data[4] & 0x0f) << 8 | msg.Data[5];	 // 电机扭矩
 
 	motor[id].monitor.timeOutCnt = 0;
+	motor[id].monitor.received	 = 1;
 	if (motor[id].monitor.timeOut)
 		motor[id].monitor.timeOut = false;
 	motor[id].real.angleDeg = uint2float(p, P_MIN, P_MAX, 16) * RadToDeg / TRATIO;

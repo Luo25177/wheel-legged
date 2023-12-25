@@ -36,7 +36,7 @@ void USART2_IRQHandler(void) {
 		USART_ClearFlag(USART2, USART_FLAG_RXNE);
 		USART_ClearITPendingBit(USART2, USART_IT_RXNE);
 		temp = USART_ReceiveData(USART2);
-		yesenseReceiveHandler(&robot->yesense, temp);
+		yesenseReceiveHandler(&robot.yesense, temp);
 	}
 }
 
@@ -55,21 +55,7 @@ void TIM3_IRQHandler(void) {
 		DJmotorMonitor(djmotor);
 		TmotorMonitor(tmotor);
 		RobotStateUpdate(&robotstate);
-
-		// vofaJustFloat((float) robot->legR.Fset, (float) robot->L0pid->output, (float) robot->legR.L0.now, (float) robot->L0Set,
-		// 										(float) robot->legR.Fnow);
-		// vofaJustFloat((float) robot->legL.Fset, (float) robot->L0pid->output, (float) robot->legL.L0.now, (float) robot->L0Set, 0);
-
-		// vofaJustFloat();
-		// blueToothSend(3, (void*) &robotstate, sizeof(RobotState));
-		float data[6];
-		data[0] = robot->legR.L0.now;
-		data[1] = robot->legR.L0pid.target;
-		data[2] = robot->legR.L0pid.output;
-		data[3] = robot->legR.Fset;
-		data[4] = robot->legR.Tpset;
-		data[5] = robot->legR.angle0.now;
-		oscilloscope(data, 6);
+		robotTorqueMonitor();
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }

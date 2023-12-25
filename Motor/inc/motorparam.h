@@ -34,6 +34,7 @@ typedef struct {
 	bool enable;
 	bool timeOut;
 	bool stuckRealse;
+	u8	 received;	// 本次是否接收到了消息
 	u8	 mode;
 	u32	 stuckCnt;
 	u32	 timeOutCnt;

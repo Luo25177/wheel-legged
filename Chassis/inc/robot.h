@@ -34,7 +34,7 @@ typedef struct {
 	float vSet;
 } Robot;
 
-extern Robot* robot;
+extern Robot robot;
 
 void robotInit();
 void updateState();

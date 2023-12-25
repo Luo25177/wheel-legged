@@ -20,14 +20,14 @@ void MasterInit(Master* master) {
 	ControlParamInit(&master->control);
 }
 
-void ControlParamDeal(ControlParam* controlparam) { robot->mode = controlparam->robotmode; }
+void ControlParamDeal(ControlParam* controlparam) { robot.mode = controlparam->robotmode; }
 
 void HandleParamDeal(HandleParam* handleparam) {
 	// TODO: 参数暂定
-	// robot->vSet						= (float) (handleparam->run * 0.01);
-	// robot->L0Set					= (float) (handleparam->height * 0.01);
-	// robot->rollpid.target = handleparam->tilt;
-	// robot->yawpid.target	= handleparam->turn;
+	// robot.vSet						= (float) (handleparam->run * 0.01);
+	// robot.L0Set					= (float) (handleparam->height * 0.01);
+	// robot.rollpid.target = handleparam->tilt;
+	// robot.yawpid.target	= handleparam->turn;
 }
 
 void RobotStateInit(RobotState* robotstate) {
@@ -40,11 +40,11 @@ void RobotStateInit(RobotState* robotstate) {
 }
 
 void RobotStateUpdate(RobotState* robotstate) {
-	robotstate->height = robot->legVir.L0.now;
-	robotstate->pitch	 = robot->yesense.pitch.now;
-	robotstate->yaw		 = robot->yesense.yaw.now;
-	robotstate->roll	 = robot->yesense.roll.now;
-	robotstate->v			 = robot->legVir.dis.dot;
+	robotstate->height = robot.legVir.L0.now;
+	robotstate->pitch	 = robot.yesense.pitch.now;
+	robotstate->yaw		 = robot.yesense.yaw.now;
+	robotstate->roll	 = robot.yesense.roll.now;
+	robotstate->v			 = robot.legVir.dis.dot;
 	// 这一段写的有点傻鸟，但是没想到更好的办法
 	if (tmotor[0].monitor.timeOut)
 		robotstate->deviceState &= 0b11111110;

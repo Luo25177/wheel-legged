@@ -464,6 +464,11 @@
               <FileType>1</FileType>
               <FilePath>..\Chassis\src\robotparam.c</FilePath>
             </File>
+            <File>
+              <FileName>robotmonitor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Chassis\src\robotmonitor.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

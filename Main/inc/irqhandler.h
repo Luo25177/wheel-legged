@@ -13,6 +13,7 @@
 #include "bluetooth.h"
 #include "can.h"
 #include "robot.h"
+#include "robotmonitor.h"
 #include "tim.h"
 #include "usart.h"
 #include "vofa.h"

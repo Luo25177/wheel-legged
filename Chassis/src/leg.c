@@ -79,16 +79,16 @@ void Zjie(Leg* leg, float pitch) {
 	cor_XY_then[1][0] = sin(pitch) * leg->xc + cos(pitch) * leg->yc;
 	leg->angle0.now		= atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
 
-	float dt					= (float) (GlobalTimer - leg->timer) / 1000;
+	float dt					= 1000 / (float) (GlobalTimer - leg->timer);
 	leg->timer				= GlobalTimer;
 
 	if (dt > 0) {
-		leg->L0.dot					= (leg->L0.now - leg->L0.last) / dt;
-		leg->L0.ddot				= (leg->L0.dot - leg->L0.lastdot) / dt;
+		leg->L0.dot					= (leg->L0.now - leg->L0.last) * dt;
+		leg->L0.ddot				= (leg->L0.dot - leg->L0.lastdot) * dt;
 		leg->L0.last				= leg->L0.now;
 		leg->L0.lastdot			= leg->L0.dot;
-		leg->angle0.dot			= (leg->angle0.now - leg->angle0.last) / dt;
-		leg->angle0.ddot		= (leg->angle0.dot - leg->angle0.lastdot) / dt;
+		leg->angle0.dot			= (leg->angle0.now - leg->angle0.last) * dt;
+		leg->angle0.ddot		= (leg->angle0.dot - leg->angle0.lastdot) * dt;
 		leg->angle0.last		= leg->angle0.now;
 		leg->angle0.lastdot = leg->angle0.dot;
 	}
