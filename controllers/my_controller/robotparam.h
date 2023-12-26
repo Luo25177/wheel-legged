@@ -77,6 +77,6 @@ void outputInit(Output* output);
 
 extern float Kcoeff[12][4];
 
-float jumpPonint[2][2];
+float jumpPoint[2][2];
 float kickTime;
 float shrinkTime;

@@ -179,16 +179,19 @@ static float time = 0;
 void				 jumpMode() {
 	car.legL.L0pid.target = 0.37;
 	car.legR.L0pid.target = 0.37;
+	jumpPoint[0][0]				= car.legVir.xc;
+	jumpPoint[1][0]				= car.legVir.xc;
 	if (time < kickTime) {
 		float k					= time / kickTime;
-		float setpointx = jumpPonint[0][0] * (1 - k) + jumpPonint[1][0] * k;
-		float setpointy = jumpPonint[0][1] * (1 - k) + jumpPonint[1][1] * k;
+		float setpointx = jumpPoint[0][0] * (1 - k) + jumpPoint[1][0] * k;
+		float setpointy = jumpPoint[0][1] * (1 - k) + jumpPoint[1][1] * k;
 		Njie(&car.legL, setpointx, setpointy);
 		Njie(&car.legR, setpointx, setpointy);
 	} else if (time < kickTime + shrinkTime) {
 		float k					= (time - kickTime) / shrinkTime;
-		float setpointx = jumpPonint[1][0] * (1 - k) + jumpPonint[0][0] * k;
-		float setpointy = jumpPonint[1][1] * (1 - k) + jumpPonint[0][1] * k;
+		jumpPoint[0][0] = 0;
+		float setpointx = jumpPoint[1][0] * (1 - k) + jumpPoint[0][0] * k;
+		float setpointy = jumpPoint[1][1] * (1 - k) + jumpPoint[0][1] * k;
 		Njie(&car.legL, setpointx, setpointy);
 		Njie(&car.legR, setpointx, setpointy);
 	} else {
