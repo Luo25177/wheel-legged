@@ -12,7 +12,7 @@ typedef struct {
 	Leg			legVir;
 	Yesense yesense;
 
-	PID yawpid;	
+	PID yawpid;
 	PID rollpid;
 	PID splitpid;
 
@@ -25,13 +25,13 @@ typedef struct {
 	float force;
 } Car;
 
-extern Car car;
+extern Car	 car;
 extern float vd;
 
-void			 robotInit();
-void			 updateState();
-void			 balanceMode();
-void			 jumpMode();
-void			 haltMode();
-void			 flyCheck();
-void			 robotRun();
+void robotInit();
+void updateState();
+void balanceMode();
+void jumpMode();
+void haltMode();
+void flyCheck();
+void robotRun();

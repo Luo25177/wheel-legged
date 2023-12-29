@@ -1,6 +1,6 @@
 #include "car.h"
 
-Car					 car;
+Car		car;
 float vd = 0;
 
 //----
@@ -69,9 +69,9 @@ void updateState() {
 //
 //----
 void balanceMode() {
-	float L03 = pow(car.legVir.L0.now, 3);
-	float L02 = pow(car.legVir.L0.now, 2);
-	float L01 = pow(car.legVir.L0.now, 1);
+	float L03 = car.legVir.L0.now * car.legVir.L0.now * car.legVir.L0.now;
+	float L02 = car.legVir.L0.now * car.legVir.L0.now;
+	float L01 = car.legVir.L0.now;
 
 	if (car.flyflag) {
 		for (int col = 0; col < 6; col++) {
@@ -91,22 +91,22 @@ void balanceMode() {
 			}
 		}
 	}
-	car.legVir.X.theta			= car.legVir.angle0.now;
-	car.legVir.X.thetadot		= car.legVir.angle0.dot;
-	car.legVir.X.x					= car.legVir.dis.now;
-	car.legVir.X.v					= car.legVir.dis.dot;
-	car.legVir.X.pitch			= car.yesense.pitch.now;
-	car.legVir.X.pitchdot		= car.yesense.pitch.dot;
+	car.legVir.X.theta		 = car.legVir.angle0.now;
+	car.legVir.X.thetadot	 = car.legVir.angle0.dot;
+	car.legVir.X.x				 = 0;
+	car.legVir.X.v				 = car.legVir.dis.dot;
+	car.legVir.X.pitch		 = car.yesense.pitch.now;
+	car.legVir.X.pitchdot	 = car.yesense.pitch.dot;
 
-	car.legVir.Xd.theta			= 0;
-	car.legVir.Xd.thetadot	= 0;
-	car.legVir.Xd.x				 += vd;
-	car.legVir.Xd.v					= 0;
-	car.legVir.Xd.pitch			= 0;
-	car.legVir.Xd.pitchdot	= 0;
-	vd												= 0;
+	car.legVir.Xd.theta		 = 0;
+	car.legVir.Xd.thetadot = 0;
+	car.legVir.Xd.x				 = 0;
+	car.legVir.Xd.v				 = vd;
+	car.legVir.Xd.pitch		 = 0;
+	car.legVir.Xd.pitchdot = 0;
+	vd										 = 0;
 
-	car.legVir.U.Twheel			= car.legVir.K[0][0] * (car.legVir.Xd.theta - car.legVir.X.theta) +
+	car.legVir.U.Twheel		 = car.legVir.K[0][0] * (car.legVir.Xd.theta - car.legVir.X.theta) +
 												car.legVir.K[0][1] * (car.legVir.Xd.thetadot - car.legVir.X.thetadot) +
 												car.legVir.K[0][2] * (car.legVir.Xd.x - car.legVir.X.x) +
 												car.legVir.K[0][3] * (car.legVir.Xd.v - car.legVir.X.v) +
@@ -134,7 +134,7 @@ void balanceMode() {
 	car.legR.Fset					-= rfCompensate;
 	// Ðý×ª²¹³¥
 	float yawCompensate		 = car.yawpid.compute(&car.yawpid, car.yesense.yaw.dot);
-	car.yawpid.target				= 0;
+	car.yawpid.target			 = 0;
 	car.legL.TWheelset		-= yawCompensate;
 	car.legR.TWheelset		+= yawCompensate;
 	//// ÅüÍÈ²¹³¥
@@ -179,8 +179,6 @@ static float time = 0;
 void				 jumpMode() {
 	car.legL.L0pid.target = 0.37;
 	car.legR.L0pid.target = 0.37;
-	jumpPoint[0][0]				= car.legVir.xc;
-	jumpPoint[1][0]				= car.legVir.xc;
 	if (time < kickTime) {
 		float k					= time / kickTime;
 		float setpointx = jumpPoint[0][0] * (1 - k) + jumpPoint[1][0] * k;
@@ -189,7 +187,6 @@ void				 jumpMode() {
 		Njie(&car.legR, setpointx, setpointy);
 	} else if (time < kickTime + shrinkTime) {
 		float k					= (time - kickTime) / shrinkTime;
-		jumpPoint[0][0] = 0;
 		float setpointx = jumpPoint[1][0] * (1 - k) + jumpPoint[0][0] * k;
 		float setpointy = jumpPoint[1][1] * (1 - k) + jumpPoint[0][1] * k;
 		Njie(&car.legL, setpointx, setpointy);

@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 	while (wb_robot_step(timestep) != -1) {
 		updateState();
 		robotRun();
-		fprintf(fp, "%f\t%f\t%f\n", car.legL.dis.now, car.legR.dis.now, car.legVir.dis.now);
+		fprintf(fp, "%f\t%f\t%f\t%f\n", car.legVir.X.pitch, car.legVir.X.theta, car.legVir.X.v, car.legVir.Xd.v);
 		int new_key = wb_keyboard_get_key();
 		while (new_key > 0) {
 			switch (new_key) {
@@ -19,10 +19,10 @@ int main(int argc, char** argv) {
 					car.mode = ROBOTJUMP;
 					break;
 				case WB_KEYBOARD_UP:
-					vd = 0.01;
+					vd = 1.5;
 					break;
 				case WB_KEYBOARD_DOWN:
-					vd = -0.01;
+					vd = -1.5;
 					break;
 				case WB_KEYBOARD_LEFT:
 					car.yawpid.target = 1.8;

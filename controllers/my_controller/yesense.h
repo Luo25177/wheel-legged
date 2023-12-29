@@ -1,14 +1,14 @@
 #pragma once
 
 #include "datastruct.h"
-#include "robotparam.h"
 #include "mymath.h"
+#include "robotparam.h"
 
 #include <webots/accelerometer.h>
+#include <webots/camera.h>
 #include <webots/gps.h>
 #include <webots/gyro.h>
 #include <webots/inertial_unit.h>
-#include <webots/camera.h>
 
 typedef struct {
 	WbDeviceTag gps;
@@ -27,8 +27,8 @@ typedef struct {
 	datastruct yaw;
 	datastruct x;
 	datastruct y;
-	
-	bool gpsinit;
+
+	bool	gpsinit;
 	float initx;
 	float inity;
 	float X;
