@@ -30,8 +30,8 @@ void robotLqrMonitor() {
 	data[3] = robot.legVir.X.v;
 	data[4] = robot.legVir.X.pitch;
 	data[5] = robot.legVir.X.pitchdot;
-	data[6] = robot.legVir.Tpset;
-	data[7] = robot.legVir.TWheelset;
+	data[6] = robot.legVir.U.Tp;
+	data[7] = robot.legVir.U.Twheel;
 	oscilloscope(data, 8);
 }
 

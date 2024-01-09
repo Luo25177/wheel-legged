@@ -12,6 +12,7 @@
 #define T_MIN	 -12.0f	 // 扭矩极限（Nm）
 #define T_MAX	 12.0f
 #define TRATIO 7.643f
+
 //----
 // @brief 初始化
 //
@@ -144,24 +145,22 @@ void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg) {
 	u16 t												 = (msg.Data[4] & 0x0f) << 8 | msg.Data[5];	 // 电机扭矩
 
 	motor[id].monitor.timeOutCnt = 0;
-	motor[id].monitor.received	 = 1;
-	if (motor[id].monitor.timeOut)
-		motor[id].monitor.timeOut = false;
-	motor[id].real.angleDeg = uint2float(p, P_MIN, P_MAX, 16) * RadToDeg / TRATIO;
-	motor[id].real.velocity = uint2float(v, P_MIN, P_MAX, 12) * RadToDeg / TRATIO;
-	motor[id].real.torque		= uint2float(t, T_MIN, T_MAX, 12);
+	motor[id].monitor.timeOut		 = false;
+	motor[id].real.angleRad			 = uint2float(p, P_MIN, P_MAX, 16) / TRATIO;
+	motor[id].real.velocity			 = uint2float(v, P_MIN, P_MAX, 12) * RadToDeg / TRATIO;
+	motor[id].real.torque				 = uint2float(t, T_MIN, T_MAX, 12);
 	if (!motor[id].init) {
-		motor[id].initReadAngle = motor[id].real.angleDeg;
+		motor[id].initReadAngle = motor[id].real.angleRad;
 		motor[id].init					= true;
 	}
-	motor[id].real.angleDeg -= motor[id].initReadAngle;
-	motor[id].real.angleRad	 = motor[id].real.angleDeg * DegToRad;
+	motor[id].real.angleRad -= motor[id].initReadAngle;
+	motor[id].real.angleDeg	 = motor[id].real.angleRad * RadToDeg;
 }
 
 void TmotorEnable(Tmotor* motor, u8 controlword) {
-	if (controlword & 0x01) {
+	if (controlword & 0x01)
 		motor->monitor.enable = true;
-	} else
+	else
 		motor->monitor.enable = false;
 }
 

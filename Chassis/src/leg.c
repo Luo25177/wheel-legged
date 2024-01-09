@@ -43,8 +43,8 @@ void legInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind) {
 void legUpdate(Leg* leg) {
 	leg->angle1		 = (float) (leg->front->initSetAngle + (leg->front->real.angleRad * leg->dir));
 	leg->angle4		 = (float) (leg->behind->initSetAngle + (leg->behind->real.angleRad * leg->dir));
-	leg->dis.now	 = (float) leg->wheel->real.angleRad * WHEELR * leg->dir;
-	leg->dis.dot	 = (float) leg->wheel->real.velocity * M3508RPMTORAD * WHEELR * leg->dir;
+	leg->dis.now	 = (float) -leg->wheel->real.angleRad * WHEELR * leg->dir;
+	leg->dis.dot	 = (float) -leg->wheel->real.velocity * M3508RPMTORAD * WHEELR * leg->dir;
 	leg->TFnow		 = (float) leg->front->real.torque * leg->dir;
 	leg->TBnow		 = (float) leg->behind->real.torque * leg->dir;
 	leg->TWheelnow = (float) leg->wheel->real.torque * leg->dir;
@@ -62,25 +62,25 @@ void Zjie(Leg* leg, float pitch) {
 	leg->yb			= l1 * sin(leg->angle1);
 	leg->xd			= l5 / 2 + l4 * cos(leg->angle4);
 	leg->yd			= l4 * sin(leg->angle4);
-	float lbd		= sqrt(pow((leg->xd - leg->xb), 2) + pow((leg->yd - leg->yb), 2));
+	float lbd		= sqrt(powf((leg->xd - leg->xb), 2) + powf((leg->yd - leg->yb), 2));
 	float A0		= 2 * l2 * (leg->xd - leg->xb);
 	float B0		= 2 * l2 * (leg->yd - leg->yb);
-	float C0		= pow(l2, 2) + pow(lbd, 2) - pow(l3, 2);
-	float D0		= pow(l3, 2) + pow(lbd, 2) - pow(l2, 2);
-	leg->angle2 = 2 * atan2((B0 + sqrt(pow(A0, 2) + pow(B0, 2) - pow(C0, 2))), (A0 + C0));
-	leg->angle3 = PI - 2 * atan2((-B0 + sqrt(pow(A0, 2) + pow(B0, 2) - pow(D0, 2))), (A0 + D0));
+	float C0		= powf(l2, 2) + powf(lbd, 2) - powf(l3, 2);
+	float D0		= powf(l3, 2) + powf(lbd, 2) - powf(l2, 2);
+	leg->angle2 = 2 * atan2f((B0 + sqrt(powf(A0, 2) + powf(B0, 2) - powf(C0, 2))), (A0 + C0));
+	leg->angle3 = PI - 2 * atan2f((-B0 + sqrt(powf(A0, 2) + powf(B0, 2) - powf(D0, 2))), (A0 + D0));
 	leg->xc			= leg->xb + l2 * cos(leg->angle2);
 	leg->yc			= leg->yb + l2 * sin(leg->angle2);
-	leg->L0.now = sqrt(pow(leg->xc, 2) + pow(leg->yc, 2));
+	leg->L0.now = sqrt(powf(leg->xc, 2) + powf(leg->yc, 2));
 
 	// 乘以pitch的旋转矩阵
-	float cor_XY_then[2][1];
-	cor_XY_then[0][0] = cos(pitch) * leg->xc - sin(pitch) * leg->yc;
-	cor_XY_then[1][0] = sin(pitch) * leg->xc + cos(pitch) * leg->yc;
-	leg->angle0.now		= atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
+	float cor_XY_then[2];
+	cor_XY_then[0]	= cos(pitch) * leg->xc - sin(pitch) * leg->yc;
+	cor_XY_then[1]	= sin(pitch) * leg->xc + cos(pitch) * leg->yc;
+	leg->angle0.now = atan2f(cor_XY_then[0], cor_XY_then[1]);
 
-	float dt					= 1000 / (float) (GlobalTimer - leg->timer);
-	leg->timer				= GlobalTimer;
+	float dt				= 1000 / (float) (GlobalTimer - leg->timer);
+	leg->timer			= GlobalTimer;
 
 	if (dt > 0) {
 		leg->L0.dot					= (leg->L0.now - leg->L0.last) * dt;
@@ -107,11 +107,11 @@ void Njie(Leg* leg, float xc, float yc) {
 	A							 = 2 * (xc + l5 / 2) * l1;
 	B							 = 2 * yc * l1;
 	C							 = (xc + l5 / 2) * (xc + l5 / 2) + yc * yc + l1 * l1 - l2 * l2;
-	leg->angle1set = 2 * atan2((B + sqrt(A * A + B * B - C * C)), (A + C));
+	leg->angle1set = 2 * atan2f((B + sqrt(A * A + B * B - C * C)), (A + C));
 	A							 = 2 * l4 * (xc - l5 / 2);
 	B							 = 2 * l4 * yc;
 	C							 = (xc - l5 / 2) * (xc - l5 / 2) + l4 * l4 + yc * yc - l3 * l3;
-	leg->angle4set = 2 * atan2((B - sqrt(A * A + B * B - C * C)), (A + C));
+	leg->angle4set = 2 * atan2f((B - sqrt(A * A + B * B - C * C)), (A + C));
 	if (leg->angle4set < 0)
 		leg->angle4set += 2 * PI;
 }

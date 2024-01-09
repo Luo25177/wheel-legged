@@ -55,9 +55,9 @@ void TIM3_IRQHandler(void) {
 		DJmotorMonitor(djmotor);
 		TmotorMonitor(tmotor);
 		RobotStateUpdate(&robotstate);
-
+    
 		// robot 状态检测
-		robotTorqueMonitor();
+		robotLqrMonitor();
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }

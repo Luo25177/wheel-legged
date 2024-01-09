@@ -12,29 +12,28 @@
 #include "vector.h"
 
 // 初始状态：(rad)
-#define FrontAngleInit	3.44708532f
-#define BehindAngleInit -0.079706274f
+#define FrontAngleInit	3.141592653579f
+#define BehindAngleInit 0.f
 // 杆长
 #define l1							0.18f
 #define l2							0.336f
 #define l3							0.336f
 #define l4							0.18f
 #define l5							0.24f
-#define WHEELR					0.065f
-
+#define WHEELR					0.07f
 // 质量参数
 #define MASSL1					0.272f
 #define MASSL2					0.704f
 #define MASSL3					0.703f
 #define MASSL4					0.272f
-#define MASSBODY				4.764f
-#define HALFMASSBODY		2.382f
+#define MASSBODY				5.824f
+#define HALFMASSBODY		2.912f
 #define MASSLEG					1.951f
 #define MASSWHEEL				0.71f
 // 重力
 #define GRAVITY					9.805f
 // 虚拟力前馈
-#define FFEEDFORWARD		-23.35551f
+#define FFEEDFORWARD		-28.55216f
 // 最小支持力阈值，判断是否离地的支持力的阈值
 #define FORCETHRESHOLD	20.f
 // 机器人最大速度，如果追踪更大的速度会翻车

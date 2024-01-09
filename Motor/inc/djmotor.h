@@ -18,10 +18,10 @@
 
 #include <stdlib.h>
 
-#define M3508RPMTORAD 0.000138155f
+#define M3508RPMTORAD 0.005454154f
 
 typedef struct {
-	bool setZero;	 // 是否获得的零点位置脉冲
+	bool init;	// 是否获得的零点位置脉冲
 	u8	 id;
 	s16	 n;	 // 累计圈数
 	s16	 lockPulse;

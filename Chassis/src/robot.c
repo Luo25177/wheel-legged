@@ -23,9 +23,9 @@ void robotInit() {
 	// TODO: 参数暂定 调节
 	pidInit(&robot.yawpid, 1, 1, 1, 0, 1000, PIDPOS);
 	pidInit(&robot.rollpid, 1, 1, 1, 0, 1000, PIDPOS);
-	pidInit(&robot.splitpid, 80, 0, 1000, 0, 1000, PIDPOS);
+	pidInit(&robot.splitpid, 120, 0, 1000, 0, 1000, PIDPOS);
 
-	robot.L0Set							= 0.35;
+	robot.L0Set							= 0.32;
 	robot.yawpid.target			= 0;
 	robot.rollpid.target		= 0;
 	robot.splitpid.target		= 0;
@@ -38,13 +38,6 @@ void robotInit() {
 //
 //----
 void updateState() {
-	//	float data[4];
-	//	data[0] = robot.legL.front->monitor.received;
-	//	data[1] = robot.legL.behind->monitor.received;
-	//	data[2] = robot.legR.front->monitor.received;
-	//	data[3] = robot.legR.behind->monitor.received;
-	//	oscilloscope(data, 4);
-
 	legUpdate(&robot.legL);
 	legUpdate(&robot.legR);
 	Zjie(&robot.legL, robot.yesense.pitch.now);
@@ -65,9 +58,9 @@ void updateState() {
 //
 //----
 void balanceMode() {
-	float L03 = pow(robot.legVir.L0.now, 3);
-	float L02 = pow(robot.legVir.L0.now, 2);
-	float L01 = pow(robot.legVir.L0.now, 1);
+	float L03 = robot.legVir.L0.now * robot.legVir.L0.now * robot.legVir.L0.now;
+	float L02 = robot.legVir.L0.now * robot.legVir.L0.now;
+	float L01 = robot.legVir.L0.now;
 
 	//	if (robot.flyflag) {
 	//		for (int col = 0; col < 6; col++) {
@@ -114,8 +107,8 @@ void balanceMode() {
 											robot.legVir.K[1][4] * (robot.legVir.Xd.pitch - robot.legVir.X.pitch) +
 											robot.legVir.K[1][5] * (robot.legVir.Xd.pitchdot - robot.legVir.X.pitchdot);
 
-	robot.legL.TWheelset	 = robot.legVir.U.Twheel / 2;
-	robot.legR.TWheelset	 = robot.legVir.U.Twheel / 2;
+	robot.legL.TWheelset	 = -robot.legVir.U.Twheel / 2;
+	robot.legR.TWheelset	 = -robot.legVir.U.Twheel / 2;
 
 	robot.legL.Tpset			 = robot.legVir.U.Tp / 2;
 	robot.legR.Tpset			 = robot.legVir.U.Tp / 2;
@@ -145,26 +138,21 @@ void balanceMode() {
 	VMC(&robot.legR);
 
 	// 方向
-	robot.legL.TWheelset								*= robot.legL.dir;
-	robot.legL.TFset										*= robot.legL.dir;
-	robot.legL.TBset										*= robot.legL.dir;
+	robot.legL.TWheelset					*= robot.legL.dir;
+	robot.legL.TFset							*= robot.legL.dir;
+	robot.legL.TBset							*= robot.legL.dir;
 
-	robot.legR.TWheelset								*= robot.legR.dir;
-	robot.legR.TFset										*= robot.legR.dir;
-	robot.legR.TBset										*= robot.legR.dir;
+	robot.legR.TWheelset					*= robot.legR.dir;
+	robot.legR.TFset							*= robot.legR.dir;
+	robot.legR.TBset							*= robot.legR.dir;
 
-	robot.legR.front->set.torque				 = robot.legR.TFset;
-	robot.legR.behind->set.torque				 = robot.legR.TBset;
-	robot.legR.wheel->set.torque				 = robot.legR.TWheelset;
+	robot.legR.front->set.torque	 = robot.legR.TFset;
+	robot.legR.behind->set.torque	 = robot.legR.TBset;
+	robot.legR.wheel->set.torque	 = robot.legR.TWheelset;
 
-	robot.legL.front->set.torque				 = robot.legL.TFset;
-	robot.legL.behind->set.torque				 = robot.legL.TBset;
-	robot.legL.wheel->set.torque				 = robot.legL.TWheelset;
-
-	robot.legL.front->monitor.received	 = 0;
-	robot.legL.behind->monitor.received	 = 0;
-	robot.legR.front->monitor.received	 = 0;
-	robot.legR.behind->monitor.received	 = 0;
+	robot.legL.front->set.torque	 = robot.legL.TFset;
+	robot.legL.behind->set.torque	 = robot.legL.TBset;
+	robot.legL.wheel->set.torque	 = robot.legL.TWheelset;
 }
 
 //----
@@ -204,8 +192,7 @@ void flyCheck() {
 
 	robot.legR.normalforce = -rp + MASSWHEEL * (GRAVITY + rzwdd);
 	robot.legL.normalforce = -lp + MASSWHEEL * (GRAVITY + lzwdd);
-
-	float force						 = (robot.legL.normalforce + robot.legR.normalforce) / 2;
+	float force					 = (robot.legL.normalforce + robot.legR.normalforce) / 2;
 
 	if (force < FORCETHRESHOLD)
 		robot.flyflag = true;

@@ -4,18 +4,23 @@
 #define M3508PULSETHRESHOLD				4096
 #define M3508MAXCURRENT						14745
 #define M3508MAXSPEED							8550.f
-#define M3508ZEROSPEED						1000.f	// 寻零或者失能的最大速度
 #define M3508RATIO								19.2f
 #define M3508ANGLETOPULSE					436.90667f			 // 角度转为编码数 deg->pulse
 #define M3508TTOI									2730.6667f			 // 扭矩转电流
 #define M3508ITOT									0.000366210938f	 // 电流转扭矩
 #define M3508FINISHPULSETHRESHOLD 60.f						 // 电机到位判定的阈值
 
+//----
+// @brief 初始化
+//
+// @param motor
+// @param id
+//----
 void DJmotorInit(DJmotor* motor, u8 id) {
 	for (int i = 0; i < 2; ++i) {
 		motor[i].id							 = id++;
 		motor[i].n							 = 0;
-		motor[i].setZero				 = false;
+		motor[i].init						 = false;
 		motor[i].monitor.timeOut = false;
 		motor[i].monitor.mode		 = TORQUE;
 		motor[i].monitor.enable	 = false;
@@ -32,14 +37,19 @@ void DJmotorInit(DJmotor* motor, u8 id) {
 	}
 }
 
+//----
+// @brief 接收消息处理
+//
+// @param motor
+// @param msg
+//----
 void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg) {
 	int id											 = msg.StdId - 0x201;
 	motor[id].monitor.timeOutCnt = 0;
-	if (motor[id].monitor.timeOut)
-		motor[id].monitor.timeOut = false;
+	motor[id].monitor.timeOut		 = false;
 	BU8ToVS16(msg.Data, &motor[id].pulseRead);
-	if (!motor[id].setZero) {
-		motor[id].setZero				= true;
+	if (!motor[id].init) {
+		motor[id].init					= true;
 		motor[id].lockPulse			= motor[id].pulseRead;
 		motor[id].lastPulseRead = motor[id].pulseRead;
 	}
@@ -57,6 +67,12 @@ void DJmotorreceiveHandle(DJmotor* motor, CanRxMsg msg) {
 	motor[id].real.angleRad		= motor[id].real.angleDeg * DegToRad;
 }
 
+//----
+// @brief 通讯
+//
+// @param motor
+// @param stdid
+//----
 void DJmotorCommunicate(DJmotor* motor, u32 stdid) {
 	CanTxMsg txmsg;
 	txmsg.IDE		= CAN_Id_Standard;
@@ -68,6 +84,11 @@ void DJmotorCommunicate(DJmotor* motor, u32 stdid) {
 	can2Txmsg->push(can2Txmsg, txmsg);
 }
 
+//----
+// @brief 运行
+//
+// @param motor
+//----
 void DJmotorRun(DJmotor* motor) {
 	for (int i = 0; i < 2; ++i) {
 		if (!motor[i].monitor.enable) {
@@ -98,6 +119,11 @@ void DJmotorRun(DJmotor* motor) {
 	DJmotorCommunicate(motor, (u32) 0x200);
 }
 
+//----
+// @brief 监控
+//
+// @param motor
+//----
 void DJmotorMonitor(DJmotor* motor) {
 	for (int i = 0; i < 2; ++i) {
 		++motor[i].monitor.timeOutCnt;

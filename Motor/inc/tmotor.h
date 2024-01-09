@@ -17,7 +17,10 @@
 
 #include <stdbool.h>
 
-typedef enum { TENTERCONTROL, TEXITCONTROL, TSETZERO } Tcontrol;
+typedef enum { TENTERCONTROL,
+							 TEXITCONTROL,
+							 TSETZERO } Tcontrol;
+
 typedef struct {
 	bool init;
 	u8	 id;
