@@ -40,9 +40,9 @@ void TmotorInit(Tmotor* motor, u8 id) {
 		// 进入控制模式
 		TmotorStatueControl(TENTERCONTROL, id++);
 	}
-	for (int i = 5; i <= 8; ++i) {
-		TmotorStatueControl(TENTERCONTROL, i);
-	}
+	// for (int i = 5; i <= 8; ++i) {
+	// 	TmotorStatueControl(TENTERCONTROL, i);
+	// }
 }
 
 //----
@@ -149,8 +149,11 @@ void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg) {
 	motor[id].real.angleRad			 = uint2float(p, P_MIN, P_MAX, 16) / TRATIO;
 	motor[id].real.velocity			 = uint2float(v, P_MIN, P_MAX, 12) * RadToDeg / TRATIO;
 	motor[id].real.torque				 = uint2float(t, T_MIN, T_MAX, 12);
+
+	motor[id].lastAngleDeg			 = motor[id].real.angleDeg;
 	if (!motor[id].init) {
 		motor[id].initReadAngle = motor[id].real.angleRad;
+		motor[id].lastAngleDeg	= motor[id].real.angleRad * RadToDeg;
 		motor[id].init					= true;
 	}
 	motor[id].real.angleRad -= motor[id].initReadAngle;
@@ -175,10 +178,10 @@ void TmotorRun(Tmotor* motor) {
 				TmotorCommunicate(&motor[i], 0, 0, 0, 0, 0);
 				break;
 			case POSITION:
-				TmotorCommunicate(&motor[i], motor[i].set.angleDeg + motor[i].initReadAngle, 0, motor[i].kp, motor[i].kd, 0);
+				TmotorCommunicate(&motor[i], motor[i].set.angleDeg + motor[i].initReadAngle, 0, 0, motor[i].kp, motor[i].kd);
 				break;
 			case SPEED:
-				TmotorCommunicate(&motor[i], 0, motor[i].set.velocity, 0, motor[i].kp, 0);
+				TmotorCommunicate(&motor[i], 0, motor[i].set.velocity, 0, 0, motor[i].kd);
 				break;
 			case TORQUE:
 				TmotorCommunicate(&motor[i], 0, 0, motor[i].set.torque, 0, 0);
@@ -196,4 +199,14 @@ void TmotorMonitor(Tmotor* motor) {
 		if (motor[i].monitor.timeOutCnt >= 10)
 			motor[i].monitor.timeOut = true;
 	}
+}
+
+bool TmotorSeekZero(Tmotor* motor, float speed) {
+	TmotorCommunicate(motor, 0, speed, 0, 0, 0);
+	if (fabsf(motor->lastAngleDeg - motor->real.angleDeg) < 0.3f) {
+		TmotorCommunicate(motor, motor->real.angleDeg + motor->initReadAngle, 0, 0, motor->kp, motor->kd);
+		motor->init = false;
+		return true;
+	}
+	return false;
 }

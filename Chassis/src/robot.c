@@ -192,7 +192,7 @@ void flyCheck() {
 
 	robot.legR.normalforce = -rp + MASSWHEEL * (GRAVITY + rzwdd);
 	robot.legL.normalforce = -lp + MASSWHEEL * (GRAVITY + lzwdd);
-	float force					 = (robot.legL.normalforce + robot.legR.normalforce) / 2;
+	float force						 = (robot.legL.normalforce + robot.legR.normalforce) / 2;
 
 	if (force < FORCETHRESHOLD)
 		robot.flyflag = true;

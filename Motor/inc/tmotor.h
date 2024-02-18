@@ -28,6 +28,7 @@ typedef struct {
 	MotorValue(float) set;
 	MotorMonitor monitor;
 	float				 kp, kd;
+	float				 lastAngleDeg;
 	float				 initReadAngle;
 	float				 initSetAngle;
 } Tmotor;
@@ -40,3 +41,4 @@ void TmotorreceiveHandle(Tmotor* motor, CanRxMsg msg);
 void TmotorCommunicate(Tmotor* motor, float _pos, float _speed, float _torque, float _kp, float _kd);
 void TmotorRun(Tmotor* motor);
 void TmotorMonitor(Tmotor* motor);
+bool TmotorSeekZero(Tmotor* motor, float speed);

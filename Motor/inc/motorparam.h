@@ -14,6 +14,9 @@
 
 #include <stdbool.h>
 
+#define M3508RPMTORAD	 0.1047197551f
+#define TSEEKZEROSPEED 0.5f	 // rad/s
+
 //----
 // @brief 电机模式
 //
