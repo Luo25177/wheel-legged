@@ -14,30 +14,27 @@
 
 #include <stdbool.h>
 
-#define M3508RPMTORAD	 0.1047197551f
-#define TSEEKZEROSPEED 0.5f	 // rad/s
-
 //----
 // @brief 电机模式
 //
 //----
 typedef enum { HALT,
-							 POSITION,
-							 SPEED,
-							 TORQUE } MotorMode;
+               POSITION,
+               SPEED,
+               TORQUE } MotorMode;
 
 //----
 // @brief 监测电机状态
 //
 //----
 typedef struct {
-	bool stuck;
-	bool enable;
-	bool timeOut;
-	bool stuckRealse;
-	u8	 mode;
-	u32	 stuckCnt;
-	u32	 timeOutCnt;
+  bool stuck;
+  bool enable;
+  bool timeOut;
+  bool stuckRealse;
+  u8   mode;
+  u32  stuckCnt;
+  u32  timeOutCnt;
 } MotorMonitor;
 
 //----
@@ -45,13 +42,13 @@ typedef struct {
 //
 //----
 #define MotorValueDefine(T) \
-	typedef struct {          \
-		T			current;          \
-		T			velocity;         \
-		float angleRad;         \
-		float angleDeg;         \
-		float torque;           \
-	} MotorValue_##T;
+  typedef struct {          \
+    T     current;          \
+    T     velocity;         \
+    float angleRad;         \
+    float angleDeg;         \
+    float torque;           \
+  } MotorValue_##T;
 #define MotorValue(T) MotorValue_##T
 MotorValueDefine(float);
 MotorValueDefine(s16);

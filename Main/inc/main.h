@@ -27,10 +27,10 @@
 
 OS_CPU_SR cpu_sr = 0;
 
-u8				beepShowErr;
+u8        beepShowErr;
 OS_EVENT* beepShowSem;
 
-u8				seekZeroErr;
+u8        seekZeroErr;
 OS_EVENT* seekZeroSem;
 
 OS_STK taskRunStk[TASK_STK_SIZE];

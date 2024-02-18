@@ -26,14 +26,14 @@
 #define BLUETOOTHDATALEN 50
 
 typedef struct {
-	u8 rxData[BLUETOOTHDATALEN];
-	u8 txData[BLUETOOTHDATALEN];
-	u8 head[2];
-	u8 tail[2];
-	u8 rxDataSize;
-	u8 txDataSize;
+  u8 rxData[BLUETOOTHDATALEN];
+  u8 txData[BLUETOOTHDATALEN];
+  u8 head[2];
+  u8 tail[2];
+  u8 rxDataSize;
+  u8 txDataSize;
 
-	bool gethead;
+  bool gethead;
 } BlueToothMsg;
 
 extern BlueToothMsg* bluetoothmsg;

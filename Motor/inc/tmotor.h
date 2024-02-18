@@ -17,20 +17,22 @@
 
 #include <stdbool.h>
 
+#define TSEEKZEROSPEED 30.f  // Deg/s
+
 typedef enum { TENTERCONTROL,
-							 TEXITCONTROL,
-							 TSETZERO } Tcontrol;
+               TEXITCONTROL,
+               TSETZERO } Tcontrol;
 
 typedef struct {
-	bool init;
-	u8	 id;
-	MotorValue(float) real;
-	MotorValue(float) set;
-	MotorMonitor monitor;
-	float				 kp, kd;
-	float				 lastAngleDeg;
-	float				 initReadAngle;
-	float				 initSetAngle;
+  bool init;
+  u8   id;
+  MotorValue(float) real;
+  MotorValue(float) set;
+  MotorMonitor monitor;
+  float        kp, kd;
+  float        lastAngleDeg;
+  float        initReadAngle;
+  float        initSetAngle;
 } Tmotor;
 
 extern Tmotor tmotor[4];

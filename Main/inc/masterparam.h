@@ -21,10 +21,10 @@
 //
 //----
 typedef struct {
-	s16 run;		 // 跑 v cm
-	s16 turn;		 // 转弯 deg
-	s16 height;	 // 底盘高度 cm
-	s16 tilt;		 // 底盘倾斜 deg
+  s16 run;     // 跑 v cm
+  s16 turn;    // 转弯 deg
+  s16 height;  // 底盘高度 cm
+  s16 tilt;    // 底盘倾斜 deg
 } HandleParam;
 
 //----
@@ -32,9 +32,9 @@ typedef struct {
 //
 //----
 typedef struct {
-	u8 begin;	 // 开始运行
-	u8 stop;	 // 急停 打算做一个功能就是为了防止程序疯跑，再怎么说没有急停开关好用好像没用
-	u8 robotmode;
+  u8 begin;  // 开始运行
+  u8 stop;   // 急停 打算做一个功能就是为了防止程序疯跑，再怎么说没有急停开关好用好像没用
+  u8 robotmode;
 } ControlParam;
 
 //----
@@ -42,8 +42,8 @@ typedef struct {
 //
 //----
 typedef struct {
-	HandleParam	 handle;
-	ControlParam control;
+  HandleParam  handle;
+  ControlParam control;
 } Master;
 
 //----
@@ -51,15 +51,15 @@ typedef struct {
 //
 //----
 typedef struct {
-	u8		deviceState;	// 电机状态 0000 0000 : 0 0 WL BL FL WR BR FR
-	float v;
-	float height;
-	float pitch;
-	float yaw;
-	float roll;
+  u8    deviceState;  // 电机状态 0000 0000 : 0 0 WL BL FL WR BR FR
+  float v;
+  float height;
+  float pitch;
+  float yaw;
+  float roll;
 } RobotState;
 
-extern Master			master;
+extern Master     master;
 extern RobotState robotstate;
 
 void HandleParamInit(HandleParam* handleparam);
