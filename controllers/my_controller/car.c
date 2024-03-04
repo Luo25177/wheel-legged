@@ -1,7 +1,7 @@
 #include "car.h"
 
 Car		car;
-float vd = 0;
+float vd	 = 0;
 float psid = 0;
 
 //----
@@ -63,6 +63,9 @@ void updateState() {
 	car.legR.TWheelnow = car.legR.TWheelset;
 
 	flyCheck();
+	if (jumpFlag) {
+		jumpMode();
+	}
 }
 
 //----
@@ -172,11 +175,11 @@ void balanceMode() {
 }
 
 void WBCbalanceMode() {
-	float L_l = car.legL.L0.now;
-	float L_r = car.legR.L0.now;
-	float L_l2 = L_l * L_l;
-	float L_r2 = L_r * L_r;
-	float L_lL_r = L_l * L_r;
+	float L_l					= car.legL.L0.now;
+	float L_r					= car.legR.L0.now;
+	float L_l2				= L_l * L_l;
+	float L_r2				= L_r * L_r;
+	float L_lL_r			= L_l * L_r;
 
 	float s						= 0;
 	float s_dot				= car.legVir.dis.dot;
@@ -191,17 +194,31 @@ void WBCbalanceMode() {
 
 	float K[4][10];
 
-	for (int row = 0; row < 4; row++) {
-		for (int col = 0; col < 10; col++) {
-			int num								 = (row * 10) + col;
-			K[row][col] = Kcoeff_wbc[num][0] + Kcoeff_wbc[num][1] * L_l + Kcoeff_wbc[num][2] * L_r + Kcoeff_wbc[num][3] * L_l2 +
-										Kcoeff_wbc[num][4] * L_r2 + Kcoeff_wbc[num][5] * L_lL_r;
+	if (car.flyflag) {
+		for (int row = 0; row < 4; row++) {
+			for (int col = 0; col < 10; col++) {
+				int num = (row * 10) + col;
+				if ((row != 2 && row != 3) || (col != 4 && col != 5 && col != 6 && col != 7)) {
+					K[row][col] = 0;
+					continue;
+				}
+				K[row][col] = Kcoeff_wbc[num][0] + Kcoeff_wbc[num][1] * L_l + Kcoeff_wbc[num][2] * L_r + Kcoeff_wbc[num][3] * L_l2 +
+											Kcoeff_wbc[num][4] * L_r2 + Kcoeff_wbc[num][5] * L_lL_r;
+			}
+		}
+	} else {
+		for (int row = 0; row < 4; row++) {
+			for (int col = 0; col < 10; col++) {
+				int num			= (row * 10) + col;
+				K[row][col] = Kcoeff_wbc[num][0] + Kcoeff_wbc[num][1] * L_l + Kcoeff_wbc[num][2] * L_r + Kcoeff_wbc[num][3] * L_l2 +
+											Kcoeff_wbc[num][4] * L_r2 + Kcoeff_wbc[num][5] * L_lL_r;
+			}
 		}
 	}
 	float Twl = K[0][0] * (0 - s) +
 							K[0][1] * (vd - s_dot) +
-							K[0][2] * (psi - psi) +
-							K[0][3] * (psid - psi_dot) +
+							K[0][2] * (psid - psi) +
+							K[0][3] * (0 - psi_dot) +
 							K[0][4] * (0 - theta_l) +
 							K[0][5] * (0 - theta_l_dot) +
 							K[0][6] * (0 - theta_r) +
@@ -211,8 +228,8 @@ void WBCbalanceMode() {
 
 	float Twr = K[1][0] * (0 - s) +
 							K[1][1] * (vd - s_dot) +
-							K[1][2] * (psi - psi) +
-							K[1][3] * (psid - psi_dot) +
+							K[1][2] * (psid - psi) +
+							K[1][3] * (0 - psi_dot) +
 							K[1][4] * (0 - theta_l) +
 							K[1][5] * (0 - theta_l_dot) +
 							K[1][6] * (0 - theta_r) +
@@ -222,8 +239,8 @@ void WBCbalanceMode() {
 
 	float Tbl = K[2][0] * (0 - s) +
 							K[2][1] * (vd - s_dot) +
-							K[2][2] * (psi - psi) +
-							K[2][3] * (psid - psi_dot) +
+							K[2][2] * (psid - psi) +
+							K[2][3] * (0 - psi_dot) +
 							K[2][4] * (0 - theta_l) +
 							K[2][5] * (0 - theta_l_dot) +
 							K[2][6] * (0 - theta_r) +
@@ -233,8 +250,8 @@ void WBCbalanceMode() {
 
 	float Tbr = K[3][0] * (0 - s) +
 							K[3][1] * (vd - s_dot) +
-							K[3][2] * (psi - psi) +
-							K[3][3] * (psid - psi_dot) +
+							K[3][2] * (psid - psi) +
+							K[3][3] * (0 - psi_dot) +
 							K[3][4] * (0 - theta_l) +
 							K[3][5] * (0 - theta_l_dot) +
 							K[3][6] * (0 - theta_r) +
@@ -242,7 +259,13 @@ void WBCbalanceMode() {
 							K[3][8] * (0 - phi) +
 							K[3][9] * (0 - phi_dot);
 
-	vd												= 0;
+	car.legL.TWheelset		 = Twl;
+	car.legR.TWheelset		 = Twr;
+
+	car.legL.Tpset				 = Tbl;
+	car.legR.Tpset				 = Tbr;
+
+	vd										 = 0;
 	// Ç°À¡Á¦
 	car.legL.Fset					 = -61.90455385f;
 	car.legR.Fset					 = -61.90455385f;
@@ -255,12 +278,9 @@ void WBCbalanceMode() {
 	float rollCompensate	 = car.rollpid.compute(&car.rollpid, car.yesense.roll.now);
 	car.legL.Fset					-= rollCompensate;
 	car.legR.Fset					+= rollCompensate;
-
-	car.legL.TWheelset			= Twl;
-	car.legR.TWheelset			= Twr;
-
-	car.legL.Tpset					 = Tbl;
-	car.legR.Tpset					 = Tbr;
+	float splitCompensate	 = car.splitpid.compute(&car.splitpid, car.legL.angle0.now - car.legR.angle0.now);
+	car.legL.Tpset				+= splitCompensate;
+	car.legR.Tpset				-= splitCompensate;
 
 	VMC(&car.legL);
 	VMC(&car.legR);
@@ -291,30 +311,34 @@ void WBCbalanceMode() {
 //----
 static float time = 0;
 void				 jumpMode() {
-	car.legL.L0pid.target = 0.37;
-	car.legR.L0pid.target = 0.37;
-	if (time < kickTime) {
-		float k					= time / kickTime;
-		float setpointx = jumpPoint[0][0] * (1 - k) + jumpPoint[1][0] * k;
-		float setpointy = jumpPoint[0][1] * (1 - k) + jumpPoint[1][1] * k;
-		Njie(&car.legL, setpointx, setpointy);
-		Njie(&car.legR, setpointx, setpointy);
-	} else if (time < kickTime + shrinkTime) {
-		float k					= (time - kickTime) / shrinkTime;
-		float setpointx = jumpPoint[1][0] * (1 - k) + jumpPoint[0][0] * k;
-		float setpointy = jumpPoint[1][1] * (1 - k) + jumpPoint[0][1] * k;
-		Njie(&car.legL, setpointx, setpointy);
-		Njie(&car.legR, setpointx, setpointy);
-	} else {
-		time		 = 0;
-		car.mode = ROBOTNORMAL;
-		return;
+	switch (car.jumpPhase) {
+		case ON:
+			car.legL.L0pid.target = MINROBOTLEGLEN;
+			car.legR.L0pid.target = MINROBOTLEGLEN;
+			if (car.legL.L0.now + car.legR.L0.now <= 0.55)
+				car.jumpPhase++;
+			break;
+		case KICK:
+			car.legL.L0pid.target = MAXROBOTLEGLEN;
+			car.legR.L0pid.target = MAXROBOTLEGLEN;
+			if (car.legL.L0.now + car.legR.L0.now >= 1.05)
+				car.jumpPhase++;
+			break;
+		case SHRINK:
+			car.legL.L0pid.target = 0.3;
+			car.legR.L0pid.target = 0.3;
+			if (car.force > 100)
+				car.jumpPhase++;
+			break;
+		case BUFFER:
+			car.legL.L0pid.target = 0.34;
+			car.legR.L0pid.target = 0.34;
+			car.jumpPhase++;
+			break;
+		case OFF:
+			jumpFlag = false;
+			break;
 	}
-	time += dt;
-	wb_motor_set_position(car.legL.front, car.legL.angle1set);
-	wb_motor_set_position(car.legL.behind, car.legL.angle4set);
-	wb_motor_set_position(car.legR.front, car.legL.angle1set);
-	wb_motor_set_position(car.legR.behind, car.legL.angle4set);
 }
 
 //----

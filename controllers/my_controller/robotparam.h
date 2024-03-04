@@ -11,6 +11,7 @@
 //
 //----
 #pragma once
+#include "stdbool.h"
 
 #define l1		 0.20f
 #define l2		 0.40f
@@ -33,8 +34,8 @@
 
 #define FORCETHRESHOLD	-20.f
 #define MAXROBOTSPEED		1.f
-#define MINROBOTLEGLEN	0.16f;
-#define MAXROBOTLEGLEN	0.4f;
+#define MINROBOTLEGLEN	0.25f;
+#define MAXROBOTLEGLEN	0.55f;
 #define MAXROBOTLEGDIFF 0.1f;
 #define MAXROBOTROLL		1.f;
 #define MAXROBOTSPLIT		1;
@@ -53,6 +54,14 @@ typedef enum {
 	ROBOTHALT,
 	ROBOTWBC
 } RobotRunMode;
+
+typedef enum {
+	ON,
+	KICK,
+	SHRINK,
+	BUFFER,
+	OFF
+} JumpPhase;
 
 typedef struct
 {
@@ -75,7 +84,5 @@ void outputInit(Output* output);
 
 extern float Kcoeff[12][4];
 extern float Kcoeff_wbc[40][6];
+extern bool	 jumpFlag;
 
-float jumpPoint[2][2];
-float kickTime;
-float shrinkTime;

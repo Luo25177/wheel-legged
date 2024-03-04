@@ -7,31 +7,34 @@ int main(int argc, char** argv) {
 	wb_robot_init();
 	robotInit();
 	FILE* fp = fopen("../../data/Data.xlsx", "w");
+	car.mode = ROBOTWBC;
 	wb_keyboard_enable(timestep);
 	while (wb_robot_step(timestep) != -1) {
 		updateState();
-		car.mode = ROBOTWBC;
 		robotRun();
-		fprintf(fp, "%f\t%f\t%f\t%F\n", car.legVir.X.theta, car.legVir.X.pitch, car.legVir.X.v, car.legVir.Xd.v);
+		//fprintf(fp, "%f\t%f\t%f\t%F\n", car.legVir.X.theta, car.legVir.X.pitch, car.legVir.X.v, car.legVir.Xd.v);
+		fprintf(fp, "%f\n", car.yesense.z);
 		int new_key = wb_keyboard_get_key();
 		while (new_key > 0) {
 			switch (new_key) {
 				case ' ':
-					car.mode = ROBOTJUMP;
+					if (!jumpFlag) 
+						car.jumpPhase = ON;
+					jumpFlag = true;
 					break;
 				case WB_KEYBOARD_UP:
-					vd = 2.5;
+					vd = 4;
 					break;
 				case WB_KEYBOARD_DOWN:
-					vd = -2.5;
+					vd = -4;
 					break;
 				case WB_KEYBOARD_LEFT:
-					car.yawpid.target = 1.8;
-					psid						= 1.8;
+					car.yawpid.target	 = 1.8;
+					psid							+= 0.012;
 					break;
 				case WB_KEYBOARD_RIGHT:
-					car.yawpid.target = -1.8;
-					psid						= -1.8;
+					car.yawpid.target	 = -1.8;
+					psid							+= -0.012;
 					break;
 				case 'S':
 					car.legL.L0pid.target -= 0.001;

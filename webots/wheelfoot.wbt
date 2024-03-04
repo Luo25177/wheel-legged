@@ -5,7 +5,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 0.1682980340732056 0.9720429497805729 0.16373232884490632 4.711537158808129
-  position -10.523631975969305 3.3555611366693237 -1.8670622476693697
+  position -17.740140448559373 6.0894937679639884 3.4811215843120427
   follow "solid"
 }
 Floor {
@@ -48,7 +48,7 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -2.1743761486492768e-07 -3.651240770496007e-06 3.26797883198889e-09
+            translation -2.1743761486492874e-07 -3.6512407704959934e-06 3.2679788319888636e-09
             rotation 0 0 1 0
             children [
               DEF 小腿连接处 Transform {
@@ -88,7 +88,7 @@ Robot {
                                 }
                               ]
                               endPoint DEF 轮子 Solid {
-                                rotation 0 1 0 3.14159
+                                rotation 0 1 5.930268246145709e-17 3.14159
                                 children [
                                   DEF 轮子 Shape {
                                     appearance Appearance {
@@ -226,7 +226,7 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -2.1743695395649134e-07 -3.6512419567673234e-06 6.978440103555572e-09
+            translation -2.1743695395649007e-07 -3.651241956767323e-06 6.978440103555533e-09
             rotation 0 0 1 0
             children [
               DEF 小腿连接处 Transform {
@@ -266,7 +266,7 @@ Robot {
                                 }
                               ]
                               endPoint Solid {
-                                rotation 1 0 0 3.14159
+                                rotation 1 5.551115123130669e-17 -4.860719743646762e-17 3.14159
                                 children [
                                   DEF 轮子 Shape {
                                     appearance Appearance {
@@ -404,7 +404,7 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -2.1733533871101353e-07 -3.6492087656566624e-06 3.2229787172433028e-09
+            translation -2.1733533871101247e-07 -3.6492087656566624e-06 3.2229787172432862e-09
             rotation 0 0 1 0
             children [
               DEF 小腿连接处 Transform {
@@ -516,7 +516,7 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -2.173347609859488e-07 -3.6492071108999724e-06 7.00649249729677e-09
+            translation -2.173347609859488e-07 -3.649207110899969e-06 7.0064924972967405e-09
             rotation 0 0 1 0
             children [
               DEF 小腿连接处 Transform {

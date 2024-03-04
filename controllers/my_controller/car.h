@@ -23,6 +23,8 @@ typedef struct {
 	float vSet;
 
 	float force;
+
+	JumpPhase jumpPhase;
 } Car;
 
 extern Car	 car;
