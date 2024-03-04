@@ -2,6 +2,7 @@
 
 Car		car;
 float vd = 0;
+float psid = 0;
 
 //----
 // @brief ≥ı ºªØ
@@ -91,6 +92,7 @@ void balanceMode() {
 			}
 		}
 	}
+
 	car.legVir.X.theta		 = car.legVir.angle0.now;
 	car.legVir.X.thetadot	 = car.legVir.angle0.dot;
 	car.legVir.X.x				 = 0;
@@ -160,7 +162,119 @@ void balanceMode() {
 	limitInRange(float)(&car.legR.TBset, 22);
 	limitInRange(float)(&car.legR.TWheelset, 10);
 
-	static int t = 0;
+	wb_motor_set_torque(car.legL.front, car.legL.TFset);
+	wb_motor_set_torque(car.legL.behind, car.legL.TBset);
+	wb_motor_set_torque(car.legL.wheel, car.legL.TWheelset);
+
+	wb_motor_set_torque(car.legR.front, car.legR.TFset);
+	wb_motor_set_torque(car.legR.behind, car.legR.TBset);
+	wb_motor_set_torque(car.legR.wheel, car.legR.TWheelset);
+}
+
+void WBCbalanceMode() {
+	float L_l = car.legL.L0.now;
+	float L_r = car.legR.L0.now;
+	float L_l2 = L_l * L_l;
+	float L_r2 = L_r * L_r;
+	float L_lL_r = L_l * L_r;
+
+	float s						= 0;
+	float s_dot				= car.legVir.dis.dot;
+	float psi					= car.yesense.yaw.now;
+	float psi_dot			= car.yesense.yaw.dot;
+	float theta_l			= car.legL.angle0.now;
+	float theta_l_dot = car.legL.angle0.dot;
+	float theta_r			= car.legR.angle0.now;
+	float theta_r_dot = car.legR.angle0.dot;
+	float phi					= -car.yesense.pitch.now;
+	float phi_dot			= -car.yesense.pitch.dot;
+
+	float K[4][10];
+
+	for (int row = 0; row < 4; row++) {
+		for (int col = 0; col < 10; col++) {
+			int num								 = (row * 10) + col;
+			K[row][col] = Kcoeff_wbc[num][0] + Kcoeff_wbc[num][1] * L_l + Kcoeff_wbc[num][2] * L_r + Kcoeff_wbc[num][3] * L_l2 +
+										Kcoeff_wbc[num][4] * L_r2 + Kcoeff_wbc[num][5] * L_lL_r;
+		}
+	}
+	float Twl = K[0][0] * (0 - s) +
+							K[0][1] * (vd - s_dot) +
+							K[0][2] * (psi - psi) +
+							K[0][3] * (psid - psi_dot) +
+							K[0][4] * (0 - theta_l) +
+							K[0][5] * (0 - theta_l_dot) +
+							K[0][6] * (0 - theta_r) +
+							K[0][7] * (0 - theta_r_dot) +
+							K[0][8] * (0 - phi) +
+							K[0][9] * (0 - phi_dot);
+
+	float Twr = K[1][0] * (0 - s) +
+							K[1][1] * (vd - s_dot) +
+							K[1][2] * (psi - psi) +
+							K[1][3] * (psid - psi_dot) +
+							K[1][4] * (0 - theta_l) +
+							K[1][5] * (0 - theta_l_dot) +
+							K[1][6] * (0 - theta_r) +
+							K[1][7] * (0 - theta_r_dot) +
+							K[1][8] * (0 - phi) +
+							K[1][9] * (0 - phi_dot);
+
+	float Tbl = K[2][0] * (0 - s) +
+							K[2][1] * (vd - s_dot) +
+							K[2][2] * (psi - psi) +
+							K[2][3] * (psid - psi_dot) +
+							K[2][4] * (0 - theta_l) +
+							K[2][5] * (0 - theta_l_dot) +
+							K[2][6] * (0 - theta_r) +
+							K[2][7] * (0 - theta_r_dot) +
+							K[2][8] * (0 - phi) +
+							K[2][9] * (0 - phi_dot);
+
+	float Tbr = K[3][0] * (0 - s) +
+							K[3][1] * (vd - s_dot) +
+							K[3][2] * (psi - psi) +
+							K[3][3] * (psid - psi_dot) +
+							K[3][4] * (0 - theta_l) +
+							K[3][5] * (0 - theta_l_dot) +
+							K[3][6] * (0 - theta_r) +
+							K[3][7] * (0 - theta_r_dot) +
+							K[3][8] * (0 - phi) +
+							K[3][9] * (0 - phi_dot);
+
+	vd												= 0;
+	// «∞¿°¡¶
+	car.legL.Fset					 = -61.90455385f;
+	car.legR.Fset					 = -61.90455385f;
+	// ≤π≥•–Èƒ‚¡¶
+	float lfCompensate		 = car.legL.L0pid.compute(&car.legL.L0pid, car.legL.L0.now);
+	float rfCompensate		 = car.legR.L0pid.compute(&car.legR.L0pid, car.legR.L0.now);
+	car.legL.Fset					-= lfCompensate;
+	car.legR.Fset					-= rfCompensate;
+	// ∑≠πˆΩ«≤π≥•
+	float rollCompensate	 = car.rollpid.compute(&car.rollpid, car.yesense.roll.now);
+	car.legL.Fset					-= rollCompensate;
+	car.legR.Fset					+= rollCompensate;
+
+	car.legL.TWheelset			= Twl;
+	car.legR.TWheelset			= Twr;
+
+	car.legL.Tpset					 = Tbl;
+	car.legR.Tpset					 = Tbr;
+
+	VMC(&car.legL);
+	VMC(&car.legR);
+
+	car.legL.TBset *= -1;
+	car.legR.TBset *= -1;
+
+	limitInRange(float)(&car.legL.TFset, 22);
+	limitInRange(float)(&car.legL.TBset, 22);
+	limitInRange(float)(&car.legL.TWheelset, 10);
+
+	limitInRange(float)(&car.legR.TFset, 22);
+	limitInRange(float)(&car.legR.TBset, 22);
+	limitInRange(float)(&car.legR.TWheelset, 10);
 
 	wb_motor_set_torque(car.legL.front, car.legL.TFset);
 	wb_motor_set_torque(car.legL.behind, car.legL.TBset);
@@ -250,6 +364,9 @@ void robotRun() {
 			break;
 		case ROBOTHALT:
 			haltMode();
+			break;
+		case ROBOTWBC:
+			WBCbalanceMode();
 			break;
 		default:
 			break;

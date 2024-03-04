@@ -5,7 +5,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 0.1682980340732056 0.9720429497805729 0.16373232884490632 4.711537158808129
-  position -17.651586033547662 5.881429991917175 2.9719857119833417
+  position -10.523631975969305 3.3555611366693237 -1.8670622476693697
   follow "solid"
 }
 Floor {
@@ -21,7 +21,7 @@ Background {
   ]
 }
 Robot {
-  translation 0 0.39 -2.68
+  translation 0 0.38 -2.68
   children [
     Camera {
       rotation 0 1 0 3.14159
@@ -667,7 +667,7 @@ Robot {
   controller "<extern>"
 }
 Solid {
-  translation -4.45 0 -1.3162e-05
+  translation 0.5 0 -2.89268e-06
   rotation 0 1 0 3.14159
   children [
     DEF 飞坡 Shape {

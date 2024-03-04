@@ -27,6 +27,7 @@ typedef struct {
 
 extern Car	 car;
 extern float vd;
+extern float psid;
 
 void robotInit();
 void updateState();
