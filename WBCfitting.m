@@ -39,9 +39,6 @@ L_rvals = zeros(numsize * numsize, 1);
 a = 1;
 for i = 1 : 1 : numsize
     for j = 1 : 1 : numsize
-
-L_l = L_lranges(i);
-L_r = L_rranges(j);
 % 一些变量
 syms thetal_l(t) thetal_r(t) phi(t) s(t) yaw(t) thetaw_l(t) thetaw_r(t)
 % 轮子参数
@@ -66,13 +63,12 @@ g = 9.81;
 Ic_z = 0.652;
 R_l = 0.63;
 l = 0;
-
+L_l = L_lranges(i);
+L_r = L_rranges(j);
 Il_l = KI(1, 1) * L_l + KI(1, 2);
 Il_r = KI(1, 1) * L_r + KI(1, 2);
-
 Lw_l = KLw(1, 1) * L_l + KLw(1, 2);
 Lw_r = KLw(1, 1) * L_r + KLw(1, 2);
-
 Lb_l = KLb(1, 1) * L_l + KLb(1, 2);
 Lb_r = KLb(1, 1) * L_r + KLb(1, 2);
 
@@ -175,6 +171,7 @@ K = lqr(sys, Q, R);
 K_vals(a, : , :) = K;
 L_lvals(a, 1) = L_l;
 L_rvals(a, 1) = L_r;
+disp(a);
 a = a + 1;
     end
 end
