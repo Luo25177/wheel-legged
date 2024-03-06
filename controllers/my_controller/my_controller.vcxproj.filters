@@ -16,7 +16,7 @@
     <ClCompile Include="mymath.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="datastruct.c">
+    <ClCompile Include="DataStruct.c">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="pid.c">
@@ -50,7 +50,7 @@
     <ClInclude Include="robotparam.h">
       <Filter>inc</Filter>
     </ClInclude>
-    <ClInclude Include="datastruct.h">
+    <ClInclude Include="DataStruct.h">
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="yesense.h">

@@ -12,10 +12,10 @@ void legInit(Leg* leg, int dir) {
 
 	pidInit(&leg->L0pid, 2000, 50, 35000, 0, 1000, PIDPOS);
 
-	datastructInit(&leg->dis, 0, 0, 0, 0);
+	DataStructInit(&leg->dis, 0, 0, 0, 0);
 	// TODO: L0 初始位置 angle0的初始值
-	datastructInit(&leg->L0, 0, 0, 0, 0);
-	datastructInit(&leg->angle0, 0, 0, 0, 0);
+	DataStructInit(&leg->L0, 0, 0, 0, 0);
+	DataStructInit(&leg->angle0, 0, 0, 0, 0);
 
 	leg->Fnow				 = leg->Fset;
 	leg->Tpset			 = 0;

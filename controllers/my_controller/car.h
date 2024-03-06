@@ -18,6 +18,8 @@ typedef struct {
 
 	RobotRunMode mode;
 
+	DataRefer posRefer;
+
 	float L0Set;
 	float xSet;
 	float vSet;
@@ -38,3 +40,4 @@ void jumpMode();
 void haltMode();
 void flyCheck();
 void robotRun();
+void LTD(float ref, DataRefer* trace);

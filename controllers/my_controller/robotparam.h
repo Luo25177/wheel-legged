@@ -34,7 +34,7 @@
 
 #define FORCETHRESHOLD	-20.f
 #define MAXROBOTSPEED		1.f
-#define MINROBOTLEGLEN	0.25f;
+#define MINROBOTLEGLEN	0.26f;
 #define MAXROBOTLEGLEN	0.55f;
 #define MAXROBOTLEGDIFF 0.1f;
 #define MAXROBOTROLL		1.f;
@@ -47,6 +47,8 @@
 
 #define InitAngle1 5.0 / 6.0 * PI
 #define InitAngle4 1.0 / 6.0 * PI
+
+#define LTDBANDWITH 0.5f
 
 typedef enum {
 	ROBOTNORMAL = 0,

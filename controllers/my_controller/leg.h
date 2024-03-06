@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "datastruct.h"
+#include "DataStruct.h"
 #include "pid.h"
 #include "robotparam.h"
 
@@ -32,12 +32,11 @@ typedef struct {
 
 	Input			 X, Xd;
 	Output		 U;
-	datastruct angle0;
-	datastruct L0;
-	datastruct dis;
-	// ����������ϵ�µ����꣬ԭ���������˵��д�����
-	float			 angle1, angle2, angle3, angle4;	// �Ƕȼ���ֵ�Ͷ�ȡ������ʵֵ���Ǻ�ͼ�е�һһ��Ӧ
-	float			 angle1set, angle4set;						// �Ƕ��趨ֵ�����ڳ�ʼ�Ƕ�֮�ϵ��趨ֵ
+	DataStruct angle0;
+	DataStruct L0;
+	DataStruct dis;
+	float			 angle1, angle2, angle3, angle4;
+	float			 angle1set, angle4set;
 
 	float xa, ya;
 	float xb, yb;

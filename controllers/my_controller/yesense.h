@@ -1,6 +1,6 @@
 #pragma once
 
-#include "datastruct.h"
+#include "DataStruct.h"
 #include "mymath.h"
 #include "robotparam.h"
 
@@ -22,11 +22,11 @@ typedef struct {
 	float accelz;
 	float z;
 
-	datastruct pitch;
-	datastruct roll;
-	datastruct yaw;
-	datastruct x;
-	datastruct y;
+	DataStruct pitch;
+	DataStruct roll;
+	DataStruct yaw;
+	DataStruct x;
+	DataStruct y;
 
 	bool	gpsinit;
 	float initx;

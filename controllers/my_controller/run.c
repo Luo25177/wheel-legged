@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
 	wb_robot_init();
 	robotInit();
 	FILE* fp = fopen("../../data/Data.xlsx", "w");
-	car.mode = ROBOTWBC;
+	car.mode = ROBOTNORMAL;
 	wb_keyboard_enable(timestep);
 	while (wb_robot_step(timestep) != -1) {
 		updateState();

@@ -13,9 +13,9 @@ void yesenseInit(Yesense* yesense) {
 	wb_gyro_enable(yesense->gyro, timestep);
 	wb_camera_enable(yesense->camera, timestep);
 
-	datastructInit(&yesense->pitch, 0, 0, 0, 0);
-	datastructInit(&yesense->roll, 0, 0, 0, 0);
-	datastructInit(&yesense->yaw, 0, 0, 0, 0);
+	DataStructInit(&yesense->pitch, 0, 0, 0, 0);
+	DataStructInit(&yesense->roll, 0, 0, 0, 0);
+	DataStructInit(&yesense->yaw, 0, 0, 0, 0);
 	yesense->gpsinit = false;
 }
 

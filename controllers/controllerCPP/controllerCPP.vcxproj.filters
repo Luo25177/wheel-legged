@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Accelerometer.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Brake.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Camera.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Compass.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Connector.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Device.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\DifferentialWheels.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Display.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\DistanceSensor.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Emitter.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Field.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\GPS.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Gyro.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\InertialUnit.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Joystick.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Keyboard.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\LED.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Lidar.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\LightSensor.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Motion.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Motor.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Mouse.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Node.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Pen.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\PositionSensor.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Radar.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\RangeFinder.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Receiver.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Robot.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Skin.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Speaker.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Supervisor.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\TouchSensor.cpp">
+      <Filter>webots</Filter>
+    </ClCompile>
+    <ClCompile Include="Car.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Leg.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Pid.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Sensor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Joint.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Array.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadProg++.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="webots">
+      <UniqueIdentifier>{78490613-5046-4066-9350-3a04d8b8ab25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc">
+      <UniqueIdentifier>{87016d5b-95ea-4f33-a970-ce9cd49f60c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{906d14bd-59de-4e2f-ab30-13bdf50c00da}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Car.hpp">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Leg.hpp">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="RobotParam.hpp">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Pid.hpp">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Sensor.hpp">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Joint.hpp">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMath.hpp">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Main.hpp">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Array.hh">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadProg++.hh">
+      <Filter>inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

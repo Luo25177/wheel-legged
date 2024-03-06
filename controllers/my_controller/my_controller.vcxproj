@@ -122,7 +122,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="car.c" />
-    <ClCompile Include="datastruct.c" />
+    <ClCompile Include="DataStruct.c" />
     <ClCompile Include="leg.c" />
     <ClCompile Include="mymath.c" />
     <ClCompile Include="pid.c" />
@@ -132,7 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="car.h" />
-    <ClInclude Include="datastruct.h" />
+    <ClInclude Include="DataStruct.h" />
     <ClInclude Include="leg.h" />
     <ClInclude Include="mymath.h" />
     <ClInclude Include="pid.h" />
