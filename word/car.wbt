@@ -1,5 +1,6 @@
 #VRML_SIM R2021a utf8
 WorldInfo {
+  basicTimeStep 10
   coordinateSystem "NUE"
 }
 Viewpoint {
@@ -42,7 +43,7 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation 2.873275488742764e-09 -0.10002440515159579 -2.80585326664169e-10
+            translation 2.873275488742773e-09 -0.1000244051515961 -2.80585326664169e-10
             rotation -6.7527290797000115e-09 0.9999999999999999 2.073262796903993e-08 1.5700000000000054
             children [
               HingeJoint {
@@ -59,7 +60,7 @@ Robot {
                   }
                 ]
                 endPoint Solid {
-                  translation -1.115890251973445e-09 -0.10002064720647393 1.3575197986583743e-10
+                  translation -1.115890251973445e-09 -0.10002064720647393 1.3575197986586189e-10
                   rotation -1 0 0 4.969040155569645e-07
                   children [
                     Solid {
@@ -221,5 +222,5 @@ Robot {
   name "robot(1)"
   physics Physics {
   }
-  controller "car"
+  controller "<extern>"
 }
