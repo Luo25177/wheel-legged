@@ -1,5 +1,4 @@
-clc
-clear
+
 % 拟合质心位置，转动惯量和杆长的函数
 I = zeros(1, 90);
 L = zeros(1, 90);
@@ -68,9 +67,7 @@ func2 = [diff(diff(x, t), t) == (Tw * R - Nw * R * R) / (Iw + mw * R * R);
     Il * diff(diff(theta, t), t) == Tb - Tw + (Pb * Lb + Pw * Lw) * sin(theta) - (Nb * Lb + Nw * Lw) * cos(theta);
     Ib_y * diff(diff(phi, t), t) == Tb + Nb * l * cos(phi) + Pb * l * sin(phi);];
 
-func2 = subs(func2, ...
-    [diff(diff(x, t), t), diff(diff(theta, t), t), diff(diff(phi, t), t), diff(x, t), diff(theta, t), diff(phi, t)], ...
-    [x_ddot, theta_ddot, phi_ddot, x_dot, theta_dot, phi_dot]);
+func2 = subs(func2, [ diff(diff(theta, t), t), diff(diff(phi, t), t), diff(x, t), diff(theta, t), diff(phi, t), diff(diff(x, t), t),], [x_dot, theta_dot, phi_dot, x_ddot, theta_ddot, phi_ddot]);
 
 [x_ddot, theta_ddot, phi_ddot] = solve(func2, [x_ddot theta_ddot phi_ddot]);
 
