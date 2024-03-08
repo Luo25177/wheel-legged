@@ -1,17 +1,17 @@
 clc
 clear
-% 拟合质心位置，转动惯量和杆长的函数
-I = zeros(1, 90);
-L = zeros(1, 90);
-Lw = zeros(1, 90);
-Lb = zeros(1, 90);
+%% 拟合质心位置，转动惯量和杆长的函数
+I = zeros(1, 116);
+L = zeros(1, 116);
+Lw = zeros(1, 116);
+Lb = zeros(1, 116);
 
-for angle4 = 0 : 1 : 89
+for angle4 = -15 : 1 : 100
     [ml, Il, L_, Lw_, Lb_] = GetLegBaryCenter(180 - angle4, angle4, 0);
-    I(angle4 + 1) = Il;
-    L(angle4 + 1) = L_;
-    Lw(angle4 + 1) = Lw_;
-    Lb(angle4 + 1) = Lb_;
+    I(angle4 + 16) = Il;
+    L(angle4 + 16) = L_;
+    Lw(angle4 + 16) = Lw_;
+    Lb(angle4 + 16) = Lb_;
 end
 
 KI = polyfit(L, I, 1);
@@ -27,34 +27,24 @@ KLb = polyfit(L, Lb, 1);
 valKLb = polyval(KLb,L);
 figure(1);hold on;plot(L,Lb,'r*',L,valKLb,'b-.');
 
-
-numsize = 20;
-
-K_vals = zeros(numsize, 2, 6);
-A_vals = zeros(numsize, 6, 6);
-B_vals = zeros(numsize, 6, 2);
-L_ranges = linspace(0.183, 0.593, numsize);
-
-for i = 1 : 1 : numsize
-
-L = L_ranges(i);
-Il = KI(1, 1) * L + KI(1, 2);
-Lw = KLw(1, 1) * L + KLw(1, 2);
-Lb = KLb(1, 1) * L + KLb(1, 2);
-
-%% 需要定义的参数
+%% 开始解算
 syms x(t) theta(t) phi(t)
 syms Tw Tb Pw Pb Nw Nb
 syms x_ddot theta_ddot phi_ddot x_dot theta_dot phi_dot
-mw = 0.88357;
-R = 0.075;
-Iw = 0.00249;
-mb = 12.09048;
-Ib_y = 0.20065;
+syms L
+mw = 1.267245 * 2;
+R = 0.2;
+Iw = 0.00379267 * 2;
+mb = 5.4940204;
+Ib_y = 0.05026821;
 g = 9.81;
-Ic_z = 0.652;
-R_l = 0.63;
-l = 0;
+Ic_z = 0.37248874;
+R_l = 0.482000001;
+l = -0.01994485;
+Il = (KI(1, 1) * L + KI(1, 2)) * 2;
+Lw = KLw(1, 1) * L + KLw(1, 2);
+Lb = KLb(1, 1) * L + KLb(1, 2);
+ml = ml * 2;
 
 func1 = [ml * diff(diff(x + Lw * sin(theta), t), t) == Nw - Nb;
     ml * diff(diff(Lw * cos(theta), t), t) == Pw - Pb - ml * g;
@@ -81,27 +71,43 @@ A = jacobian(X_dot, X);
 B = jacobian(X_dot, u);
 A = subs(A, [x_dot, theta(t), theta_dot, phi(t), phi_dot, Tw, Tb], zeros(1,7));
 B = subs(B, [x_dot, theta(t), theta_dot, phi(t), phi_dot, Tw, Tb], zeros(1,7));
-A = double(A);
-B = double(B);
 
-if(rank(ctrb(A, B)) == size(A, 1))
+%% 设置拟合次数和腿长，开始拟合
+numsize = 29;
+minleglen = 0.120;
+maxleglen = 0.400;
+
+K_vals = zeros(numsize, 2, 6);
+A_vals = zeros(numsize, 6, 6);
+B_vals = zeros(numsize, 6, 2);
+L_ranges = linspace(minleglen, maxleglen, numsize);
+
+for i = 1 : 1 : numsize
+valL = L_ranges(i);
+
+valA = subs(A, L, valL);
+valB = subs(B, L, valL);
+valA = double(valA);
+valB = double(valB);
+
+if(rank(ctrb(valA, valB)) == size(valA, 1))
     disp('系统可控')
 else
     disp('系统不可控')
     K = 0;
     return
 end
+disp(i)
 
-%% LQR
 C = eye(6);
 D = zeros(6,2);
 Q = diag([100 100 100 10 5000 1]);
 R = diag([1 0.25]);
-sys = ss(A, B, C, D);
+sys = ss(valA, valB, C, D);
 KLQR = lqr(sys, Q, R);%得到反馈增益矩阵
 K_vals(i, :, :) = KLQR;
-A_vals(i, :, :) = A;
-B_vals(i, :, :) = B;
+A_vals(i, :, :) = valA;
+B_vals(i, :, :) = valB;
 end
 
 %% LQR 拟合:比较倾向于使用Curve Fitting Toolbox，简单好用
@@ -178,37 +184,3 @@ B52 = B_vals(:, 5, 2);
 
 B61 = B_vals(:, 6, 1);
 B62 = B_vals(:, 6, 2);
-
-%% 状态反馈次优gamma-Hinfinty 控制器
-B_1 = [0 0 0 0 0 0; 0 0 0 0 0 0];
-B_2 = B;
-C_1 = diag([1 1 1 1 1 1]);
-D_11 = 0;
-D_12 = [0 0 0 0 0 0; 0 0 0 0 0 0];
-C_2 = diag([1 1 1 1 1 1]);
-D_21 = [0 0 0 0 0 0; 0 0 0 0 0 0];
-D_22 = [0 0 0 0 0 0; 0 0 0 0 0 0];
-syssize = size(A, 1);
-inputsize = size(B, 2);
-gamma = 3.3;
-
-setlmis([]);
-Xh = lmivar(1, [syssize 1]);
-Wh = lmivar(2, [inputsize syssize]);
-lmiterm([1 1 1 Xh], A, 1, 's'); % AX+(AX)'
-lmiterm([1 1 1 Wh], B_2, 1, 's'); %B_2W+(B_2W)'
-lmiterm([1 2 1 0], B_1'); % B1'
-lmiterm([1 2 2 0], -1); % -I
-lmiterm([1 3 1 Xh], C_1, 1); % C1X
-lmiterm([1 3 1 Wh], D_12, 1); % D12W
-lmiterm([1 3 2 0], D_11); % D11
-lmiterm([1 3 3 0], -1 * gamma ^ 2); % -γ^2I
-lmiterm([-2 1 1 Xh], 1, 1); % X>0	特别注意不能漏掉
-
-lmisys = getlmis;
-[tmin, xfeas] = feasp(lmisys);
-XX2 = dec2mat(lmisys, xfeas, Xh);
-WW2 = dec2mat(lmisys, xfeas, Wh);
-KHinfinty = WW2 * inv(XX2);
-
-

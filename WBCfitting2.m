@@ -1,19 +1,18 @@
 clc
 clear
 
-% 这是另一种解算方法对应的拟合
-% 拟合质心位置，转动惯量和杆长的函数
-I = zeros(1, 90);
-L = zeros(1, 90);
-Lw = zeros(1, 90);
-Lb = zeros(1, 90);
+%% 拟合质心位置，转动惯量和杆长的函数
+I = zeros(1, 116);
+L = zeros(1, 116);
+Lw = zeros(1, 116);
+Lb = zeros(1, 116);
 
-for angle4 = 0 : 1 : 89
+for angle4 = -15 : 1 : 100
     [ml, Il, L_, Lw_, Lb_] = GetLegBaryCenter(180 - angle4, angle4, 0);
-    I(angle4 + 1) = Il;
-    L(angle4 + 1) = L_;
-    Lw(angle4 + 1) = Lw_;
-    Lb(angle4 + 1) = Lb_;
+    I(angle4 + 16) = Il;
+    L(angle4 + 16) = L_;
+    Lw(angle4 + 16) = Lw_;
+    Lb(angle4 + 16) = Lb_;
 end
 
 KI = polyfit(L, I, 1);
@@ -29,28 +28,13 @@ KLb = polyfit(L, Lb, 1);
 valKLb = polyval(KLb,L);
 figure(1);hold on;plot(L,Lb,'r*',L,valKLb,'b-.');
 
-numsize = 20;
-
-K_vals = zeros(numsize * numsize, 4, 10);
-
-L_lranges = linspace(0.183, 0.593, numsize);
-L_rranges = linspace(0.183, 0.593, numsize);
-
-L_lvals = zeros(numsize * numsize, 1);
-L_rvals = zeros(numsize * numsize, 1);
-
-a = 1;
-for i = 1 : 1 : numsize
-    for j = 1 : 1 : numsize
-
-L_l = L_lranges(i);
-L_r = L_rranges(j);
-
+%% 开始解算
 % 一些变量
 syms thetal_l(t) thetal_r(t) phi(t) s(t) yaw(t) x_l(t) x_r(t)
 % 轮子参数
 syms f_l f_r Nw_l Nw_r Pw_l Pw_r Tw_l Tw_r
 % 腿部参数
+syms L_l L_r
 % 机体参数
 syms Ib_x Ib_z Tb_l Tb_r Nb_l Nb_r Pb_l Pb_r
 % 基本参数
@@ -59,26 +43,23 @@ syms Ib_x Ib_z Tb_l Tb_r Nb_l Nb_r Pb_l Pb_r
 syms x_l_dot x_r_dot thetal_l_dot thetal_r_dot phi_dot s_dot yaw_dot
 syms x_l_ddot x_r_ddot thetal_l_ddot thetal_r_ddot phi_ddot s_ddot yaw_ddot
 
-%% 需要定义的参数
-mw = 0.88357;
-R = 0.075;
-Iw = 0.00249;
-mb = 12.09048;
-Ib_y = 0.20065;
+% 需要定义的参数
+mw = 1.267245;
+R = 0.2;
+Iw = 0.00379267;
+mb = 5.4940204;
+Ib_y = 0.05026821;
 g = 9.81;
-Ic_z = 0.652;
-R_l = 0.63;
-l = 0;
+Ic_z = 0.37248874;
+R_l = 0.482000001;
+l = -0.01994485;
+
 Il_l = KI(1, 1) * L_l + KI(1, 2);
 Il_r = KI(1, 1) * L_r + KI(1, 2);
 Lw_l = KLw(1, 1) * L_l + KLw(1, 2);
 Lw_r = KLw(1, 1) * L_r + KLw(1, 2);
 Lb_l = KLb(1, 1) * L_l + KLb(1, 2);
 Lb_r = KLb(1, 1) * L_r + KLb(1, 2);
-
-% s = 0.5 * (x_l + x_r);
-% s_dot = 0.5 * (x_l_dot + x_r_dot);
-% s_ddot = 0.5 * (x_l_ddot + x_r_ddot);
 
 %% 轮子分析
 xw_l = x_l;
@@ -221,11 +202,39 @@ B = [0 0 0 0;
     ];
 
 A = subs(A, [x_l_dot, x_r_dot, thetal_l(t), thetal_l_dot, thetal_r(t), thetal_r_dot, phi(t), phi_dot, Tw_l, Tw_r, Tb_l, Tb_r], zeros(1, 12));
-A = double(A);
 B = subs(B, [x_l_dot, x_r_dot, thetal_l(t), thetal_l_dot, thetal_r(t), thetal_r_dot, phi(t), phi_dot, Tw_l, Tw_r, Tb_l, Tb_r], zeros(1, 12));
-B = double(B);
 
-if(rank(ctrb(A, B)) == size(A, 1))
+%% 设定拟合次数，开始拟合
+numsize = 29;
+minleglen = 0.120;
+maxleglen = 0.400;
+
+K_vals = zeros(numsize * numsize, 4, 10);
+
+L_lranges = linspace(minleglen, maxleglen, numsize);
+L_rranges = linspace(minleglen, maxleglen, numsize);
+
+L_lvals = zeros(numsize * numsize, 1);
+L_rvals = zeros(numsize * numsize, 1);
+
+a = 1;
+
+for i = 1 : 1 : numsize
+    for j = 1 : 1 : numsize
+
+valL_l = L_lranges(i);
+valL_r = L_rranges(j);
+
+% s = 0.5 * (x_l + x_r);
+% s_dot = 0.5 * (x_l_dot + x_r_dot);
+% s_ddot = 0.5 * (x_l_ddot + x_r_ddot);
+valA = subs(A, [L_l L_r], [valL_l valL_r]);
+valB = subs(B, [L_l L_r], [valL_l valL_r]);
+
+valA = double(valA);
+valB = double(valB);
+
+if(rank(ctrb(valA, valB)) == size(valA, 1))
     disp('系统可控')
 else
     disp('系统不可控')
@@ -237,16 +246,17 @@ C = eye(10);
 D = zeros(10,4);
 Q = diag([10 1 10 1 10 10 10 10 100 1]);
 R = diag([1 1 0.25 0.25]);
-sys = ss(A, B, C, D);
+sys = ss(valA, valB, C, D);
 K = lqr(sys, Q, R);
 K_vals(a, : , :) = K;
-L_lvals(a, 1) = L_l;
-L_rvals(a, 1) = L_r;
+L_lvals(a, 1) = valL_l;
+L_rvals(a, 1) = valL_r;
 disp(a);
 a = a + 1;
     end
 end
 
+%% 参数引出处理
 K11 = K_vals(:, 1, 1);
 K12 = K_vals(:, 1, 2);
 K13 = K_vals(:, 1, 3);
