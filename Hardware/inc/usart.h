@@ -24,16 +24,18 @@
 #define MAXUSARTDATASIZE 70
 
 typedef struct Usart {
-	u8 rxBuff[MAXUSARTDATASIZE];
-	u8 txBuff[MAXUSARTDATASIZE];
-	void (*send)(u8* data, u8 cnt);
+  u8 rxBuff[MAXUSARTDATASIZE];
+  u8 txBuff[MAXUSARTDATASIZE];
+  void (*send)(u8* data, u8 cnt);
 } Usart;
 
-void usart1Init();
-void usart2Init();
+void Usart1Init();
+void Usart2Init();
+void Usart3Init();
+void Uart5Init();
 
-void usart1Send(u8* data, u8 cnt);
-void usart2Send(u8* data, u8 cnt);
+void Usart1Send(u8* data, u8 cnt);
+void Usart2Send(u8* data, u8 cnt);
 
 extern Usart* usart1;
 extern Usart* usart2;

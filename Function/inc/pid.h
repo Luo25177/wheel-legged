@@ -13,35 +13,35 @@
 #include "mymath.h"
 
 typedef enum {
-	PIDINC,
-	PIDPOS,
-	PIDTINC,
-	PIDTPOS,
+  PIDINC,
+  PIDPOS,
+  PIDTINC,
+  PIDTPOS,
 } pidMode;
 
 typedef struct PID {
-	float real;
-	float target;
-	float err[3];
+  float real;
+  float target;
+  float err[3];
 
-	float accErr;
-	float accErrLimit;
-	float output;
-	float outputLimit;
+  float accErr;
+  float accErrLimit;
+  float output;
+  float outputLimit;
 
-	float kp;
-	float ki;
-	float kd;
+  float kp;
+  float ki;
+  float kd;
 
-	float (*compute)(struct PID* pid, float input);
+  float (*compute)(struct PID* pid, float input);
 } PID;
 
-float incCompute(PID* pid, float input);
-float posCompute(PID* pid, float input);
+float IncCompute(PID* pid, float input);
+float PosCompute(PID* pid, float input);
 
-float TincCompute(PID* pid, float input);
-float TposCompute(PID* pid, float input);
+float TIncCompute(PID* pid, float input);
+float TPosCompute(PID* pid, float input);
 
-float twiceIncCompute(PID* pid, float input, float inputdot);
+float TwiceIncCompute(PID* pid, float input, float inputdot);
 
-void pidInit(PID* pid, float kp, float ki, float kd, float outputLimit, float accErrLimit, pidMode mode);
+void PidInit(PID* pid, float kp, float ki, float kd, float outputLimit, float accErrLimit, pidMode mode);

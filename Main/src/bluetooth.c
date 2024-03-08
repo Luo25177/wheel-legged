@@ -6,7 +6,7 @@ BlueToothMsg* bluetoothmsg;
 // @brief 初始化
 //
 //----
-void blueToothInit() {
+void BlueToothInit() {
   bluetoothmsg             = (BlueToothMsg*) malloc(sizeof(BlueToothMsg));
   bluetoothmsg->gethead    = false;
   bluetoothmsg->rxDataSize = 0;
@@ -22,13 +22,13 @@ void blueToothInit() {
 //
 // @param data
 //----
-void blueToothReceive(u8 data) {
+void BlueToothReceive(u8 data) {
   // 接收到头但是没接到尾 因为接收到尾之后会直接清空flag的
   if (bluetoothmsg->gethead) {
     bluetoothmsg->tail[0] = bluetoothmsg->tail[1];
     bluetoothmsg->tail[1] = data;
     if (bluetoothmsg->tail[0] == TAILCHAR1 && bluetoothmsg->tail[1] == TAILCHAR2) {
-      blueToothDeal();
+      BlueToothDeal();
       bluetoothmsg->gethead    = false;
       bluetoothmsg->rxDataSize = 0;
     } else
@@ -52,7 +52,7 @@ void blueToothReceive(u8 data) {
 // @brief 接收数据处理
 //
 //----
-void blueToothDeal() {
+void BlueToothDeal() {
   switch (bluetoothmsg->rxData[0]) {
     case 1:
       memcpy(&master.control, &bluetoothmsg->rxData[1], sizeof(ControlParam));
@@ -76,7 +76,7 @@ void blueToothDeal() {
 // @param data
 // @param size
 //----
-void blueToothSend(u8 id, void* data, u8 size) {
+void BlueToothSend(u8 id, void* data, u8 size) {
   bluetoothmsg->txData[2] = id;
   memcpy(&bluetoothmsg->txData[3], data, size);
   bluetoothmsg->txData[size + 3] = TAILCHAR1;

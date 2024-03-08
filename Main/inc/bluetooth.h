@@ -38,8 +38,8 @@ typedef struct {
 
 extern BlueToothMsg* bluetoothmsg;
 
-void blueToothInit();
-void blueToothReceive(u8 data);
-void blueToothDeal();
-void blueToothClear();
-void blueToothSend(u8 id, void* data, u8 size);
+void BlueToothInit();
+void BlueToothReceive(u8 data);
+void BlueToothDeal();
+void BlueToothClear();
+void BlueToothSend(u8 id, void* data, u8 size);

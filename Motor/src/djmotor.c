@@ -32,8 +32,8 @@ void DJmotorInit(DJmotor* motor, u8 id) {
 		motor[i].set.velocity		 = 0;
 		motor[i].set.torque			 = 0;
 		// 增量式PID
-		pidInit(motor[i].speedPid, 8, 0.25, 0, 0, 0, PIDINC);
-		pidInit(motor[i].pulsePid, 1.3, 0.2, 0, M3508MAXSPEED, 0, PIDINC);
+		PidInit(motor[i].speedPid, 8, 0.25, 0, 0, 0, PIDINC);
+		PidInit(motor[i].pulsePid, 1.3, 0.2, 0, M3508MAXSPEED, 0, PIDINC);
 	}
 }
 
@@ -105,11 +105,11 @@ void DJmotorRun(DJmotor* motor) {
 			case SPEED:
 				motor[i].speedPid->target	 = motor[i].set.velocity;
 				motor[i].set.current			+= motor[i].speedPid->compute(motor[i].speedPid, (float) motor[i].real.velocity);
-				limitInRange(s16)(&motor[i].set.current, M3508MAXCURRENT);
+				LimitInRange(s16)(&motor[i].set.current, M3508MAXCURRENT);
 				break;
 			case TORQUE:
 				motor[i].set.current = (s16) (motor[i].set.torque * M3508TTOI);
-				limitInRange(s16)(&motor[i].set.current, M3508MAXCURRENT);
+				LimitInRange(s16)(&motor[i].set.current, M3508MAXCURRENT);
 				break;
 			default:
 				motor[i].set.current = 0;

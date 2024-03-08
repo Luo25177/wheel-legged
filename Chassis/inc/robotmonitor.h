@@ -5,6 +5,6 @@
 
 void LegLPidMonitor();
 void LegRPidMonitor();
-void robotLqrMonitor();
-void robotTorqueMonitor();
-void robotWholeDataMonitor();
+void RobotLqrMonitor();
+void RobotTorqueMonitor();
+void RobotWholeDataMonitor();

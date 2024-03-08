@@ -8,11 +8,11 @@
 #include "ucos_ii.h"
 
 extern OS_EVENT* beepShowSem;
-extern u8				 beepShowErr;
+extern u8        beepShowErr;
 
 #define BEEP_OFF GPIOA->BSRRH = GPIO_Pin_8
-#define BEEP_ON	 GPIOA->BSRRL = GPIO_Pin_8
+#define BEEP_ON  GPIOA->BSRRL = GPIO_Pin_8
 
-void beepInit();
-void beepShow(int num);
-void beepWarning();
+void BeepInit();
+void BeepShow(int num);
+void BeepWarning();

@@ -15,31 +15,33 @@
 #include "leg.h"
 #include "yesense.h"
 typedef struct {
-	bool flyflag;
+  bool flyflag;
+  u8   jumpPhase;
 
-	Leg			legL;
-	Leg			legR;
-	Leg			legVir;
-	Yesense yesense;
+  Leg     legL;
+  Leg     legR;
+  Leg     legVir;
+  Yesense yesense;
 
-	// 以下四个PID输出结果均为力
-	PID yawpid;		 // 角速度控制
-	PID rollpid;	 // 翻滚角控制
-	PID splitpid;	 // 双腿劈叉控制
+  // 以下四个PID输出结果均为力
+  PID yawpid;    // 角速度控制
+  PID rollpid;   // 翻滚角控制
+  PID splitpid;  // 双腿劈叉控制
 
-	RobotRunMode mode;
+  RobotRunMode mode;
 
-	float L0Set;	// 设定腿长，也就是当前两条腿的平均腿长
-	float xSet;
-	float vSet;
+  float L0Set;  // 设定腿长，也就是当前两条腿的平均腿长
+  float xSet;
+  float vSet;
+  float force;
 } Robot;
 
 extern Robot robot;
 
-void robotInit();
-void updateState();
-void balanceMode();
-void jumpMode();
-void haltMode();
-void flyCheck();
-void robotRun();
+void RobotInit();
+void UpdateState();
+void BalanceMode();
+void Jump();
+void HaltMode();
+void FlyCheck();
+void RobotRun();

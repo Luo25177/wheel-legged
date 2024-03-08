@@ -11,4 +11,4 @@
 #include "string.h"
 #include "usart.h"
 
-void oscilloscope(float* data, u8 size);
+void Oscilloscope(float* data, u8 size);

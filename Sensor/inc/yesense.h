@@ -10,7 +10,7 @@
 //----
 #pragma once
 
-#include "datastruct.h"
+#include "DataStruct.h"
 #include "mymath.h"
 #include "tim.h"
 
@@ -32,9 +32,9 @@ typedef struct {
 	float rawMagy;
 	float rawMagz;
 
-	datastruct pitch;	 // deg
-	datastruct roll;
-	datastruct yaw;
+	DataStruct pitch;	 // deg
+	DataStruct roll;
+	DataStruct yaw;
 
 	float quaternion_data0;
 	float quaternion_data1;

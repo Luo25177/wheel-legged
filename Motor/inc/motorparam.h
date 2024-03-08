@@ -50,5 +50,6 @@ typedef struct {
     float torque;           \
   } MotorValue_##T;
 #define MotorValue(T) MotorValue_##T
+
 MotorValueDefine(float);
 MotorValueDefine(s16);

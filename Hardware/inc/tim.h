@@ -7,5 +7,5 @@
 
 extern unsigned int GlobalTimer;
 
-void tim2Init();
-void tim3Init();
+void Tim2Init();
+void Tim3Init();

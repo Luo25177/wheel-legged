@@ -44,7 +44,7 @@ void USART2_IRQHandler(void) {
 void TIM2_IRQHandler(void) {
   if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET) {
     GlobalTimer++;  // 全局计时器 代码的全局时间可都靠这个
-    canSend(0x3);
+    CanSend(0x3);
   }
   TIM_ClearITPendingBit(TIM2, TIM_IT_Update);  // 清除中断标志位
 }
@@ -57,7 +57,7 @@ void TIM3_IRQHandler(void) {
     RobotStateUpdate(&robotstate);
 
     // robot 状态检测
-    robotLqrMonitor();
+    RobotLqrMonitor();
   }
   TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }

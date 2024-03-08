@@ -11,24 +11,24 @@
 #pragma once
 
 typedef struct {
-	float x;
-	float y;
-} vector2f;
+  float x;
+  float y;
+} Vector2f;
 
 typedef struct {
-	float x;
-	float y;
-	float z;
-} vector3f;
+  float x;
+  float y;
+  float z;
+} Vector3f;
 
-vector2f vector2fAdd(const vector2f vec1, const vector2f vec2);
-vector2f vector2fSub(const vector2f vec1, const vector2f vec2);
-vector2f vector2fMulty(const vector2f vec1, const float num);
-vector2f vector2fDivid(const vector2f vec1, const float num);
-float		 vector2fDot(const vector2f vec1, const vector2f vec2);
+Vector2f Vector2fAdd(const Vector2f vec1, const Vector2f vec2);
+Vector2f Vector2fSub(const Vector2f vec1, const Vector2f vec2);
+Vector2f Vector2fMulty(const Vector2f vec1, const float num);
+Vector2f Vector2fDivid(const Vector2f vec1, const float num);
+float    Vector2fDot(const Vector2f vec1, const Vector2f vec2);
 
-vector3f vector3fAdd(const vector3f vec1, const vector3f vec2);
-vector3f vector3fSub(const vector3f vec1, const vector3f vec2);
-vector3f vector3fMulty(const vector3f vec1, const float num);
-vector3f vector3fDivid(const vector3f vec1, const float num);
-float		 vector3fDot(const vector3f vec1, const vector3f vec2);
+Vector3f Vector3fAdd(const Vector3f vec1, const Vector3f vec2);
+Vector3f Vector3fSub(const Vector3f vec1, const Vector3f vec2);
+Vector3f Vector3fMulty(const Vector3f vec1, const float num);
+Vector3f Vector3fDivid(const Vector3f vec1, const float num);
+float    Vector3fDot(const Vector3f vec1, const Vector3f vec2);

@@ -410,9 +410,9 @@
           <GroupName>FUNCTION</GroupName>
           <Files>
             <File>
-              <FileName>datastruct.c</FileName>
+              <FileName>DataStruct.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Function\src\datastruct.c</FilePath>
+              <FilePath>..\Function\src\DataStruct.c</FilePath>
             </File>
             <File>
               <FileName>mymath.c</FileName>
