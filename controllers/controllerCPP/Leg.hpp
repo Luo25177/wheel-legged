@@ -6,10 +6,11 @@
 class Leg {
   Joint* jointF;
   Joint* jointB;
-  Joint* wheel;
+  Wheel* wheel;
 
   float angle2, angle3;
   float angle1set, angle4set;
+  float angle0;
 
   float xa, ya;
   float xb, yb;
@@ -20,7 +21,7 @@ class Leg {
   public:
   float      angle1;
   float      angle4;
-  DataStruct angle0;
+  DataStruct theta;
   DataStruct L0;
   DataStruct dis;
   float      Fnow;

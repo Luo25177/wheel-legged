@@ -153,24 +153,20 @@
     <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Speaker.cpp" />
     <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Supervisor.cpp" />
     <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\TouchSensor.cpp" />
-    <ClCompile Include="Array.cc" />
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="Joint.cpp" />
     <ClCompile Include="Leg.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pid.cpp" />
-    <ClCompile Include="QuadProg++.cc" />
     <ClCompile Include="Sensor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Array.hh" />
     <ClInclude Include="Car.hpp" />
     <ClInclude Include="Joint.hpp" />
     <ClInclude Include="Leg.hpp" />
     <ClInclude Include="Main.hpp" />
     <ClInclude Include="MyMath.hpp" />
     <ClInclude Include="Pid.hpp" />
-    <ClInclude Include="QuadProg++.hh" />
     <ClInclude Include="RobotParam.hpp" />
     <ClInclude Include="Sensor.hpp" />
   </ItemGroup>

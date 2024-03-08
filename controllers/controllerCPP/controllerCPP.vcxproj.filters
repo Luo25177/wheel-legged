@@ -118,12 +118,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Array.cc">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadProg++.cc">
-      <Filter>src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="webots">
@@ -159,12 +153,6 @@
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="Main.hpp">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="Array.hh">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="QuadProg++.hh">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>

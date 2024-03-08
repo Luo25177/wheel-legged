@@ -12,7 +12,7 @@ Joint::Joint(const int& _dir, const std::string& encoder_name, const std::string
 
 void Joint::update() {
   this->torqueRead   = this->torqueSet;
-  this->posRead      = this->encoder->getValue() * dir + this->initAngle;
+  this->posRead      = this->initAngle - this->encoder->getValue() * dir;
   this->velocityRead = (this->posRead - this->lastpos) / DT;
   this->lastpos      = this->posRead;
 }
@@ -30,3 +30,11 @@ Joint::~Joint() {
   delete this->motor;
   delete this->encoder;
 }
+
+void Wheel::update() {
+  this->torqueRead   = this->torqueSet;
+  this->posRead      = this->initAngle + this->encoder->getValue() * dir;
+  this->velocityRead = (this->posRead - this->lastpos) / DT;
+  this->lastpos      = this->posRead;
+}
+

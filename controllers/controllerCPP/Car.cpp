@@ -69,6 +69,8 @@ Car::Car() {
     5.3844, 0.8031, -5.3733, -3.9449, 5.7666, 6.7014,
     9.8365, -14.3279, 28.2392, 5.5521, -21.4837, 3.5966,
     1.3797, -1.8205, 4.4538, 0.5427, -2.8596, -0.0419;
+
+
   this->jumpPhase = OFF;
   this->flyflag   = false;
 }
@@ -93,16 +95,16 @@ void Car::update() {
 }
 
 void Car::flyCheck() {
-  float lp          = this->legL->Fnow * cos(this->legL->angle0.now) + this->legL->Tbnow * sin(this->legL->angle0.now) / this->legL->L0.now;
-  float rp          = this->legR->Fnow * cos(this->legR->angle0.now) + this->legR->Tbnow * sin(this->legR->angle0.now) / this->legR->L0.now;
+  float lp          = this->legL->Fnow * cos(this->legL->theta.now) + this->legL->Tbnow * sin(this->legL->theta.now) / this->legL->L0.now;
+  float rp          = this->legR->Fnow * cos(this->legR->theta.now) + this->legR->Tbnow * sin(this->legR->theta.now) / this->legR->L0.now;
 
   float zmdd        = this->sensor->accelz * cos(this->sensor->pitch.now) - this->sensor->accelx * sin(this->sensor->pitch.now);
 
-  float lzwdd       = zmdd - this->legL->L0.ddot * cos(this->legL->angle0.now) + 2 * this->legL->L0.dot + this->legL->angle0.dot * sin(this->legL->angle0.now) + this->legL->L0.now * this->legL->angle0.ddot * sin(this->legL->angle0.now) + this->legL->L0.now * this->legL->angle0.dot * this->legL->angle0.dot * cos(this->legL->angle0.now);
-  float rzwdd       = zmdd - this->legR->L0.ddot * cos(this->legR->angle0.now) + 2 * this->legR->L0.dot + this->legR->angle0.dot * sin(this->legR->angle0.now) + this->legR->L0.now * this->legR->angle0.ddot * sin(this->legR->angle0.now) + this->legR->L0.now * this->legR->angle0.dot * this->legR->angle0.dot * cos(this->legR->angle0.now);
+  float lzwdd       = zmdd - this->legL->L0.ddot * cos(this->legL->theta.now) + 2 * this->legL->L0.dot + this->legL->theta.dot * sin(this->legL->theta.now) + this->legL->L0.now * this->legL->theta.ddot * sin(this->legL->theta.now) + this->legL->L0.now * this->legL->theta.dot * this->legL->theta.dot * cos(this->legL->theta.now);
+  float rzwdd       = zmdd - this->legR->L0.ddot * cos(this->legR->theta.now) + 2 * this->legR->L0.dot + this->legR->theta.dot * sin(this->legR->theta.now) + this->legR->L0.now * this->legR->theta.ddot * sin(this->legR->theta.now) + this->legR->L0.now * this->legR->theta.dot * this->legR->theta.dot * cos(this->legR->theta.now);
 
-  this->legR->force = -rp + MASSWHEEL * (GRAVITY + rzwdd);
-  this->legL->force = -lp + MASSWHEEL * (GRAVITY + lzwdd);
+  this->legR->force = rp + MASSWHEEL * (GRAVITY + rzwdd);
+  this->legL->force = lp + MASSWHEEL * (GRAVITY + lzwdd);
 
   this->force       = (this->legL->force + this->legR->force) / 2;
 
@@ -164,7 +166,7 @@ void Car::SplitLQRControl() {
       }
     }
   }
-  this->StateSplit << this->legVir->angle0.now, this->legVir->angle0.dot, this->legVir->dis.now, this->legVir->dis.dot, this->sensor->pitch.now, this->sensor->pitch.dot;
+  this->StateSplit << this->legVir->theta.now, this->legVir->theta.dot, this->legVir->dis.now, this->legVir->dis.dot, this->sensor->pitch.now, this->sensor->pitch.dot;
   this->ExpectSplit << 0, 0, 0, 0, 0, 0;
   this->InputSplit     = this->KSplit * (this->ExpectSplit - this->StateSplit);
 
@@ -174,26 +176,27 @@ void Car::SplitLQRControl() {
   this->legL->Tbset    = this->InputSplit(1, 0) / 2.0;
   this->legR->Tbset    = this->InputSplit(1, 0) / 2.0;
 
-  this->legL->Fset     = -61.90455385f;
-  this->legR->Fset     = -61.90455385f;
+  this->legL->Fset     = FFEEDFORWARD;
+  this->legR->Fset     = FFEEDFORWARD;
 
-  float lfCompensate   = this->legL->L0PID.compute(this->legL->L0.now);
-  float rfCompensate   = this->legR->L0PID.compute(this->legR->L0.now);
-  this->legL->Fset    -= lfCompensate;
-  this->legR->Fset    -= rfCompensate;
   // Ðý×ª²¹³¥
   float yawCompensate  = this->turnPID.compute(this->sensor->yaw.dot);
   this->turnPID.setTarget(0);
   this->legL->Twset     -= yawCompensate;
   this->legR->Twset     += yawCompensate;
-  //// ÅüÍÈ²¹³¥
-  float splitCompensate  = this->splitPID.compute(this->legL->angle0.now - this->legR->angle0.now);
+  // ÐéÄâÁ¦
+  float lfCompensate     = this->legL->L0PID.compute(this->legL->L0.now);
+  float rfCompensate     = this->legR->L0PID.compute(this->legR->L0.now);
+  this->legL->Fset      += lfCompensate;
+  this->legR->Fset      += rfCompensate;
+  // ÅüÍÈ²¹³¥
+  float splitCompensate  = this->splitPID.compute(this->legL->theta.now - this->legR->theta.now);
   this->legL->Tbset     += splitCompensate;
   this->legR->Tbset     -= splitCompensate;
-  //// // ·­¹ö½Ç²¹³¥
+  // ·­¹ö½Ç²¹³¥
   float rollCompensate   = this->rollPID.compute(this->sensor->roll.now);
-  this->legL->Fset      -= rollCompensate;
-  this->legR->Fset      += rollCompensate;
+  this->legL->Fset      += rollCompensate;
+  this->legR->Fset      -= rollCompensate;
 
   legL->VMC();
   legR->VMC();
@@ -209,23 +212,23 @@ void Car::WbcLQRControl() {
   float L_r2   = L_r * L_r;
   float L_lL_r = L_l * L_r;
 
-  if (this->flyflag) {
-    for (int row = 0; row < 4; row++) {
-      for (int col = 0; col < 10; col++) {
-        int num = (row * 10) + col;
-        if ((row != 2 && row != 3) || (col != 4 && col != 5 && col != 6 && col != 7)) {
-          this->KWBC(row, col) = 0;
-          continue;
-        }
-        this->KWBC(row, col) = this->WBCKCoeff(num, 0) +
-                               this->WBCKCoeff(num, 1) * L_l +
-                               this->WBCKCoeff(num, 2) * L_r +
-                               this->WBCKCoeff(num, 3) * L_l2 +
-                               this->WBCKCoeff(num, 4) * L_r2 +
-                               this->WBCKCoeff(num, 5) * L_lL_r;
-      }
-    }
-  } else {
+  //if (this->flyflag) {
+  //  for (int row = 0; row < 4; row++) {
+  //    for (int col = 0; col < 10; col++) {
+  //      int num = (row * 10) + col;
+  //      if ((row != 2 && row != 3) || (col != 4 && col != 5 && col != 6 && col != 7)) {
+  //        this->KWBC(row, col) = 0;
+  //        continue;
+  //      }
+  //      this->KWBC(row, col) = this->WBCKCoeff(num, 0) +
+  //                             this->WBCKCoeff(num, 1) * L_l +
+  //                             this->WBCKCoeff(num, 2) * L_r +
+  //                             this->WBCKCoeff(num, 3) * L_l2 +
+  //                             this->WBCKCoeff(num, 4) * L_r2 +
+  //                             this->WBCKCoeff(num, 5) * L_lL_r;
+  //    }
+  //  }
+  //} else {
     for (int row = 0; row < 4; row++) {
       for (int col = 0; col < 10; col++) {
         int num              = (row * 10) + col;
@@ -237,18 +240,18 @@ void Car::WbcLQRControl() {
                                this->WBCKCoeff(num, 5) * L_lL_r;
       }
     }
-  }
+  //}
 
   this->StateWBC << this->legVir->dis.now,
-    this->legVir->dis.dot,
-    this->sensor->yaw.now,
-    this->sensor->yaw.dot,
-    this->legL->angle0.now,
-    this->legL->angle0.dot,
-    this->legR->angle0.now,
-    this->legR->angle0.dot,
-    this->sensor->pitch.now,
-    this->sensor->pitch.dot;
+			this->legVir->dis.dot,
+			this->sensor->yaw.now,
+			this->sensor->yaw.dot,
+			this->legL->theta.now,
+			this->legL->theta.dot,
+			this->legR->theta.now,
+			this->legR->theta.dot,
+			this->sensor->pitch.now,
+			this->sensor->pitch.dot;
   this->ExpectWBC << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
   this->InputWBC         = this->KWBC * (this->ExpectWBC - this->StateWBC);
 
@@ -258,21 +261,21 @@ void Car::WbcLQRControl() {
   this->legL->Tbset      = this->InputWBC(2, 0);
   this->legR->Tbset      = this->InputWBC(3, 0);
 
-  this->legL->Fset       = -61.90455385f;
-  this->legR->Fset       = -61.90455385f;
+  this->legL->Fset       = FFEEDFORWARD;
+  this->legR->Fset       = FFEEDFORWARD;
   // ÐéÄâÁ¦
   float lfCompensate     = this->legL->L0PID.compute(this->legL->L0.now);
   float rfCompensate     = this->legR->L0PID.compute(this->legR->L0.now);
-  this->legL->Fset      -= lfCompensate;
-  this->legR->Fset      -= rfCompensate;
+  this->legL->Fset      += lfCompensate;
+  this->legR->Fset      += rfCompensate;
   // ÅüÍÈ²¹³¥
-  float splitCompensate  = this->splitPID.compute(this->legL->angle0.now - this->legR->angle0.now);
+  float splitCompensate  = this->splitPID.compute(this->legL->theta.now - this->legR->theta.now);
   this->legL->Tbset     += splitCompensate;
   this->legR->Tbset     -= splitCompensate;
   // ·­¹ö½Ç²¹³¥
   float rollCompensate   = this->rollPID.compute(this->sensor->roll.now);
-  this->legL->Fset      -= rollCompensate;
-  this->legR->Fset      += rollCompensate;
+  this->legL->Fset      += rollCompensate;
+  this->legR->Fset      -= rollCompensate;
 
   legL->VMC();
   legR->VMC();
@@ -283,3 +286,4 @@ void Car::WbcLQRControl() {
 
 void Car::SplitMPCControl() {
 }
+

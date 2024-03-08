@@ -23,7 +23,7 @@
 
 #define FFEEDFORWARD -64.59885f
 
-#define FORCETHRESHOLD  -20.f
+#define FORCETHRESHOLD  20.f
 #define MAXROBOTSPEED   1.f
 #define MINROBOTLEGLEN  0.26f
 #define MAXROBOTLEGLEN  0.55f
@@ -66,3 +66,4 @@ struct DataStruct {
   float last;
   float lastdot;
 };
+

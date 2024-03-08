@@ -5,9 +5,6 @@
 #include "RobotParam.hpp"
 #include "Sensor.hpp"
 
-#include "Array.hh"
-#include "QuadProg++.hh"
-
 class Car : public webots::Robot {
   RobotControlMode            controlmode;
   Eigen::Matrix<float, 12, 4> SplitKCoeff;

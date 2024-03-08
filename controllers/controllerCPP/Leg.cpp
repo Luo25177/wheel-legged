@@ -5,17 +5,17 @@ PIDParam legPIDParam = { 2000, 50, 35000 };
 Leg::Leg(const LEGDIR& _dir) {
   switch (_dir) {
     case LEFT:
-      this->jointB = new Joint(-1, "EncoderBL", "MotorBL", InitAngle4, 22);
-      this->jointF = new Joint(1, "EncoderFL", "MotorFL", InitAngle1, 22);
-      this->wheel  = new Joint(1, "EncoderWheelL", "MotorWheelL", 0, 10);
+      this->jointB = new Joint(1, "EncoderBL", "MotorBL", InitAngle4, 22);
+      this->jointF = new Joint(-1, "EncoderFL", "MotorFL", InitAngle1, 22);
+      this->wheel  = new Wheel(1, "EncoderWheelL", "MotorWheelL", 0, 10);
       break;
     case RIGHT:
-      this->jointB = new Joint(-1, "EncoderBR", "MotorBR", InitAngle4, 22);
-      this->jointF = new Joint(1, "EncoderFR", "MotorFR", InitAngle1, 22);
-      this->wheel  = new Joint(1, "EncoderWheelR", "MotorWheelR", 0, 10);
+      this->jointB = new Joint(1, "EncoderBR", "MotorBR", InitAngle4, 22);
+      this->jointF = new Joint(-1, "EncoderFR", "MotorFR", InitAngle1, 22);
+      this->wheel  = new Wheel(1, "EncoderWheelR", "MotorWheelR", 0, 10);
       break;
   }
-  this->angle0 = DataStruct();
+  this->theta = DataStruct();
   this->L0     = DataStruct();
   this->dis    = DataStruct();
   this->L0PID.init(PIDPOSMODE, legPIDParam, 0, 1);
@@ -61,21 +61,22 @@ void Leg::zjie(const float& _pitch) {
   this->yc     = this->yb + l2 * sin(this->angle2);
 
   this->L0.now = sqrt(pow(this->xc, 2) + pow(this->yc, 2));
+  this->angle0 = atan2(this->yc, this->xc);
 
   // 乘以_pitch的旋转矩阵
   float cor_XY_then[2][1];
   cor_XY_then[0][0]    = cos(_pitch) * this->xc - sin(_pitch) * this->yc;
   cor_XY_then[1][0]    = sin(_pitch) * this->xc + cos(_pitch) * this->yc;
-  this->angle0.now     = atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
+  this->theta.now     = atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
 
   this->L0.dot         = (this->L0.now - this->L0.last) / DT;
   this->L0.ddot        = (this->L0.dot - this->L0.lastdot) / DT;
   this->L0.last        = this->L0.now;
   this->L0.lastdot     = this->L0.dot;
-  this->angle0.dot     = (this->angle0.now - this->angle0.last) / DT;
-  this->angle0.ddot    = (this->angle0.dot - this->angle0.lastdot) / DT;
-  this->angle0.last    = this->angle0.now;
-  this->angle0.lastdot = this->angle0.dot;
+  this->theta.dot     = (this->theta.now - this->theta.last) / DT;
+  this->theta.ddot    = (this->theta.dot - this->theta.lastdot) / DT;
+  this->theta.last    = this->theta.now;
+  this->theta.lastdot = this->theta.dot;
 }
 
 void Leg::zjie(const float& _pitch, const float& _angle1, const float _angle4) {
@@ -96,21 +97,22 @@ void Leg::zjie(const float& _pitch, const float& _angle1, const float _angle4) {
   this->yc     = this->yb + l2 * sin(this->angle2);
 
   this->L0.now = sqrt(pow(this->xc, 2) + pow(this->yc, 2));
+  this->angle0 = atan2(this->yc, this->xc);
 
   // 乘以_pitch的旋转矩阵
   float cor_XY_then[2][1];
   cor_XY_then[0][0]    = cos(_pitch) * this->xc - sin(_pitch) * this->yc;
   cor_XY_then[1][0]    = sin(_pitch) * this->xc + cos(_pitch) * this->yc;
-  this->angle0.now     = atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
+  this->theta.now     = atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
 
   this->L0.dot         = (this->L0.now - this->L0.last) / DT;
   this->L0.ddot        = (this->L0.dot - this->L0.lastdot) / DT;
   this->L0.last        = this->L0.now;
   this->L0.lastdot     = this->L0.dot;
-  this->angle0.dot     = (this->angle0.now - this->angle0.last) / DT;
-  this->angle0.ddot    = (this->angle0.dot - this->angle0.lastdot) / DT;
-  this->angle0.last    = this->angle0.now;
-  this->angle0.lastdot = this->angle0.dot;
+  this->theta.dot     = (this->theta.now - this->theta.last) / DT;
+  this->theta.ddot    = (this->theta.dot - this->theta.lastdot) / DT;
+  this->theta.last    = this->theta.now;
+  this->theta.lastdot = this->theta.dot;
 }
 
 void Leg::njie(const float& _xc, const float& _yc) {
@@ -129,28 +131,21 @@ void Leg::njie(const float& _xc, const float& _yc) {
 }
 
 void Leg::VMC() {
-  float trans[2][2] = { l1 * cos(this->angle0.now + this->angle3) * sin(this->angle1 - this->angle2) / sin(this->angle2 - this->angle3),
-                        l1 * sin(this->angle0.now + this->angle3) * sin(this->angle1 - this->angle2) / (this->L0.now * sin(this->angle2 - this->angle3)),
-                        l4 * cos(this->angle0.now + this->angle2) * sin(this->angle3 - this->angle4) / sin(this->angle2 - this->angle3),
-                        l4 * sin(this->angle0.now + this->angle2) * sin(this->angle3 - this->angle4) / (this->L0.now * sin(this->angle2 - this->angle3)) };
-  this->jointF->setTorque(trans[0][0] * this->Fset + trans[0][1] * this->Tbset);
-  this->jointB->setTorque(trans[1][0] * this->Fset + trans[1][1] * this->Tbset);
+  Eigen::Matrix<float, 2, 2> trans;
+  trans << l1 * sin(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / sin(this->angle2 - this->angle3),
+    l1 * cos(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / (this->L0.now * sin(this->angle2 - this->angle3)),
+    l4 * sin(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / sin(this->angle2 - this->angle3),
+    l4 * cos(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / (this->L0.now * sin(this->angle2 - this->angle3));
+  this->jointF->setTorque(trans(0, 0) * this->Fset - trans(0, 1) * this->Tbset);
+  this->jointB->setTorque(trans(1, 0) * this->Fset - trans(1, 1) * this->Tbset);
   this->wheel->setTorque(this->Twset);
 }
 
 void Leg::INVMC() {
-  float trans[2][2] = { -(sin(this->angle0.now + this->angle2) * sin(this->angle2 - this->angle3)) /
-                          (l1 * cos(this->angle0.now + this->angle2) * sin(this->angle0.now + this->angle3) * sin(this->angle1 - this->angle2) -
-                           l1 * cos(this->angle0.now + this->angle3) * sin(this->angle0.now + this->angle2) * sin(this->angle1 - this->angle2)),
-                        (sin(this->angle0.now + this->angle3) * sin(this->angle2 - this->angle3)) /
-                          (l4 * cos(this->angle0.now + this->angle2) * sin(this->angle0.now + this->angle3) * sin(this->angle3 - this->angle4) -
-                           l4 * cos(this->angle0.now + this->angle3) * sin(this->angle0.now + this->angle2) * sin(this->angle3 - this->angle4)),
-                        (this->L0.now * cos(this->angle0.now + this->angle2) * sin(this->angle2 - this->angle3)) /
-                          (l1 * cos(this->angle0.now + this->angle2) * sin(this->angle0.now + this->angle3) * sin(this->angle1 - this->angle2) -
-                           l1 * cos(this->angle0.now + this->angle3) * sin(this->angle0.now + this->angle2) * sin(this->angle1 - this->angle2)),
-                        -(this->L0.now * cos(this->angle0.now + this->angle3) * sin(this->angle2 - this->angle3)) /
-                          (l4 * cos(this->angle0.now + this->angle2) * sin(this->angle0.now + this->angle3) * sin(this->angle3 - this->angle4) -
-                           l4 * cos(this->angle0.now + this->angle3) * sin(this->angle0.now + this->angle2) * sin(this->angle3 - this->angle4)) };
+  float A           = sin(angle2 - angle3) / (l1 * cos(angle0 - angle2) * sin(angle0 - angle3) * sin(angle1 - angle2) - l1 * cos(angle0 - angle3) * sin(angle0 - angle2) * sin(angle1 - angle2));
+  float B           = sin(angle2 - angle3) / (l4 * cos(angle0 - angle2) * sin(angle0 - angle3) * sin(angle3 - angle4) - l4 * cos(angle0 - angle3) * sin(angle0 - angle2) * sin(angle3 - angle4));
+
+  float trans[2][2] = { cos(angle0 - angle2) * A, -cos(angle0 - angle3) * B, -L0.now * sin(angle0 - angle2) * A, L0.now * sin(angle0 - angle3) * B };
 
   this->Fnow        = (trans[0][0] * this->jointF->torqueRead + trans[0][1] * this->jointB->torqueRead);
   this->Tbnow       = (trans[1][0] * this->jointF->torqueRead + trans[1][1] * this->jointB->torqueRead);

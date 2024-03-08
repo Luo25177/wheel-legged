@@ -1,6 +1,39 @@
-﻿  robotparam.c
-D:\Desktop\轮足相关\轮足\controllers\my_controller\robotparam.c(17,25): warning C4305: “初始化”: 从“double”到“float”截断
-D:\Desktop\轮足相关\轮足\controllers\my_controller\robotparam.c(30,27): warning C4305: “初始化”: 从“double”到“float”截断
+﻿  car.c
+D:\Desktop\轮足相关\轮足\controllers\my_controller\leg.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“car.c”)
+  
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(26,31): warning C4305: “=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(40,32): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(41,32): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(42,32): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(43,32): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(329,35): warning C4305: “=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(330,35): warning C4305: “=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(335,35): warning C4305: “=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(336,35): warning C4305: “=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(359,67): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(360,67): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(362,74): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(364,216): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\Desktop\轮足相关\轮足\controllers\my_controller\car.c(365,216): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+  run.c
+D:\Desktop\轮足相关\轮足\controllers\my_controller\leg.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“run.c”)
+  
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(32,30): warning C4305: “=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(33,25): warning C4305: “+=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(36,31): warning C4305: “=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(37,26): warning C4305: “+=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(40,36): warning C4305: “-=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(41,36): warning C4305: “-=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(42,61): warning C4305: “函数”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(43,61): warning C4305: “函数”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(46,36): warning C4305: “+=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(47,36): warning C4305: “+=”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(48,61): warning C4305: “函数”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(49,61): warning C4305: “函数”: 从“double”到“float”截断
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(6,27): warning C4100: “argv”: 未引用的形参
+D:\Desktop\轮足相关\轮足\controllers\my_controller\run.c(6,14): warning C4100: “argc”: 未引用的形参
   正在生成代码
   Previous IPDB and IOBJ mismatch, fall back to full compilation.
   All 29 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
