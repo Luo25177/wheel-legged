@@ -212,23 +212,23 @@ void Car::WbcLQRControl() {
   float L_r2   = L_r * L_r;
   float L_lL_r = L_l * L_r;
 
-  //if (this->flyflag) {
-  //  for (int row = 0; row < 4; row++) {
-  //    for (int col = 0; col < 10; col++) {
-  //      int num = (row * 10) + col;
-  //      if ((row != 2 && row != 3) || (col != 4 && col != 5 && col != 6 && col != 7)) {
-  //        this->KWBC(row, col) = 0;
-  //        continue;
-  //      }
-  //      this->KWBC(row, col) = this->WBCKCoeff(num, 0) +
-  //                             this->WBCKCoeff(num, 1) * L_l +
-  //                             this->WBCKCoeff(num, 2) * L_r +
-  //                             this->WBCKCoeff(num, 3) * L_l2 +
-  //                             this->WBCKCoeff(num, 4) * L_r2 +
-  //                             this->WBCKCoeff(num, 5) * L_lL_r;
-  //    }
-  //  }
-  //} else {
+  if (this->flyflag) {
+    for (int row = 0; row < 4; row++) {
+      for (int col = 0; col < 10; col++) {
+        int num = (row * 10) + col;
+        if ((row != 2 && row != 3) || (col != 4 && col != 5 && col != 6 && col != 7)) {
+          this->KWBC(row, col) = 0;
+          continue;
+        }
+        this->KWBC(row, col) = this->WBCKCoeff(num, 0) +
+                               this->WBCKCoeff(num, 1) * L_l +
+                               this->WBCKCoeff(num, 2) * L_r +
+                               this->WBCKCoeff(num, 3) * L_l2 +
+                               this->WBCKCoeff(num, 4) * L_r2 +
+                               this->WBCKCoeff(num, 5) * L_lL_r;
+      }
+    }
+  } else {
     for (int row = 0; row < 4; row++) {
       for (int col = 0; col < 10; col++) {
         int num              = (row * 10) + col;
@@ -240,7 +240,7 @@ void Car::WbcLQRControl() {
                                this->WBCKCoeff(num, 5) * L_lL_r;
       }
     }
-  //}
+  }
 
   this->StateWBC << this->legVir->dis.now,
 			this->legVir->dis.dot,
