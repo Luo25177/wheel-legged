@@ -133,9 +133,9 @@ void Leg::njie(const float& _xc, const float& _yc) {
 void Leg::VMC() {
   Eigen::Matrix<float, 2, 2> trans;
   trans << l1 * sin(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / sin(this->angle2 - this->angle3),
-    l1 * cos(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / (this->L0.now * sin(this->angle2 - this->angle3)),
-    l4 * sin(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / sin(this->angle2 - this->angle3),
-    l4 * cos(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / (this->L0.now * sin(this->angle2 - this->angle3));
+  				 l1 * cos(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / (this->L0.now * sin(this->angle2 - this->angle3)),
+					 l4 * sin(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / sin(this->angle2 - this->angle3),
+					 l4 * cos(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / (this->L0.now * sin(this->angle2 - this->angle3));
   this->jointF->setTorque(trans(0, 0) * this->Fset - trans(0, 1) * this->Tbset);
   this->jointB->setTorque(trans(1, 0) * this->Fset - trans(1, 1) * this->Tbset);
   this->wheel->setTorque(this->Twset);

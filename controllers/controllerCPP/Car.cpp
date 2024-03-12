@@ -16,18 +16,18 @@ Car::Car() {
   this->turnPID.setTarget(0);
   this->splitPID.setTarget(0);
 
-  this->SplitKCoeff << 28.45590904, -26.14663189, -71.85491677, -57.67693323,
-    20.81935214, 31.04311745, -99.97647312, 80.63747638,
-    34.35211267, -62.5255255, 3.744783184, -13.39610566,
-    9.539809458, -5.674417183, -9.042172469, 15.38011589,
-    -8.099733304, 18.91800462, -15.63725351, -17.56065062,
-    -13.46493183, 51.6815939, -63.47046464, 31.58875259,
-    4.946146057, -5.071503538, -5.553098397, -20.03619027,
-    -13.6641625, 51.30866802, -62.03695631, 31.35820391,
-    -21.28992656, 81.7157749, -100.3556162, 49.94620332,
-    51.22721124, -119.6479665, 98.89867476, 111.0633064,
-    -4.99553123, 11.91361564, -11.0718808, 4.99317801,
-    4.988162345, -11.37121624, 9.311143603, 4.877697792;
+  this->SplitKCoeff << -127.5384, 203.576, -137.8553, -26.3202,
+    -17.0269, 24.9917, -26.5219, -6.531,
+    -19.2266, 30.213, -16.8492, -6.4391,
+    -12.0306, 18.6266, -11.599, -8.7046,
+    -136.1066, 249.4351, -180.0359, 61.321,
+    -15.1166, 26.1633, -17.5876, 5.7101,
+    -72.3749, 162.8075, -146.8095, 65.8966,
+    -28.8617, 54.6422, -41.8358, 18.1567,
+    -38.4968, 70.5509, -50.9218, 17.3442,
+    -59.4404, 102.1731, -67.8144, 21.1842,
+    271.9045, -427.2766, 238.2835, 91.062,
+    24.59, -38.1709, 20.9754, 5.457;
 
   this->WBCKCoeff << -1.5782, -2.3503, 0.2456, 2.8044, -0.5538, -0.3792,
     -2.3012, -2.4472, 0.6088, 3.0067, -0.9434, -0.696,
@@ -144,37 +144,45 @@ void Car::JumpControl() {
 }
 
 void Car::SplitLQRControl() {
-  float L01 = this->legVir->L0.now;
-  float L02 = L01 * L01;
-  float L03 = L02 * L01;
+  float L01L = this->legL->L0.now;
+  float L02L = L01L * L01L;
+  float L03L = L02L * L01L;
+
+  float L01R = this->legR->L0.now;
+  float L02R = L01R * L01R;
+  float L03R = L02R * L01R;
 
   if (this->flyflag) {
-    for (int col = 0; col < 6; col++) {
       for (int row = 0; row < 2; row++) {
-        int num = (col << 1) + row;
-        if (row == 1 && (col == 0 || col == 1))
-          this->KSplit(row, col) = this->SplitKCoeff(num, 0) * L03 + this->SplitKCoeff(num, 1) * L02 + this->SplitKCoeff(num, 2) * L01 + this->SplitKCoeff(num, 3);
-        else
-          this->KSplit(row, col) = 0;
+    for (int col = 0; col < 6; col++) {
+        int num = (row *6 ) + col;
+        if (row == 1 && (col == 0 || col == 1)) {
+          this->KSplitL(row, col) = this->SplitKCoeff(num, 0) * L03L + this->SplitKCoeff(num, 1) * L02L + this->SplitKCoeff(num, 2) * L01L + this->SplitKCoeff(num, 3);
+          this->KSplitR(row, col) = this->SplitKCoeff(num, 0) * L03R + this->SplitKCoeff(num, 1) * L02R + this->SplitKCoeff(num, 2) * L01R + this->SplitKCoeff(num, 3);
+        } else {
+          this->KSplitL(row, col) = 0;
+          this->KSplitR(row, col) = 0;
+        }
       }
     }
   } else {
-    for (int col = 0; col < 6; col++) {
       for (int row = 0; row < 2; row++) {
-        int num                = (col << 1) + row;
-        this->KSplit(row, col) = this->SplitKCoeff(num, 0) * L03 + this->SplitKCoeff(num, 1) * L02 + this->SplitKCoeff(num, 2) * L01 + this->SplitKCoeff(num, 3);
+    for (int col = 0; col < 6; col++) {
+        int num = (row *6 ) + col;
+				this->KSplitL(row, col) = this->SplitKCoeff(num, 0) * L03L + this->SplitKCoeff(num, 1) * L02L + this->SplitKCoeff(num, 2) * L01L + this->SplitKCoeff(num, 3);
+				this->KSplitR(row, col) = this->SplitKCoeff(num, 0) * L03R + this->SplitKCoeff(num, 1) * L02R + this->SplitKCoeff(num, 2) * L01R + this->SplitKCoeff(num, 3);
       }
     }
   }
-  this->StateSplit << this->legVir->theta.now, this->legVir->theta.dot, this->legVir->dis.now, this->legVir->dis.dot, this->sensor->pitch.now, this->sensor->pitch.dot;
+  this->StateSplitL << this->legL->theta.now, this->legL->theta.dot, this->legL->dis.now, this->legL->dis.dot, this->sensor->pitch.now, this->sensor->pitch.dot;
   this->ExpectSplit << 0, 0, 0, 0, 0, 0;
-  this->InputSplit     = this->KSplit * (this->ExpectSplit - this->StateSplit);
+  this->InputSplitL     = this->KSplitL * (this->ExpectSplit - this->StateSplitL);
 
-  this->legL->Twset    = this->InputSplit(0, 0) / 2.0;
-  this->legR->Twset    = this->InputSplit(0, 0) / 2.0;
+  this->legL->Twset    = this->InputSplitL(0, 0) / 2.0;
+  this->legR->Twset    = this->InputSplitR(0, 0) / 2.0;
 
-  this->legL->Tbset    = this->InputSplit(1, 0) / 2.0;
-  this->legR->Tbset    = this->InputSplit(1, 0) / 2.0;
+  this->legL->Tbset    = this->InputSplitL(1, 0) / 2.0;
+  this->legR->Tbset    = this->InputSplitR(1, 0) / 2.0;
 
   this->legL->Fset     = FFEEDFORWARD;
   this->legR->Fset     = FFEEDFORWARD;
@@ -252,7 +260,7 @@ void Car::WbcLQRControl() {
 			this->legR->theta.dot,
 			this->sensor->pitch.now,
 			this->sensor->pitch.dot;
-  this->ExpectWBC << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  this->ExpectWBC << 1, 0, 0, 0, 0, 0, 0, 0, 0, 0;
   this->InputWBC         = this->KWBC * (this->ExpectWBC - this->StateWBC);
 
   this->legL->Twset      = this->InputWBC(0, 0);
