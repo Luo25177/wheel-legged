@@ -17,6 +17,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "vofa.h"
+#include "zdrive.h"
 
 void DMA2_Stream7_IRQHandler();
 void DMA1_Stream6_IRQHandler();

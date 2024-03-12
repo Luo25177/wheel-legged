@@ -54,7 +54,7 @@ void RobotStateUpdate(RobotState* robotstate) {
     robotstate->deviceState &= 0b11111101;
   else
     robotstate->deviceState |= 0b00000010;
-  if (djmotor[0].monitor.timeOut)
+  if (zdrive[0].monitor.timeOut)
     robotstate->deviceState &= 0b11111011;
   else
     robotstate->deviceState |= 0b00000100;
@@ -66,7 +66,7 @@ void RobotStateUpdate(RobotState* robotstate) {
     robotstate->deviceState &= 0b11101111;
   else
     robotstate->deviceState |= 0b00010000;
-  if (djmotor[1].monitor.timeOut)
+  if (zdrive[1].monitor.timeOut)
     robotstate->deviceState &= 0b11011111;
   else
     robotstate->deviceState |= 0b00100000;

@@ -52,10 +52,9 @@ void TIM2_IRQHandler(void) {
 // 100ms
 void TIM3_IRQHandler(void) {
   if (TIM_GetITStatus(TIM3, TIM_IT_Update) == SET) {
-    DJmotorMonitor(djmotor);
-    TmotorMonitor(tmotor);
+    for (int i = 0; i < 4; ++i) TmotorMonitor(&tmotor[i]);
+    for (int i = 0; i < 2; ++i) ZdriveMonitor(&zdrive[i]);
     RobotStateUpdate(&robotstate);
-
     // robot 状态检测
     RobotLqrMonitor();
   }
@@ -78,6 +77,6 @@ void CAN2_RX0_IRQHandler(void) {
   if (CAN_GetITStatus(CAN2, CAN_IT_FMP0) != RESET) {
     CanRxMsg rxMsg;
     CAN_Receive(CAN2, CAN_FIFO0, &rxMsg);
-    DJmotorreceiveHandle(djmotor, rxMsg);
+    ZdriveReceiveHandler(zdrive, rxMsg);
   }
 }

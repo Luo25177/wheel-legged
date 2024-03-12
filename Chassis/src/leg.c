@@ -6,10 +6,10 @@
 // @param leg
 // @param dir 腿的方向
 //----
-void LegInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind) {
+void LegInit(Leg* leg, int dir, Zdrive* wheel, Tmotor* front, Tmotor* behind) {
   leg->dir = dir;
 
-  PidInit(&leg->L0pid, 400, 0, 500, 0, 1000, PIDPOS);
+  PidInit(&leg->L0pid, 1000, 2, 9500, 0, 1000, PIDPOS);
 
   DataStructInit(&leg->dis, 0, 0, 0, 0);
   DataStructInit(&leg->L0, 0, 0, 0, 0);
@@ -41,10 +41,10 @@ void LegInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind) {
 // @param leg
 //----
 void LegUpdate(Leg* leg) {
-  leg->angle1    = (float) (leg->front->initSetAngle + (leg->front->real.angleRad * leg->dir));
-  leg->angle4    = (float) (leg->behind->initSetAngle + (leg->behind->real.angleRad * leg->dir));
-  leg->dis.now   = (float) -leg->wheel->real.angleRad * WHEELR * leg->dir;
-  leg->dis.dot   = (float) -leg->wheel->real.velocity * M3508RPMTORAD * WHEELR * leg->dir;
+  leg->angle1    = (float) (leg->front->initSetAngle - (leg->front->real.angleRad * leg->dir));
+  leg->angle4    = (float) (leg->behind->initSetAngle - (leg->behind->real.angleRad * leg->dir));
+  leg->dis.now   = (float) leg->wheel->real.angleRad * WHEELR * leg->dir;
+  leg->dis.dot   = (float) leg->wheel->real.velocity * WHEELR * leg->dir;
   leg->TFnow     = (float) leg->front->real.torque * leg->dir;
   leg->TBnow     = (float) leg->behind->real.torque * leg->dir;
   leg->TWheelnow = (float) leg->wheel->real.torque * leg->dir;

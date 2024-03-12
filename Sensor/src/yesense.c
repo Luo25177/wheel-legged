@@ -86,10 +86,9 @@ int calc_checksum(unsigned char* data, unsigned short len, unsigned short* check
 
 /*-------------------------------------------------------------------------------------------------------------*/
 unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned char len, unsigned char* data) {
-  unsigned char ret         = 0xff;
-  static float  yaw_start   = 0;
-  static float  roll_start  = 0;
-  static float  pitch_start = 0;
+  unsigned char ret        = 0xff;
+  static float  yaw_start  = 0;
+  static float  roll_start = 0;
 
   switch (id) {
     case ACCEL_ID: {
@@ -153,16 +152,14 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
         yesense->yaw.now   = get_signed_int(data + (SINGLE_DATA_BYTES << 1)) * NOT_MAG_DATA_FACTOR;
         if (!yesense->init) {
           yaw_start     = yesense->yaw.now;
-          pitch_start   = yesense->pitch.now;
           roll_start    = yesense->roll.now;
           yesense->init = true;
         }
         yesense->yaw.now   -= yaw_start;
         yesense->roll.now  -= roll_start;
-        yesense->pitch.now -= pitch_start;
         yesense->yaw.now   *= DegToRad;
-        yesense->roll.now  *= DegToRad;
         yesense->pitch.now *= DegToRad;
+        yesense->roll.now  *= DegToRad;
       } else
         ret = (unsigned char) 0x00;
     } break;

@@ -10,9 +10,14 @@
 //----
 #pragma once
 
+#include "can.h"
+#include "mymath.h"
+#include "pid.h"
 #include "stm32f4xx.h"
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 
 //----
 // @brief 电机模式
@@ -39,7 +44,11 @@ typedef struct {
 
 //----
 // @brief 电机数据
-//
+// @param current A
+// @param velocity rad/s
+// @param angleRad rad
+// @param angleDeg °
+// @param torque N·M
 //----
 #define MotorValueDefine(T) \
   typedef struct {          \

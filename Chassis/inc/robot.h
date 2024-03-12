@@ -14,6 +14,7 @@
 #include "btoscilloscope.h"
 #include "leg.h"
 #include "yesense.h"
+
 typedef struct {
   bool flyflag;
   u8   jumpPhase;

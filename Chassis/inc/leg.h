@@ -12,15 +12,15 @@
 #pragma once
 
 #include "DataStruct.h"
-#include "djmotor.h"
 #include "robotparam.h"
 #include "tim.h"
 #include "tmotor.h"
+#include "zdrive.h"
 
 typedef struct {
   int dir;
 
-  DJmotor*   wheel;
+  Zdrive*    wheel;
   Tmotor*    front;
   Tmotor*    behind;
   Input      X, Xd;
@@ -53,7 +53,7 @@ typedef struct {
   PID   L0pid;  // 虚拟力的pid 是腿长的控制
 } Leg;
 
-void LegInit(Leg* leg, int dir, DJmotor* wheel, Tmotor* front, Tmotor* behind);
+void LegInit(Leg* leg, int dir, Zdrive* wheel, Tmotor* front, Tmotor* behind);
 void LegUpdate(Leg* leg);
 void Zjie(Leg* leg, float pitch);
 void Njie(Leg* leg, float xc, float yc);

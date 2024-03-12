@@ -11,11 +11,7 @@
 
 #pragma once
 
-#include "can.h"
 #include "motorparam.h"
-#include "mymath.h"
-
-#include <stdbool.h>
 
 #define TSEEKZEROSPEED 30.f  // Deg/s
 

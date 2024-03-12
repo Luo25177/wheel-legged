@@ -33,7 +33,7 @@ syms Tw Tb Pw Pb Nw Nb
 syms x_ddot theta_ddot phi_ddot x_dot theta_dot phi_dot
 syms L
 mw = 1.267245 * 2;
-R = 0.2;
+R = 0.1;
 Iw = 0.00379267 * 2;
 mb = 5.4940204;
 Ib_y = 0.05026821;
@@ -101,7 +101,7 @@ disp(i)
 
 C = eye(6);
 D = zeros(6,2);
-Q = diag([100 100 100 10 5000 1]);
+Q = diag([30.0000 	10.0000 	30.0000 	30.0000 	100.0000 	10.0000]);
 R = diag([1 0.25]);
 sys = ss(valA, valB, C, D);
 KLQR = lqr(sys, Q, R);%得到反馈增益矩阵

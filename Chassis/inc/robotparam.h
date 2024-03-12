@@ -12,15 +12,18 @@
 #include "vector.h"
 
 // 初始状态：(rad)
-#define FrontAngleInit  1.762782545f
-#define BehindAngleInit 1.378810109f
+// #define FrontAngleInit  1.762782545f
+// #define BehindAngleInit 1.378810109f
+
+#define FrontAngleInit  3.4033920414f
+#define BehindAngleInit -0.2617993878f
 // 杆长
 #define l1              0.15f
 #define l2              0.27f
 #define l3              0.27f
 #define l4              0.15f
 #define l5              0.15f
-#define WHEELR          0.2f
+#define WHEELR          0.1f
 // 质量参数
 #define MASSL1          0.2512f
 #define MASSL2          0.3006f

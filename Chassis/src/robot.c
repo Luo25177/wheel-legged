@@ -1,8 +1,9 @@
 #include "robot.h"
 
-Robot   robot;
-Tmotor  tmotor[4];
-DJmotor djmotor[2];
+Robot  robot;
+Tmotor tmotor[4];
+Zdrive zdrive[2];
+float  expectx = 0;
 
 //----
 // @brief 初始化
@@ -10,22 +11,26 @@ DJmotor djmotor[2];
 //----
 void RobotInit() {
   TmotorInit(tmotor, 1);
-  DJmotorInit(djmotor, 1);
+  TmotorInit(tmotor + 1, 2);
+  TmotorInit(tmotor + 2, 3);
+  TmotorInit(tmotor + 3, 4);
+  ZdriveInit(zdrive, 1);
+  ZdriveInit(zdrive + 1, 2);
   yesenseInit(&robot.yesense);
 
   LegInit(&robot.legVir, LEGLEFT, NULL, NULL, NULL);
-  LegInit(&robot.legR, LEGRIGHT, &djmotor[0], &tmotor[2], &tmotor[3]);
-  LegInit(&robot.legL, LEGLEFT, &djmotor[1], &tmotor[0], &tmotor[1]);
+  LegInit(&robot.legR, LEGRIGHT, &zdrive[1], &tmotor[2], &tmotor[3]);
+  LegInit(&robot.legL, LEGLEFT, &zdrive[0], &tmotor[0], &tmotor[1]);
 
   robot.flyflag = false;
   robot.mode    = ROBOTNORMAL;
 
   // TODO: 参数暂定 调节
-  PidInit(&robot.yawpid, 1, 1, 1, 0, 1000, PIDPOS);
+  PidInit(&robot.yawpid, 1, 0, 0, 0, 1000, PIDPOS);
   PidInit(&robot.rollpid, 1, 1, 1, 0, 1000, PIDPOS);
   PidInit(&robot.splitpid, 120, 0, 1000, 0, 1000, PIDPOS);
 
-  robot.L0Set             = 0.30;
+  robot.L0Set             = 0.18;
   robot.yawpid.target     = 0;
   robot.rollpid.target    = 0;
   robot.splitpid.target   = 0;
@@ -43,8 +48,8 @@ void UpdateState() {
   Zjie(&robot.legL, robot.yesense.pitch.now);
   Zjie(&robot.legR, robot.yesense.pitch.now);
 
-  robot.legVir.dis.now = (robot.legL.dis.now + robot.legR.dis.now) / 2;
-  robot.legVir.dis.dot = (robot.legL.dis.dot + robot.legR.dis.dot) / 2;
+  robot.legVir.dis.now = (-robot.legL.dis.now + robot.legR.dis.now) / 2;
+  robot.legVir.dis.dot = (-robot.legL.dis.dot + robot.legR.dis.dot) / 2;
   robot.legVir.angle1  = (robot.legL.angle1 + robot.legR.angle1) / 2;
   robot.legVir.angle4  = (robot.legL.angle4 + robot.legR.angle4) / 2;
 
@@ -62,23 +67,23 @@ void BalanceMode() {
   float L02 = L01 * L01;
   float L03 = L02 * L01;
 
-  // if (robot.flyflag) {
-  for (int col = 0; col < 6; col++) {
-    for (int row = 0; row < 2; row++) {
-      int num = (col << 1) + row;
-      if (row == 1 && (col == 0 || col == 1))
-        robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
-      else
-        robot.legVir.K[row][col] = 0;
+  //  if (robot.flyflag) {
+  // for (int row = 0; row < 2; row++) {
+  //   for (int col = 0; col < 6; col++) {
+  //     int num = (row * 6) + col;
+  //     if (row == 1 && (col == 0 || col == 1))
+  //       robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+  //     else
+  //       robot.legVir.K[row][col] = 0;
+  //   }
+  // }
+  //  } else {
+  for (int row = 0; row < 2; row++) {
+    for (int col = 0; col < 6; col++) {
+      int num                  = (row * 6) + col;
+      robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
     }
   }
-  // } else {
-  //   for (int col = 0; col < 6; col++) {
-  //     for (int row = 0; row < 2; row++) {
-  //       int num                  = (col << 1) + row;
-  //       robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
-  //     }
-  //   }
   // }
   robot.legVir.X.theta     = robot.legVir.theta.now;
   robot.legVir.X.thetadot  = robot.legVir.theta.dot;
@@ -107,28 +112,28 @@ void BalanceMode() {
                       robot.legVir.K[1][4] * (robot.legVir.Xd.pitch - robot.legVir.X.pitch) +
                       robot.legVir.K[1][5] * (robot.legVir.Xd.pitchdot - robot.legVir.X.pitchdot);
 
-  robot.legL.TWheelset  = robot.legVir.U.Twheel / 2;
-  robot.legR.TWheelset  = robot.legVir.U.Twheel / 2;
+  robot.legL.TWheelset   = robot.legVir.U.Twheel / 2;
+  robot.legR.TWheelset   = robot.legVir.U.Twheel / 2;
 
-  robot.legL.Tpset      = robot.legVir.U.Tp / 2;
-  robot.legR.Tpset      = robot.legVir.U.Tp / 2;
+  robot.legL.Tpset       = robot.legVir.U.Tp / 2;
+  robot.legR.Tpset       = robot.legVir.U.Tp / 2;
 
   // 前馈力
-  robot.legL.Fset       = FFEEDFORWARD;
-  robot.legR.Fset       = FFEEDFORWARD;
+  robot.legL.Fset        = FFEEDFORWARD;
+  robot.legR.Fset        = FFEEDFORWARD;
   // 补偿虚拟力
-  float lfCompensate    = robot.legL.L0pid.compute(&robot.legL.L0pid, robot.legL.L0.now);
-  float rfCompensate    = robot.legR.L0pid.compute(&robot.legR.L0pid, robot.legR.L0.now);
-  robot.legL.Fset      += lfCompensate;
-  robot.legR.Fset      += rfCompensate;
+  float lfCompensate     = robot.legL.L0pid.compute(&robot.legL.L0pid, robot.legL.L0.now);
+  float rfCompensate     = robot.legR.L0pid.compute(&robot.legR.L0pid, robot.legR.L0.now);
+  robot.legL.Fset       += lfCompensate;
+  robot.legR.Fset       += rfCompensate;
   // 旋转补偿
   // float yawCompensate		 = 0;	 // robot.yawpid->compute(robot.yawpid, robot.yesense.yaw.now);
   // robot.legL.TWheelset -= yawCompensate;
   // robot.legR.TWheelset += yawCompensate;
   // 劈腿补偿
-  // float splitCompensate  = robot.splitpid.compute(&robot.splitpid, robot.legL.theta.now - robot.legR.theta.now);
-  // robot.legL.Tpset      += splitCompensate;
-  // robot.legR.Tpset      -= splitCompensate;
+  float splitCompensate  = robot.splitpid.compute(&robot.splitpid, robot.legL.theta.now - robot.legR.theta.now);
+  robot.legL.Tpset      += splitCompensate;
+  robot.legR.Tpset      -= splitCompensate;
   // 翻滚角补偿
   // float rollCompensate	 = 0;	 // robot.rollpid->compute(robot.rollpid, robot.yesense.roll.now);
   // robot.legL.Fset			-= rollCompensate;
@@ -138,7 +143,7 @@ void BalanceMode() {
   VMC(&robot.legR);
 
   // 方向
-  robot.legL.TWheelset          *= robot.legL.dir;
+  //  robot.legL.TWheelset          *= robot.legL.dir;
   robot.legL.TFset              *= robot.legL.dir;
   robot.legL.TBset              *= robot.legL.dir;
 
@@ -194,12 +199,12 @@ void Jump() {
 //
 //----
 void HaltMode() {
-  tmotor[0].monitor.mode  = HALT;
-  tmotor[1].monitor.mode  = HALT;
-  tmotor[2].monitor.mode  = HALT;
-  tmotor[3].monitor.mode  = HALT;
-  djmotor[0].monitor.mode = HALT;
-  djmotor[1].monitor.mode = HALT;
+  tmotor[0].monitor.mode = HALT;
+  tmotor[1].monitor.mode = HALT;
+  tmotor[2].monitor.mode = HALT;
+  tmotor[3].monitor.mode = HALT;
+  zdrive[0].monitor.mode = HALT;
+  zdrive[1].monitor.mode = HALT;
 }
 
 //----
@@ -216,8 +221,8 @@ void FlyCheck() {
   float lzwdd            = zmdd - robot.legL.L0.ddot * cos(robot.legL.theta.now) + 2 * robot.legL.L0.dot + robot.legL.theta.dot * sin(robot.legL.theta.now) + robot.legL.L0.now * robot.legL.theta.ddot * sin(robot.legL.theta.now) + robot.legL.L0.now * robot.legL.theta.dot * robot.legL.theta.dot * cos(robot.legL.theta.now);
   float rzwdd            = zmdd - robot.legR.L0.ddot * cos(robot.legR.theta.now) + 2 * robot.legR.L0.dot + robot.legR.theta.dot * sin(robot.legR.theta.now) + robot.legR.L0.now * robot.legR.theta.ddot * sin(robot.legR.theta.now) + robot.legR.L0.now * robot.legR.theta.dot * robot.legR.theta.dot * cos(robot.legR.theta.now);
 
-  robot.legR.normalforce = -rp + MASSWHEEL * (GRAVITY + rzwdd);
-  robot.legL.normalforce = -lp + MASSWHEEL * (GRAVITY + lzwdd);
+  robot.legR.normalforce = rp + MASSWHEEL * (GRAVITY + rzwdd);
+  robot.legL.normalforce = lp + MASSWHEEL * (GRAVITY + lzwdd);
   float force            = (robot.legL.normalforce + robot.legR.normalforce) / 2;
 
   if (force < FORCETHRESHOLD)
@@ -243,5 +248,9 @@ void RobotRun() {
   }
   // 将会运行所有的tmotor和djmotor
   TmotorRun(tmotor);
-  DJmotorRun(djmotor);
+  TmotorRun(tmotor + 1);
+  TmotorRun(tmotor + 2);
+  TmotorRun(tmotor + 3);
+  ZdriveRun(zdrive);
+  ZdriveRun(zdrive + 1);
 }

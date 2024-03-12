@@ -10,13 +10,7 @@
 //----
 #pragma once
 
-#include "can.h"
 #include "motorparam.h"
-#include "mymath.h"
-#include "pid.h"
-#include "stm32f4xx_can.h"
-
-#include <stdlib.h>
 
 #define M3508RPMTORAD 0.1047197551f
 
@@ -36,8 +30,6 @@ typedef struct {
   MotorMonitor monitor;
   vs32         pulseAccumulate;  // 累计脉冲
 } DJmotor;
-
-extern DJmotor djmotor[2];
 
 void DJmotorRun(DJmotor* motor);
 void DJmotorInit(DJmotor* motor, u8 id);

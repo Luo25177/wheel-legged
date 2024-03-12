@@ -177,7 +177,7 @@ __Vectors_Size  EQU  __Vectors_End - __Vectors
 Reset_Handler    PROC 	
                  EXPORT  Reset_Handler             [WEAK]
         IMPORT  SystemInit
-        IMPORT  __main
+        IMPORT  __main 
 
                  LDR     R0, =SystemInit
                  BLX     R0

@@ -94,7 +94,7 @@ void Can2Init() {
 
   /* CAN cell init */
   CAN_InitStructure.CAN_TTCM      = DISABLE;          // 非时间触发通道模式
-  CAN_InitStructure.CAN_ABOM      = DISABLE;          // 软件对CAN_MCR寄存器的INRQ位置1，随后清0，一旦监测到128次连续11位的隐性位，就退出离线状态
+  CAN_InitStructure.CAN_ABOM      = ENABLE;          // 软件对CAN_MCR寄存器的INRQ位置1，随后清0，一旦监测到128次连续11位的隐性位，就退出离线状态
   CAN_InitStructure.CAN_AWUM      = DISABLE;          // 睡眠模式由软件唤醒
   CAN_InitStructure.CAN_NART      = DISABLE;          // 禁止报文自动发送，即只发送一次，无论结果如何
   CAN_InitStructure.CAN_RFLM      = DISABLE;          // 报文不锁定，新的覆盖旧的
@@ -111,8 +111,8 @@ void Can2Init() {
   CAN_FilterInitStructure.CAN_FilterNumber         = 14;
   CAN_FilterInitStructure.CAN_FilterMode           = CAN_FilterMode_IdList;
   CAN_FilterInitStructure.CAN_FilterScale          = CAN_FilterScale_16bit;
-  CAN_FilterInitStructure.CAN_FilterIdHigh         = 0x201 << 5;
-  CAN_FilterInitStructure.CAN_FilterIdLow          = 0x202 << 5;
+  CAN_FilterInitStructure.CAN_FilterIdHigh         = 0x001 << 5;
+  CAN_FilterInitStructure.CAN_FilterIdLow          = 0x002 << 5;
   CAN_FilterInitStructure.CAN_FilterMaskIdHigh     = 0x203 << 5;
   CAN_FilterInitStructure.CAN_FilterMaskIdLow      = 0x204 << 5;
   CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
