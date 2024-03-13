@@ -166,8 +166,8 @@ void ZdriveAskState(Zdrive* motor) {
   txmsg.RTR     = CAN_RTR_Data;
   txmsg.DLC     = 0x01;
   // current
-  txmsg.Data[0] = 0x52;
-  can2Txmsg->push(can2Txmsg, txmsg);
+//  txmsg.Data[0] = 0x52;
+//  can2Txmsg->push(can2Txmsg, txmsg);
   // speed
   txmsg.Data[0] = 0x5C;
   can2Txmsg->push(can2Txmsg, txmsg);

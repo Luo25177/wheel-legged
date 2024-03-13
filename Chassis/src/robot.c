@@ -67,24 +67,24 @@ void BalanceMode() {
   float L02 = L01 * L01;
   float L03 = L02 * L01;
 
-  //  if (robot.flyflag) {
-  // for (int row = 0; row < 2; row++) {
-  //   for (int col = 0; col < 6; col++) {
-  //     int num = (row * 6) + col;
-  //     if (row == 1 && (col == 0 || col == 1))
-  //       robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
-  //     else
-  //       robot.legVir.K[row][col] = 0;
-  //   }
-  // }
-  //  } else {
+    if (robot.flyflag) {
+   for (int row = 0; row < 2; row++) {
+     for (int col = 0; col < 6; col++) {
+       int num = (row * 6) + col;
+       if (row == 1 && (col == 0 || col == 1))
+         robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+       else
+         robot.legVir.K[row][col] = 0;
+     }
+  }
+  } else {
   for (int row = 0; row < 2; row++) {
     for (int col = 0; col < 6; col++) {
       int num                  = (row * 6) + col;
       robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
     }
   }
-  // }
+  }
   robot.legVir.X.theta     = robot.legVir.theta.now;
   robot.legVir.X.thetadot  = robot.legVir.theta.dot;
   robot.legVir.X.x         = robot.legVir.dis.now;

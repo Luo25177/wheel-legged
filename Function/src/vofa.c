@@ -2,7 +2,7 @@
 
 void FloatTo4Byte(float* f, u8* buff) {
   u8* p_float;
-  p_float   = (unsigned char*) f;  // µõ½floatµĵؖ·
+  p_float   = (unsigned char*) f;
 
   *buff     = p_float[0];
   *(++buff) = p_float[1];
