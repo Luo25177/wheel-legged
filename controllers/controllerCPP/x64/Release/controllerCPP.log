@@ -14,53 +14,53 @@ D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(13,50): warning
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(14,54): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(14,48): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(19,25): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(19,35): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(19,45): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(19,56): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(19,34): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(19,44): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(19,54): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(20,6): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(20,15): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(20,25): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(20,35): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(20,24): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(20,34): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(21,6): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(21,15): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(21,24): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(21,34): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(21,25): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(21,35): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(22,6): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(22,15): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(22,25): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(22,34): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(22,35): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(23,6): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(23,16): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(23,27): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(23,37): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(23,15): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(23,25): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(23,33): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(24,6): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(24,15): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(24,25): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(24,34): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(24,14): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(24,24): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(24,33): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(25,6): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(25,15): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(25,26): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(25,36): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(25,13): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(25,22): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(25,31): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(26,6): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(26,15): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(26,25): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(26,34): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(26,13): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(26,22): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(26,30): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(27,6): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(27,15): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(27,25): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(27,34): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(28,6): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(28,15): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(28,26): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(28,35): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(28,24): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(28,33): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(29,5): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(29,16): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(29,26): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(29,36): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(29,15): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(29,24): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(29,33): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(30,5): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(30,13): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(30,22): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(30,31): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(30,15): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(30,24): warning C4305: “参数”: 从“double”到“const float”截断
+D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(30,33): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(32,23): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(32,32): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(32,40): warning C4305: “参数”: 从“double”到“const float”截断
@@ -305,12 +305,9 @@ D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(131,35): warnin
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(132,35): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(137,35): warning C4305: “参数”: 从“double”到“const float”截断
 D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(138,35): warning C4305: “参数”: 从“double”到“const float”截断
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(181,50): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(182,50): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(184,50): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\Desktop\轮足相关\轮足\controllers\controllerCPP\Car.cpp(185,50): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
   正在生成代码
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-  All 902 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  368 of 970 functions (37.9%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    6 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   controllerCPP.vcxproj -> D:\Desktop\轮足相关\轮足\controllers\controllerCPP\controllerCPP.exe

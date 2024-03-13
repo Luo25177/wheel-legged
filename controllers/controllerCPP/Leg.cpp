@@ -16,8 +16,8 @@ Leg::Leg(const LEGDIR& _dir) {
       break;
   }
   this->theta = DataStruct();
-  this->L0     = DataStruct();
-  this->dis    = DataStruct();
+  this->L0    = DataStruct();
+  this->dis   = DataStruct();
   this->L0PID.init(PIDPOSMODE, legPIDParam, 0, 1);
   this->L0PID.setTarget(0.3f);
 }
@@ -65,14 +65,14 @@ void Leg::zjie(const float& _pitch) {
 
   // 乘以_pitch的旋转矩阵
   float cor_XY_then[2][1];
-  cor_XY_then[0][0]    = cos(_pitch) * this->xc - sin(_pitch) * this->yc;
-  cor_XY_then[1][0]    = sin(_pitch) * this->xc + cos(_pitch) * this->yc;
+  cor_XY_then[0][0]   = cos(_pitch) * this->xc - sin(_pitch) * this->yc;
+  cor_XY_then[1][0]   = sin(_pitch) * this->xc + cos(_pitch) * this->yc;
   this->theta.now     = atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
 
-  this->L0.dot         = (this->L0.now - this->L0.last) / DT;
-  this->L0.ddot        = (this->L0.dot - this->L0.lastdot) / DT;
-  this->L0.last        = this->L0.now;
-  this->L0.lastdot     = this->L0.dot;
+  this->L0.dot        = (this->L0.now - this->L0.last) / DT;
+  this->L0.ddot       = (this->L0.dot - this->L0.lastdot) / DT;
+  this->L0.last       = this->L0.now;
+  this->L0.lastdot    = this->L0.dot;
   this->theta.dot     = (this->theta.now - this->theta.last) / DT;
   this->theta.ddot    = (this->theta.dot - this->theta.lastdot) / DT;
   this->theta.last    = this->theta.now;
@@ -101,14 +101,14 @@ void Leg::zjie(const float& _pitch, const float& _angle1, const float _angle4) {
 
   // 乘以_pitch的旋转矩阵
   float cor_XY_then[2][1];
-  cor_XY_then[0][0]    = cos(_pitch) * this->xc - sin(_pitch) * this->yc;
-  cor_XY_then[1][0]    = sin(_pitch) * this->xc + cos(_pitch) * this->yc;
+  cor_XY_then[0][0]   = cos(_pitch) * this->xc - sin(_pitch) * this->yc;
+  cor_XY_then[1][0]   = sin(_pitch) * this->xc + cos(_pitch) * this->yc;
   this->theta.now     = atan2(cor_XY_then[0][0], cor_XY_then[1][0]);
 
-  this->L0.dot         = (this->L0.now - this->L0.last) / DT;
-  this->L0.ddot        = (this->L0.dot - this->L0.lastdot) / DT;
-  this->L0.last        = this->L0.now;
-  this->L0.lastdot     = this->L0.dot;
+  this->L0.dot        = (this->L0.now - this->L0.last) / DT;
+  this->L0.ddot       = (this->L0.dot - this->L0.lastdot) / DT;
+  this->L0.last       = this->L0.now;
+  this->L0.lastdot    = this->L0.dot;
   this->theta.dot     = (this->theta.now - this->theta.last) / DT;
   this->theta.ddot    = (this->theta.dot - this->theta.lastdot) / DT;
   this->theta.last    = this->theta.now;
@@ -133,9 +133,9 @@ void Leg::njie(const float& _xc, const float& _yc) {
 void Leg::VMC() {
   Eigen::Matrix<float, 2, 2> trans;
   trans << l1 * sin(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / sin(this->angle2 - this->angle3),
-  				 l1 * cos(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / (this->L0.now * sin(this->angle2 - this->angle3)),
-					 l4 * sin(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / sin(this->angle2 - this->angle3),
-					 l4 * cos(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / (this->L0.now * sin(this->angle2 - this->angle3));
+    l1 * cos(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / (this->L0.now * sin(this->angle2 - this->angle3)),
+    l4 * sin(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / sin(this->angle2 - this->angle3),
+    l4 * cos(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / (this->L0.now * sin(this->angle2 - this->angle3));
   this->jointF->setTorque(trans(0, 0) * this->Fset - trans(0, 1) * this->Tbset);
   this->jointB->setTorque(trans(1, 0) * this->Fset - trans(1, 1) * this->Tbset);
   this->wheel->setTorque(this->Twset);
@@ -149,4 +149,7 @@ void Leg::INVMC() {
 
   this->Fnow        = (trans[0][0] * this->jointF->torqueRead + trans[0][1] * this->jointB->torqueRead);
   this->Tbnow       = (trans[1][0] * this->jointF->torqueRead + trans[1][1] * this->jointB->torqueRead);
+}
+
+void Leg::splitCompute(const float& _pitch, const float& _pitchdot, const Eigen::Matrix<float, 12, 4>& _kcoeff) {
 }

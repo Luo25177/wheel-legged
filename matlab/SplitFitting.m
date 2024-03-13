@@ -35,17 +35,16 @@ syms L
 mw = 0.88357;
 R = 0.075;
 Iw = 0.00249;
-mb = 12.09048;
+mb = 12.09048 / 2;
 Ib_y = 0.20065;
 g = 9.81;
 Ic_z = 0.652;
 R_l = 0.63;
 l = 0;
 
-Il = (KI(1, 1) * L + KI(1, 2)) * 2;
+Il = (KI(1, 1) * L + KI(1, 2));
 Lw = KLw(1, 1) * L + KLw(1, 2);
 Lb = KLb(1, 1) * L + KLb(1, 2);
-ml = ml * 2;
 
 func1 = [ml * diff(diff(x + Lw * sin(theta), t), t) == Nw - Nb;
     ml * diff(diff(Lw * cos(theta), t), t) == Pw - Pb - ml * g;

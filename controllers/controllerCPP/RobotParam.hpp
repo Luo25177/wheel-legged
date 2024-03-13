@@ -66,4 +66,3 @@ struct DataStruct {
   float last;
   float lastdot;
 };
-

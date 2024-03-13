@@ -8,13 +8,7 @@
 class Car : public webots::Robot {
   RobotControlMode            controlmode;
   Eigen::Matrix<float, 12, 4> SplitKCoeff;
-  Eigen::Matrix<float, 2, 6>  KSplitL;
-  Eigen::Matrix<float, 2, 6>  KSplitR;
-  Eigen::Matrix<float, 6, 1>  StateSplitL;
-  Eigen::Matrix<float, 6, 1>  StateSplitR;
   Eigen::Matrix<float, 6, 1>  ExpectSplit;
-  Eigen::Matrix<float, 2, 1>  InputSplitL;
-  Eigen::Matrix<float, 2, 1>  InputSplitR;
 
   Eigen::Matrix<float, 40, 6> WBCKCoeff;
   Eigen::Matrix<float, 4, 10> KWBC;
@@ -50,4 +44,3 @@ class Car : public webots::Robot {
 extern PIDParam turnPIDParam;
 extern PIDParam splitPIDParam;
 extern PIDParam rollPIDParam;
-
