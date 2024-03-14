@@ -17,29 +17,29 @@
 #include <stdbool.h>
 
 typedef struct {
-	bool				 init;
-	unsigned int timer;
+  bool  init;
+  float timer;
 
-	float accelx;	 // m/s2
-	float accely;
-	float accelz;
+  float accelx;  // m/s2
+  float accely;
+  float accelz;
 
-	float magx;
-	float magy;
-	float magz;
+  float magx;
+  float magy;
+  float magz;
 
-	float rawMagx; /*uinit: mGauss*/
-	float rawMagy;
-	float rawMagz;
+  float rawMagx; /*uinit: mGauss*/
+  float rawMagy;
+  float rawMagz;
 
-	DataStruct pitch;	 // deg
-	DataStruct roll;
-	DataStruct yaw;
+  DataStruct pitch;  // deg
+  DataStruct roll;
+  DataStruct yaw;
 
-	float quaternion_data0;
-	float quaternion_data1;
-	float quaternion_data2;
-	float quaternion_data3;
+  float quaternion_data0;
+  float quaternion_data1;
+  float quaternion_data2;
+  float quaternion_data3;
 
 } Yesense;
 

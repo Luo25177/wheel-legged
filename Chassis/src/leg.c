@@ -80,7 +80,7 @@ void Zjie(Leg* leg, float pitch) {
   cor_XY_then[1] = sin(pitch) * leg->xc + cos(pitch) * leg->yc;
   leg->theta.now = atan2f(cor_XY_then[0], cor_XY_then[1]);
 
-  float dt       = 1000 / (float) (GlobalTimer - leg->timer);
+  float dt       = 10000 / (float) (GlobalTimer - leg->timer);
   leg->timer     = GlobalTimer;
 
   if (dt > 0) {
@@ -143,5 +143,5 @@ void INVMC(Leg* leg) {
   float trans[2][2] = { cos(leg->angle0 - leg->angle2) * A, -cos(leg->angle0 - leg->angle3) * B, -leg->L0.now * sin(leg->angle0 - leg->angle2) * A, leg->L0.now * sin(leg->angle0 - leg->angle3) * B };
 
   leg->Fnow         = trans[0][0] * leg->TFnow + trans[0][1] * leg->TBnow;
-  leg->Tpnow        = trans[1][0] * leg->TFnow + trans[1][1] * leg->TBnow;
+  leg->Tpnow        = -trans[1][0] * leg->TFnow - trans[1][1] * leg->TBnow;
 }

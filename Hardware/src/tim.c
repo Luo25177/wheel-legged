@@ -1,6 +1,6 @@
 #include "tim.h"
 
-unsigned int GlobalTimer = 0;
+vu32 GlobalTimer = 0;
 
 // 时钟计算公式 时钟频率 / TIM_Prescaler / TIM_Period
 
@@ -17,7 +17,7 @@ void Tim2Init() {
   NVIC_Init(&NVIC_InitStructure);
 
   TIM_TimeBaseStructure.TIM_Prescaler     = 84 - 1;
-  TIM_TimeBaseStructure.TIM_Period        = 1000 - 1;  // 1ms
+  TIM_TimeBaseStructure.TIM_Period        = 100 - 1;  // 100 us
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode   = TIM_CounterMode_Up;
   TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);

@@ -28,7 +28,7 @@ typedef struct {
   DataStruct theta;
   DataStruct L0;
   DataStruct dis;
-  u32        timer;
+  vu32       timer;
   // 五连杆坐标系下的坐标，原点在五连杆的中垂线上
   float      angle0, angle1, angle2, angle3, angle4;  // 角度计算值和读取到的真实值，是和图中的一一对应
   float      angle1set, angle4set;                    // 角度设定值，是在初始角度之上的设定值

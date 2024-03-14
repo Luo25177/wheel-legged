@@ -23,26 +23,28 @@ void LegRPidMonitor() {
 }
 
 void RobotLqrMonitor() {
-  float data[8];
+  float data[12];
   data[0] = robot.legVir.X.theta;
   data[1] = robot.legVir.X.thetadot;
   data[2] = robot.legVir.X.x;
   data[3] = robot.legVir.X.v;
   data[4] = robot.legVir.X.pitch;
   data[5] = robot.legVir.X.pitchdot;
-  data[6] = robot.legVir.U.Tp;
-  data[7] = robot.legVir.U.Twheel;
-  Oscilloscope(data, 8);
+  data[6] = robot.legL.wheel->set.torque;
+  data[7] = robot.legR.wheel->set.torque;
+  data[8] = robot.legL.wheel->real.torque;
+  data[9] = robot.legR.wheel->real.torque;
+  Oscilloscope(data, 10);
 }
 
 void RobotTorqueMonitor() {
   float data[6];
   data[0] = robot.legL.front->set.torque;
   data[1] = robot.legL.behind->set.torque;
-  data[2] = robot.legL.wheel->set.torque;
+  data[2] = robot.legL.wheel->real.torque;
   data[3] = robot.legR.front->set.torque;
   data[4] = robot.legR.behind->set.torque;
-  data[5] = robot.legR.wheel->set.torque;
+  data[5] = robot.legR.wheel->real.torque;
   Oscilloscope(data, 6);
 }
 

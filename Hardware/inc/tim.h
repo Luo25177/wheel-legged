@@ -5,7 +5,7 @@
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_tim.h"
 
-extern unsigned int GlobalTimer;
+extern vu32 GlobalTimer;
 
 void Tim2Init();
 void Tim3Init();

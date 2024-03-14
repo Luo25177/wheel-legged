@@ -110,9 +110,9 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
         yesense->yaw.dot   *= DegToRad;
         yesense->roll.dot  *= DegToRad;
         yesense->pitch.dot *= DegToRad;
-        float dt            = 1000 / (float) (GlobalTimer - yesense->timer);
+        float dt            = 10000 / (float) (GlobalTimer - yesense->timer);
         yesense->timer      = GlobalTimer;
-        if (dt != 0) {
+        if (dt > 0) {
           yesense->roll.ddot     = (yesense->roll.dot - yesense->roll.lastdot) * dt;
           yesense->pitch.ddot    = (yesense->pitch.dot - yesense->pitch.lastdot) * dt;
           yesense->yaw.ddot      = (yesense->yaw.dot - yesense->yaw.lastdot) * dt;
@@ -155,6 +155,7 @@ unsigned char check_data_len_by_id(Yesense* yesense, unsigned char id, unsigned 
           roll_start    = yesense->roll.now;
           yesense->init = true;
         }
+        //        yesense->pitch.now = (int) (yesense->pitch.now * 10) / 10.f;
         yesense->yaw.now   -= yaw_start;
         yesense->roll.now  -= roll_start;
         yesense->yaw.now   *= DegToRad;

@@ -94,7 +94,7 @@ void Can2Init() {
 
   /* CAN cell init */
   CAN_InitStructure.CAN_TTCM      = DISABLE;          // 非时间触发通道模式
-  CAN_InitStructure.CAN_ABOM      = ENABLE;          // 软件对CAN_MCR寄存器的INRQ位置1，随后清0，一旦监测到128次连续11位的隐性位，就退出离线状态
+  CAN_InitStructure.CAN_ABOM      = ENABLE;           // 软件对CAN_MCR寄存器的INRQ位置1，随后清0，一旦监测到128次连续11位的隐性位，就退出离线状态
   CAN_InitStructure.CAN_AWUM      = DISABLE;          // 睡眠模式由软件唤醒
   CAN_InitStructure.CAN_NART      = DISABLE;          // 禁止报文自动发送，即只发送一次，无论结果如何
   CAN_InitStructure.CAN_RFLM      = DISABLE;          // 报文不锁定，新的覆盖旧的

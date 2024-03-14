@@ -26,7 +26,7 @@ void RobotInit() {
   robot.mode    = ROBOTNORMAL;
 
   // TODO: 参数暂定 调节
-  PidInit(&robot.yawpid, 1, 0, 0, 0, 1000, PIDPOS);
+  PidInit(&robot.yawpid, 3, 0, 3, 0, 1000, PIDPOS);
   PidInit(&robot.rollpid, 1, 1, 1, 0, 1000, PIDPOS);
   PidInit(&robot.splitpid, 120, 0, 1000, 0, 1000, PIDPOS);
 
@@ -67,23 +67,23 @@ void BalanceMode() {
   float L02 = L01 * L01;
   float L03 = L02 * L01;
 
-    if (robot.flyflag) {
-   for (int row = 0; row < 2; row++) {
-     for (int col = 0; col < 6; col++) {
-       int num = (row * 6) + col;
-       if (row == 1 && (col == 0 || col == 1))
-         robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
-       else
-         robot.legVir.K[row][col] = 0;
-     }
-  }
-  } else {
-  for (int row = 0; row < 2; row++) {
-    for (int col = 0; col < 6; col++) {
-      int num                  = (row * 6) + col;
-      robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+  if (robot.flyflag) {
+    for (int row = 0; row < 2; row++) {
+      for (int col = 0; col < 6; col++) {
+        int num = (row * 6) + col;
+        if (row == 1 && (col == 0 || col == 1))
+          robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+        else
+          robot.legVir.K[row][col] = 0;
+      }
     }
-  }
+  } else {
+    for (int row = 0; row < 2; row++) {
+      for (int col = 0; col < 6; col++) {
+        int num                  = (row * 6) + col;
+        robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+      }
+    }
   }
   robot.legVir.X.theta     = robot.legVir.theta.now;
   robot.legVir.X.thetadot  = robot.legVir.theta.dot;
@@ -94,7 +94,7 @@ void BalanceMode() {
 
   robot.legVir.Xd.theta    = 0;
   robot.legVir.Xd.thetadot = 0;
-  robot.legVir.Xd.x        = 0;
+  robot.legVir.Xd.x        = expectx;
   robot.legVir.Xd.v        = 0;
   robot.legVir.Xd.pitch    = 0;
   robot.legVir.Xd.pitchdot = 0;
@@ -127,9 +127,9 @@ void BalanceMode() {
   robot.legL.Fset       += lfCompensate;
   robot.legR.Fset       += rfCompensate;
   // 旋转补偿
-  // float yawCompensate		 = 0;	 // robot.yawpid->compute(robot.yawpid, robot.yesense.yaw.now);
-  // robot.legL.TWheelset -= yawCompensate;
-  // robot.legR.TWheelset += yawCompensate;
+  float yawCompensate    = robot.yawpid.compute(&robot.yawpid, robot.yesense.yaw.now);
+  robot.legL.TWheelset  -= yawCompensate;
+  robot.legR.TWheelset  += yawCompensate;
   // 劈腿补偿
   float splitCompensate  = robot.splitpid.compute(&robot.splitpid, robot.legL.theta.now - robot.legR.theta.now);
   robot.legL.Tpset      += splitCompensate;
@@ -213,16 +213,17 @@ void HaltMode() {
 //----
 void FlyCheck() {
   // 要计算轮子所受的地面的支持力，也就是Fn，且Fn=F+Gw 其中F应当时轮子给机体的支持力，其实就是地面给的支持力用于轮子的重力和上层机构的支持力，而对于lp是机体对轮子的力，所以要反向
-  float lp               = robot.legL.Fnow * cos(robot.legL.theta.now) + robot.legL.Tpnow * sin(robot.legL.theta.now) / robot.legL.L0.now;
-  float rp               = robot.legR.Fnow * cos(robot.legR.theta.now) + robot.legR.Tpnow * sin(robot.legR.theta.now) / robot.legR.L0.now;
+  float lpw              = robot.legL.Fnow * cos(robot.legL.theta.now) - robot.legL.Tpnow * sin(robot.legL.theta.now) / robot.legL.L0.now;
+  float rpw              = robot.legR.Fnow * cos(robot.legR.theta.now) - robot.legR.Tpnow * sin(robot.legR.theta.now) / robot.legR.L0.now;
 
-  float zmdd             = robot.yesense.accelz * cos(robot.yesense.pitch.now) - robot.yesense.accelx * sin(robot.yesense.pitch.now);
+  float zbdd             = (robot.yesense.accelz * cos(robot.yesense.pitch.now) - robot.yesense.accelx * sin(robot.yesense.pitch.now)) * cos(robot.yesense.roll.now) + robot.yesense.accely * sin(robot.yesense.roll.now);
 
-  float lzwdd            = zmdd - robot.legL.L0.ddot * cos(robot.legL.theta.now) + 2 * robot.legL.L0.dot + robot.legL.theta.dot * sin(robot.legL.theta.now) + robot.legL.L0.now * robot.legL.theta.ddot * sin(robot.legL.theta.now) + robot.legL.L0.now * robot.legL.theta.dot * robot.legL.theta.dot * cos(robot.legL.theta.now);
-  float rzwdd            = zmdd - robot.legR.L0.ddot * cos(robot.legR.theta.now) + 2 * robot.legR.L0.dot + robot.legR.theta.dot * sin(robot.legR.theta.now) + robot.legR.L0.now * robot.legR.theta.ddot * sin(robot.legR.theta.now) + robot.legR.L0.now * robot.legR.theta.dot * robot.legR.theta.dot * cos(robot.legR.theta.now);
+  float lzwdd            = zbdd - robot.legL.L0.ddot * cos(robot.legL.theta.now) + 2 * robot.legL.L0.dot + robot.legL.theta.dot * sin(robot.legL.theta.now) + robot.legL.L0.now * robot.legL.theta.ddot * sin(robot.legL.theta.now) + robot.legL.L0.now * robot.legL.theta.dot * robot.legL.theta.dot * cos(robot.legL.theta.now);
+  float rzwdd            = zbdd - robot.legR.L0.ddot * cos(robot.legR.theta.now) + 2 * robot.legR.L0.dot + robot.legR.theta.dot * sin(robot.legR.theta.now) + robot.legR.L0.now * robot.legR.theta.ddot * sin(robot.legR.theta.now) + robot.legR.L0.now * robot.legR.theta.dot * robot.legR.theta.dot * cos(robot.legR.theta.now);
 
-  robot.legR.normalforce = rp + MASSWHEEL * (GRAVITY + rzwdd);
-  robot.legL.normalforce = lp + MASSWHEEL * (GRAVITY + lzwdd);
+  robot.legR.normalforce = rpw + MASSWHEEL * (GRAVITY + rzwdd);
+  robot.legL.normalforce = lpw + MASSWHEEL * (GRAVITY + lzwdd);
+
   float force            = (robot.legL.normalforce + robot.legR.normalforce) / 2;
 
   if (force < FORCETHRESHOLD)
