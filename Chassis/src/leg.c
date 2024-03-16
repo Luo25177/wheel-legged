@@ -80,16 +80,18 @@ void Zjie(Leg* leg, float pitch) {
   cor_XY_then[1] = sin(pitch) * leg->xc + cos(pitch) * leg->yc;
   leg->theta.now = atan2f(cor_XY_then[0], cor_XY_then[1]);
 
-  float dt       = 10000 / (float) (GlobalTimer - leg->timer);
+  float dt       = (float) (GlobalTimer - leg->timer) / 10000;
   leg->timer     = GlobalTimer;
 
   if (dt > 0) {
-    leg->L0.dot        = (leg->L0.now - leg->L0.last) * dt;
-    leg->L0.ddot       = (leg->L0.dot - leg->L0.lastdot) * dt;
+    leg->L0.dot        = (leg->L0.now - leg->L0.last) / dt;
+    leg->L0.ddot       = (leg->L0.dot - leg->L0.lastdot) / dt;
+
     leg->L0.last       = leg->L0.now;
     leg->L0.lastdot    = leg->L0.dot;
-    leg->theta.dot     = (leg->theta.now - leg->theta.last) * dt;
-    leg->theta.ddot    = (leg->theta.dot - leg->theta.lastdot) * dt;
+    leg->theta.dot     = (leg->theta.now - leg->theta.last) / dt;
+    leg->theta.ddot    = (leg->theta.dot - leg->theta.lastdot) / dt;
+
     leg->theta.last    = leg->theta.now;
     leg->theta.lastdot = leg->theta.dot;
   }
@@ -123,12 +125,16 @@ void Njie(Leg* leg, float xc, float yc) {
 // @param leg
 //----
 void VMC(Leg* leg) {
-  float trans[2][2] = { l1 * sin(leg->angle0 - leg->angle3) * sin(leg->angle1 - leg->angle2) / sin(leg->angle2 - leg->angle3),
-                        l1 * cos(leg->angle0 - leg->angle3) * sin(leg->angle1 - leg->angle2) / (leg->L0.now * sin(leg->angle2 - leg->angle3)),
-                        l4 * sin(leg->angle0 - leg->angle2) * sin(leg->angle3 - leg->angle4) / sin(leg->angle2 - leg->angle3),
-                        l4 * cos(leg->angle0 - leg->angle2) * sin(leg->angle3 - leg->angle4) / (leg->L0.now * sin(leg->angle2 - leg->angle3)) };
-  leg->TFset        = trans[0][0] * leg->Fset - trans[0][1] * leg->Tpset;
-  leg->TBset        = trans[1][0] * leg->Fset - trans[1][1] * leg->Tpset;
+  float A           = l1 * sin(leg->angle1 - leg->angle2) / sin(leg->angle2 - leg->angle3);
+  float B           = l4 * sin(leg->angle3 - leg->angle4) / sin(leg->angle2 - leg->angle3);
+
+  float trans[2][2] = { -A * cos(leg->theta.now + leg->angle3),
+                        A * sin(leg->theta.now + leg->angle3) / leg->L0.now,
+                        -B * cos(leg->theta.now + leg->angle2),
+                        B * sin(leg->theta.now + leg->angle2) / leg->L0.now };
+
+  leg->TFset        = -trans[0][0] * leg->Fset - trans[0][1] * leg->Tpset;
+  leg->TBset        = -trans[1][0] * leg->Fset - trans[1][1] * leg->Tpset;
 }
 
 //----
@@ -137,11 +143,15 @@ void VMC(Leg* leg) {
 // @param leg
 //----
 void INVMC(Leg* leg) {
-  float A           = sin(leg->angle2 - leg->angle3) / (l1 * cos(leg->angle0 - leg->angle2) * sin(leg->angle0 - leg->angle3) * sin(leg->angle1 - leg->angle2) - l1 * cos(leg->angle0 - leg->angle3) * sin(leg->angle0 - leg->angle2) * sin(leg->angle1 - leg->angle2));
-  float B           = sin(leg->angle2 - leg->angle3) / (l4 * cos(leg->angle0 - leg->angle2) * sin(leg->angle0 - leg->angle3) * sin(leg->angle3 - leg->angle4) - l4 * cos(leg->angle0 - leg->angle3) * sin(leg->angle0 - leg->angle2) * sin(leg->angle3 - leg->angle4));
+  float A           = l1 * sin(leg->angle1 - leg->angle2) / sin(leg->angle2 - leg->angle3);
+  float B           = l4 * sin(leg->angle3 - leg->angle4) / sin(leg->angle2 - leg->angle3);
 
-  float trans[2][2] = { cos(leg->angle0 - leg->angle2) * A, -cos(leg->angle0 - leg->angle3) * B, -leg->L0.now * sin(leg->angle0 - leg->angle2) * A, leg->L0.now * sin(leg->angle0 - leg->angle3) * B };
+  A                 = A * cos(leg->angle2 + leg->theta.now) * sin(leg->angle3 + leg->theta.now) - A * cos(leg->angle3 + leg->theta.now) * sin(leg->angle2 + leg->theta.now);
+  B                 = B * cos(leg->angle2 + leg->theta.now) * sin(leg->angle3 + leg->theta.now) - B * cos(leg->angle3 + leg->theta.now) * sin(leg->angle2 + leg->theta.now);
 
-  leg->Fnow         = trans[0][0] * leg->TFnow + trans[0][1] * leg->TBnow;
+  float trans[2][2] = { sin(leg->angle2 + leg->theta.now) / A, -sin(leg->angle3 + leg->theta.now) / B,
+                        leg->L0.now * cos(leg->angle2 + leg->theta.now) / B, -leg->L0.now * cos(leg->angle3 + leg->theta.now) / B };
+
+  leg->Fnow         = -trans[0][0] * leg->TFnow - trans[0][1] * leg->TBnow;
   leg->Tpnow        = -trans[1][0] * leg->TFnow - trans[1][1] * leg->TBnow;
 }

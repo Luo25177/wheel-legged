@@ -31,9 +31,9 @@ static void TaskStart(void* pdata) {
 
   OSTaskCreate(TaskLed, (void*) 0, &taskLedStk[TASK_STK_SIZE - 1], LED_TASK_PRIO);
   // OSTaskCreate(TaskBeep, (void*) 0, &taskBeepStk[TASK_STK_SIZE - 1], BEEP_TASK_PRIO);
-   OSTaskCreate(TaskRun, (void*) 0, &taskRunStk[TASK_STK_SIZE - 1], RUN_TASK_PRIO);
+  OSTaskCreate(TaskRun, (void*) 0, &taskRunStk[TASK_STK_SIZE - 1], RUN_TASK_PRIO);
   // OSTaskCreate(TaskInit, (void*) 0, &taskInitStk[TASK_STK_SIZE - 1], INIT_TASK_PRIO);
-//  OSTaskCreate(TaskTest, (void*) 0, &taskTestStk[TASK_STK_SIZE - 1], TEST_TASK_PRIO);
+  //  OSTaskCreate(TaskTest, (void*) 0, &taskTestStk[TASK_STK_SIZE - 1], TEST_TASK_PRIO);
 
   OS_EXIT_CRITICAL();              //! 程序退出临界段，可以被中断打断，在临界段中不要加延时，会死机
   OSTaskSuspend(START_TASK_PRIO);  // 根据程序优先级挂起起始任务 每个任务单独一个优先级
@@ -106,7 +106,7 @@ static void TaskRun(void* pdata) {
       zdrive[1].monitor.enable = true;
       RobotRun();
     }
-    OSTimeDly(35);
+    OSTimeDly(30);
   }
 }
 

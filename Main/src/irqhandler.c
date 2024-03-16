@@ -61,7 +61,7 @@ void TIM3_IRQHandler(void) {
     for (int i = 0; i < 2; ++i) ZdriveMonitor(&zdrive[i]);
     //    RobotStateUpdate(&robotstate);
     // robot 状态检测
-    RobotLqrMonitor();
+    //    RobotLqrMonitor();
   }
   TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }

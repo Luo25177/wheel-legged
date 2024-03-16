@@ -3,7 +3,9 @@
 Robot  robot;
 Tmotor tmotor[4];
 Zdrive zdrive[2];
-float  expectx = 0;
+float  expectx     = 0;
+// TODO:
+float  expecttheta = -1.5f;
 
 //----
 // @brief 初始化
@@ -30,7 +32,7 @@ void RobotInit() {
   PidInit(&robot.rollpid, 1, 1, 1, 0, 1000, PIDPOS);
   PidInit(&robot.splitpid, 120, 0, 1000, 0, 1000, PIDPOS);
 
-  robot.L0Set             = 0.18;
+  robot.L0Set             = 0.15;
   robot.yawpid.target     = 0;
   robot.rollpid.target    = 0;
   robot.splitpid.target   = 0;
@@ -45,19 +47,32 @@ void RobotInit() {
 void UpdateState() {
   LegUpdate(&robot.legL);
   LegUpdate(&robot.legR);
-  Zjie(&robot.legL, robot.yesense.pitch.now);
-  Zjie(&robot.legR, robot.yesense.pitch.now);
+  float pitch = robot.yesense.pitch.now;
+  Zjie(&robot.legL, pitch);
+  Zjie(&robot.legR, pitch);
 
   robot.legVir.dis.now = (-robot.legL.dis.now + robot.legR.dis.now) / 2;
   robot.legVir.dis.dot = (-robot.legL.dis.dot + robot.legR.dis.dot) / 2;
   robot.legVir.angle1  = (robot.legL.angle1 + robot.legR.angle1) / 2;
   robot.legVir.angle4  = (robot.legL.angle4 + robot.legR.angle4) / 2;
 
-  Zjie(&robot.legVir, robot.yesense.pitch.now);
+  Zjie(&robot.legVir, pitch);
 
   FlyCheck();
 }
 
+float x = 0;
+float v = 0;
+float r = 1;
+//----
+// @brief 微分跟踪器，使得跟踪值更加平滑
+//
+// @param refx
+//----
+void  LTD(float refx) {
+  x = x + v * 0.0035;
+  v = v + 0.0035 * (-r * r * x - 2 * r * v + r * r * refx);
+}
 //----
 // @brief lqr 控制保持平衡
 //
@@ -85,16 +100,19 @@ void BalanceMode() {
       }
     }
   }
-  robot.legVir.X.theta     = robot.legVir.theta.now;
-  robot.legVir.X.thetadot  = robot.legVir.theta.dot;
-  robot.legVir.X.x         = robot.legVir.dis.now;
-  robot.legVir.X.v         = robot.legVir.dis.dot;
-  robot.legVir.X.pitch     = robot.yesense.pitch.now;
-  robot.legVir.X.pitchdot  = robot.yesense.pitch.dot;
+  robot.legVir.X.theta    = robot.legVir.theta.now;
+  robot.legVir.X.thetadot = robot.legVir.theta.dot;
+  LimitInRange(float)(&robot.legVir.X.thetadot, 5);
+  robot.legVir.X.x        = robot.legVir.dis.now;
+  robot.legVir.X.v        = robot.legVir.dis.dot;
+  robot.legVir.X.pitch    = robot.yesense.pitch.now;
+  robot.legVir.X.pitchdot = robot.yesense.pitch.dot;
 
-  robot.legVir.Xd.theta    = 0;
+  LTD(expectx);
+
+  robot.legVir.Xd.theta    = expecttheta / 180 * PI;
   robot.legVir.Xd.thetadot = 0;
-  robot.legVir.Xd.x        = expectx;
+  robot.legVir.Xd.x        = x;
   robot.legVir.Xd.v        = 0;
   robot.legVir.Xd.pitch    = 0;
   robot.legVir.Xd.pitchdot = 0;
@@ -239,6 +257,7 @@ void FlyCheck() {
 void RobotRun() {
   switch (robot.mode) {
     case ROBOTNORMAL:
+      // WBCControl();
       BalanceMode();
       break;
     case ROBOTHALT:
@@ -254,4 +273,134 @@ void RobotRun() {
   TmotorRun(tmotor + 3);
   ZdriveRun(zdrive);
   ZdriveRun(zdrive + 1);
+}
+
+void WBCControl() {
+  float L_l         = robot.legL.L0.now;
+  float L_r         = robot.legR.L0.now;
+  float L_l2        = L_l * L_l;
+  float L_r2        = L_r * L_r;
+  float L_lL_r      = L_l * L_r;
+
+  float s           = robot.legVir.dis.now;
+  float s_dot       = robot.legVir.dis.dot;
+  float psi         = robot.yesense.yaw.now;
+  float psi_dot     = robot.yesense.yaw.dot;
+  float theta_l     = robot.legL.theta.now;
+  float theta_l_dot = robot.legL.theta.dot;
+  float theta_r     = robot.legR.theta.now;
+  float theta_r_dot = robot.legR.theta.dot;
+  float phi         = robot.yesense.pitch.now;
+  float phi_dot     = robot.yesense.pitch.dot;
+
+  float K[4][10];
+
+  if (robot.flyflag) {
+    for (int row = 0; row < 4; row++) {
+      for (int col = 0; col < 10; col++) {
+        int num = (row * 10) + col;
+        if ((row != 2 && row != 3) || (col != 4 && col != 5 && col != 6 && col != 7)) {
+          K[row][col] = 0;
+          continue;
+        }
+        K[row][col] = Kcoeff_wbc[num][0] + Kcoeff_wbc[num][1] * L_l + Kcoeff_wbc[num][2] * L_r + Kcoeff_wbc[num][3] * L_l2 +
+                      Kcoeff_wbc[num][4] * L_r2 + Kcoeff_wbc[num][5] * L_lL_r;
+      }
+    }
+  } else {
+    for (int row = 0; row < 4; row++) {
+      for (int col = 0; col < 10; col++) {
+        int num     = (row * 10) + col;
+        K[row][col] = Kcoeff_wbc[num][0] + Kcoeff_wbc[num][1] * L_l + Kcoeff_wbc[num][2] * L_r + Kcoeff_wbc[num][3] * L_l2 +
+                      Kcoeff_wbc[num][4] * L_r2 + Kcoeff_wbc[num][5] * L_lL_r;
+      }
+    }
+  }
+
+  float Twl = K[0][0] * (0 - s) +
+              K[0][1] * (0 - s_dot) +
+              K[0][2] * (0 - psi) +
+              K[0][3] * (0 - psi_dot) +
+              K[0][4] * (0 - theta_l) +
+              K[0][5] * (0 - theta_l_dot) +
+              K[0][6] * (0 - theta_r) +
+              K[0][7] * (0 - theta_r_dot) +
+              K[0][8] * (0 - phi) +
+              K[0][9] * (0 - phi_dot);
+
+  float Twr = K[1][0] * (0 - s) +
+              K[1][1] * (0 - s_dot) +
+              K[1][2] * (0 - psi) +
+              K[1][3] * (0 - psi_dot) +
+              K[1][4] * (0 - theta_l) +
+              K[1][5] * (0 - theta_l_dot) +
+              K[1][6] * (0 - theta_r) +
+              K[1][7] * (0 - theta_r_dot) +
+              K[1][8] * (0 - phi) +
+              K[1][9] * (0 - phi_dot);
+
+  float Tbl = K[2][0] * (0 - s) +
+              K[2][1] * (0 - s_dot) +
+              K[2][2] * (0 - psi) +
+              K[2][3] * (0 - psi_dot) +
+              K[2][4] * (0 - theta_l) +
+              K[2][5] * (0 - theta_l_dot) +
+              K[2][6] * (0 - theta_r) +
+              K[2][7] * (0 - theta_r_dot) +
+              K[2][8] * (0 - phi) +
+              K[2][9] * (0 - phi_dot);
+
+  float Tbr = K[3][0] * (0 - s) +
+              K[3][1] * (0 - s_dot) +
+              K[3][2] * (0 - psi) +
+              K[3][3] * (0 - psi_dot) +
+              K[3][4] * (0 - theta_l) +
+              K[3][5] * (0 - theta_l_dot) +
+              K[3][6] * (0 - theta_r) +
+              K[3][7] * (0 - theta_r_dot) +
+              K[3][8] * (0 - phi) +
+              K[3][9] * (0 - phi_dot);
+
+  robot.legL.TWheelset   = Twl;
+  robot.legR.TWheelset   = Twr;
+
+  robot.legL.Tpset       = Tbl;
+  robot.legR.Tpset       = Tbr;
+
+  // 前馈力
+  robot.legL.Fset        = FFEEDFORWARD;
+  robot.legR.Fset        = FFEEDFORWARD;
+  // 补偿虚拟力
+  float lfCompensate     = robot.legL.L0pid.compute(&robot.legL.L0pid, robot.legL.L0.now);
+  float rfCompensate     = robot.legR.L0pid.compute(&robot.legR.L0pid, robot.legR.L0.now);
+  robot.legL.Fset       += lfCompensate;
+  robot.legR.Fset       += rfCompensate;
+  // 劈腿补偿
+  float splitCompensate  = robot.splitpid.compute(&robot.splitpid, robot.legL.theta.now - robot.legR.theta.now);
+  robot.legL.Tpset      += splitCompensate;
+  robot.legR.Tpset      -= splitCompensate;
+  // 翻滚角补偿
+  // float rollCompensate	 = 0;	 // robot.rollpid->compute(robot.rollpid, robot.yesense.roll.now);
+  // robot.legL.Fset			-= rollCompensate;
+  // robot.legR.Fset			+= rollCompensate;
+
+  VMC(&robot.legL);
+  VMC(&robot.legR);
+
+  // 方向
+  //  robot.legL.TWheelset          *= robot.legL.dir;
+  robot.legL.TFset              *= robot.legL.dir;
+  robot.legL.TBset              *= robot.legL.dir;
+
+  robot.legR.TWheelset          *= robot.legR.dir;
+  robot.legR.TFset              *= robot.legR.dir;
+  robot.legR.TBset              *= robot.legR.dir;
+
+  robot.legR.front->set.torque   = robot.legR.TFset;
+  robot.legR.behind->set.torque  = robot.legR.TBset;
+  robot.legR.wheel->set.torque   = robot.legR.TWheelset;
+
+  robot.legL.front->set.torque   = robot.legL.TFset;
+  robot.legL.behind->set.torque  = robot.legL.TBset;
+  robot.legL.wheel->set.torque   = robot.legL.TWheelset;
 }

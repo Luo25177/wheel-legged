@@ -8,3 +8,4 @@ void LegRPidMonitor();
 void RobotLqrMonitor();
 void RobotTorqueMonitor();
 void RobotWholeDataMonitor();
+void RobotThetaMonitor();

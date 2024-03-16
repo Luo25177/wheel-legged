@@ -80,7 +80,20 @@ typedef struct {
   float Twheel;
 } Output;
 
+typedef struct {
+  float s;
+  float sdot;
+  float psi;
+  float psidot;
+  float thetal;
+  float thetaldot;
+} WBCInput;
+
+typedef struct {
+} WBCOutput;
+
 void InputInit(Input* input);
 void OutputInit(Output* output);
 
 extern float Kcoeff[12][4];
+extern float Kcoeff_wbc[40][6];

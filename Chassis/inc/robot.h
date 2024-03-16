@@ -46,3 +46,4 @@ void Jump();
 void HaltMode();
 void FlyCheck();
 void RobotRun();
+void WBCControl();

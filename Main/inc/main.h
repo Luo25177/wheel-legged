@@ -18,6 +18,7 @@
 #include "os_cfg.h"
 #include "os_cpu.h"
 #include "robot.h"
+#include "robotmonitor.h"
 #include "tim.h"
 #include "ucos_ii.h"
 #include "usart.h"

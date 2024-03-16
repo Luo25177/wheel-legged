@@ -190,6 +190,26 @@
           <WinNumber>1</WinNumber>
           <ItemText>Xd</ItemText>
         </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\wheelfoot\../Main/src/masterparam.c\master</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>expectx</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>expecttheta</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>CYBERGEAR_ITOTORQUE</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow4>
         <Mm>
@@ -429,8 +449,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Chassis\src\robotmonitor.c</PathWithFileName>
-      <FilenameWithoutPath>robotmonitor.c</FilenameWithoutPath>
+      <PathWithFileName>..\Chassis\src\robotparam.c</PathWithFileName>
+      <FilenameWithoutPath>robotparam.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -441,8 +461,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Chassis\src\robotparam.c</PathWithFileName>
-      <FilenameWithoutPath>robotparam.c</FilenameWithoutPath>
+      <PathWithFileName>..\Chassis\src\robotmonitor.c</PathWithFileName>
+      <FilenameWithoutPath>robotmonitor.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

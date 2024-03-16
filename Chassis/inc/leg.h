@@ -12,6 +12,7 @@
 #pragma once
 
 #include "DataStruct.h"
+#include "btoscilloscope.h"
 #include "robotparam.h"
 #include "tim.h"
 #include "tmotor.h"
