@@ -174,7 +174,7 @@ void Car::SplitLQRControl() {
     }
   }
   this->legL->StateSplit << this->legL->theta.now, this->legL->theta.dot, this->legL->dis.now, this->legL->dis.dot, this->sensor->pitch.now, this->sensor->pitch.dot;
-  this->ExpectSplit << 0, 0, 0, 0, 0, 0;
+  this->ExpectSplit << 0, 0, 2, 0, 0, 0;
   this->legL->InputSplit = this->legL->KSplit * (this->ExpectSplit - this->legL->StateSplit);
 
   this->legR->StateSplit << this->legR->theta.now, this->legR->theta.dot, this->legR->dis.now, this->legR->dis.dot, this->sensor->pitch.now, this->sensor->pitch.dot;
@@ -262,7 +262,7 @@ void Car::WbcLQRControl() {
     this->legR->theta.dot,
     this->sensor->pitch.now,
     this->sensor->pitch.dot;
-  this->ExpectWBC << 1, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  this->ExpectWBC << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
   this->InputWBC         = this->KWBC * (this->ExpectWBC - this->StateWBC);
 
   this->legL->Twset      = this->InputWBC(0, 0);

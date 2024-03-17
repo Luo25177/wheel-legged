@@ -12,8 +12,7 @@ int main(int argc, char** argv) {
 	while (wb_robot_step(timestep) != -1) {
 		updateState();
 		robotRun();
-		//fprintf(fp, "%f\t%f\t%f\t%F\n", car.legVir.X.theta, car.legVir.X.pitch, car.legVir.X.v, car.legVir.Xd.v);
-		fprintf(fp, "%f\n", car.yesense.z);
+		fprintf(fp, "%f\t%f\t%f\t%F\n", car.legVir.angle0.now, car.legVir.dis.now, car.yesense.pitch.now, car.legVir.dis.now);
 		int new_key = wb_keyboard_get_key();
 		while (new_key > 0) {
 			switch (new_key) {
@@ -23,10 +22,10 @@ int main(int argc, char** argv) {
 					jumpFlag = true;
 					break;
 				case WB_KEYBOARD_UP:
-					vd = 4;
+					vd = 2;
 					break;
 				case WB_KEYBOARD_DOWN:
-					vd = -4;
+					vd = -2;
 					break;
 				case WB_KEYBOARD_LEFT:
 					car.yawpid.target	 = 1.8;

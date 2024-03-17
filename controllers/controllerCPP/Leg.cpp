@@ -131,24 +131,30 @@ void Leg::njie(const float& _xc, const float& _yc) {
 }
 
 void Leg::VMC() {
+  float                      A = l1 * sin(angle1 - angle2) / sin(angle2 - angle3);
+  float                      B = l4 * sin(angle3 - angle4) / sin(angle2 - angle3);
   Eigen::Matrix<float, 2, 2> trans;
-  trans << l1 * sin(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / sin(this->angle2 - this->angle3),
-    l1 * cos(this->angle0 - this->angle3) * sin(this->angle1 - this->angle2) / (this->L0.now * sin(this->angle2 - this->angle3)),
-    l4 * sin(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / sin(this->angle2 - this->angle3),
-    l4 * cos(this->angle0 - this->angle2) * sin(this->angle3 - this->angle4) / (this->L0.now * sin(this->angle2 - this->angle3));
-  this->jointF->setTorque(trans(0, 0) * this->Fset - trans(0, 1) * this->Tbset);
-  this->jointB->setTorque(trans(1, 0) * this->Fset - trans(1, 1) * this->Tbset);
+  trans << -A * cos(theta.now + angle3), 
+					 A * sin(theta.now + angle3) / L0.now, 
+           -B * cos(theta.now + angle2), 
+           B * sin(theta.now + angle2) / L0.now;
+
+  this->jointF->setTorque(-trans(0, 0) * this->Fset - trans(0, 1) * this->Tbset);
+  this->jointB->setTorque(-trans(1, 0) * this->Fset - trans(1, 1) * this->Tbset);
   this->wheel->setTorque(this->Twset);
 }
 
 void Leg::INVMC() {
-  float A           = sin(angle2 - angle3) / (l1 * cos(angle0 - angle2) * sin(angle0 - angle3) * sin(angle1 - angle2) - l1 * cos(angle0 - angle3) * sin(angle0 - angle2) * sin(angle1 - angle2));
-  float B           = sin(angle2 - angle3) / (l4 * cos(angle0 - angle2) * sin(angle0 - angle3) * sin(angle3 - angle4) - l4 * cos(angle0 - angle3) * sin(angle0 - angle2) * sin(angle3 - angle4));
+  float A = l1 * sin(angle1 - angle2) / sin(angle2 - angle3);
+  float B = l4 * sin(angle3 - angle4) / sin(angle2 - angle3);
+  A       = A * cos(angle2 + theta.now) * sin(angle3 + theta.now) - A * cos(angle3 + theta.now) * sin(angle2 + theta.now);
+  B       = B * cos(angle2 + theta.now) * sin(angle3 + theta.now) - B * cos(angle3 + theta.now) * sin(angle2 + theta.now);
 
-  float trans[2][2] = { cos(angle0 - angle2) * A, -cos(angle0 - angle3) * B, -L0.now * sin(angle0 - angle2) * A, L0.now * sin(angle0 - angle3) * B };
+  Eigen::Matrix<float, 2, 2> trans;
+  trans << sin(angle2 + theta.now) / A, -sin(angle3 + theta.now) / B, L0.now * cos(angle2 + theta.now) / B, -L0.now * cos(angle3 + theta.now) / B;
 
-  this->Fnow        = (trans[0][0] * this->jointF->torqueRead + trans[0][1] * this->jointB->torqueRead);
-  this->Tbnow       = (trans[1][0] * this->jointF->torqueRead + trans[1][1] * this->jointB->torqueRead);
+  Fnow  = -trans(0, 0) * jointF->torqueRead - trans(0, 1) * jointB->torqueRead;
+  Tbnow = -trans(1, 0) * jointF->torqueRead - trans(1, 1) * jointB->torqueRead;
 }
 
 void Leg::splitCompute(const float& _pitch, const float& _pitchdot, const Eigen::Matrix<float, 12, 4>& _kcoeff) {

@@ -98,7 +98,7 @@ void balanceMode() {
 
   car.legVir.X.theta     = car.legVir.angle0.now;
   car.legVir.X.thetadot  = car.legVir.angle0.dot;
-  car.legVir.X.x         = car.legVir.dis.now;
+  car.legVir.X.x         = 0;
   car.legVir.X.v         = car.legVir.dis.dot;
   car.legVir.X.pitch     = car.yesense.pitch.now;
   car.legVir.X.pitchdot  = car.yesense.pitch.dot;
@@ -279,6 +279,7 @@ void WBCbalanceMode() {
   float rollCompensate   = car.rollpid.compute(&car.rollpid, car.yesense.roll.now);
   car.legL.Fset         -= rollCompensate;
   car.legR.Fset         += rollCompensate;
+
   float splitCompensate  = car.splitpid.compute(&car.splitpid, car.legL.angle0.now - car.legR.angle0.now);
   car.legL.Tpset        += splitCompensate;
   car.legR.Tpset        -= splitCompensate;
