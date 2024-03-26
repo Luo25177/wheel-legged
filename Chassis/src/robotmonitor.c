@@ -35,7 +35,8 @@ void RobotLqrMonitor() {
   data[8]  = robot.legL.wheel->real.torque;
   data[9]  = robot.legR.wheel->real.torque;
   data[10] = robot.legVir.Xd.x;
-  Oscilloscope(data, 11);
+  data[11] = robot.force;
+  Oscilloscope(data, 12);
 }
 
 void RobotTorqueMonitor() {

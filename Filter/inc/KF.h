@@ -31,5 +31,5 @@ typedef struct {
   arm_matrix_instance_f32 Hk;   // 观测矩阵 p x n
 } KalmanFilterMatrix;
 
-void                    KalmanFilterMatrixInit(KalmanFilterMatrix* filter, int n, int p, float* _Fk, float* _Hk, float* _Qk, float* _Rk);
+void                    KalmanFilterMatrixInit(KalmanFilterMatrix* filter, const unsigned short n, const unsigned short p, float* _Xk, float* _Pk, float* _Fk, float* _Hk, float* _Qk, float* _Rk);
 arm_matrix_instance_f32 KalmanFilterMatrixRun(KalmanFilterMatrix* filter, arm_matrix_instance_f32 _input);

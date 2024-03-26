@@ -1,51 +1,20 @@
 clc
 clear
-%% 拟合质心位置，转动惯量和杆长的函数
-I = zeros(1, 116);
-L = zeros(1, 116);
-Lw = zeros(1, 116);
-Lb = zeros(1, 116);
-
-for angle4 = -15 : 1 : 100
-    [ml, Il, L_, Lw_, Lb_] = GetLegBaryCenter(180 - angle4, angle4, 0);
-    I(angle4 + 16) = Il;
-    L(angle4 + 16) = L_;
-    Lw(angle4 + 16) = Lw_;
-    Lb(angle4 + 16) = Lb_;
-end
-
-KI = polyfit(L, I, 1);
-valKI = polyval(KI,L);
-figure(1);hold on;plot(L,I,'r*',L,valKI,'b-.');
-
-KLw = polyfit(L, Lw, 1);
-valKLw = polyval(KLw,L);
-figure(1);hold on;plot(L,Lw,'r*',L,valKLw,'b-.');
-
-
-KLb = polyfit(L, Lb, 1);
-valKLb = polyval(KLb,L);
-figure(1);hold on;plot(L,Lb,'r*',L,valKLb,'b-.');
-
 %% 开始解算
 syms x(t) theta(t) phi(t)
 syms Tw Tb Pw Pb Nw Nb
 syms x_ddot theta_ddot phi_ddot x_dot theta_dot phi_dot
-syms L
-mw = 1.267245 * 2;
+syms L Il Lw Lb ml
+mw = 0.77115000 * 2;
 R = 0.1;
 Iw = 0.00379267 * 2;
 
 mb = 5.4940204;
-Ib_y = 0.05026821;
+Ib_y = 0.05019911;
 g = 9.81;
 Ic_z = 0.37248874;
 R_l = 0.482000001;
-l = -0.01994485;
-Il = (KI(1, 1) * L + KI(1, 2)) * 2;
-Lw = KLw(1, 1) * L + KLw(1, 2);
-Lb = KLb(1, 1) * L + KLb(1, 2);
-ml = ml * 2;
+l = -0.02011323;
 
 func1 = [ml * diff(diff(x + Lw * sin(theta), t), t) == Nw - Nb;
     ml * diff(diff(Lw * cos(theta), t), t) == Pw - Pb - ml * g;
@@ -74,44 +43,68 @@ A = subs(A, [x_dot, theta(t), theta_dot, phi(t), phi_dot, Tw, Tb], zeros(1,7));
 B = subs(B, [x_dot, theta(t), theta_dot, phi(t), phi_dot, Tw, Tb], zeros(1,7));
 
 %% 设置拟合次数和腿长，开始拟合
-numsize = 29;
-minleglen = 0.120;
-maxleglen = 0.400;
+minangle4 = -15;
+maxangle4 = 79;
+steps = 0.2;
+numsize = (maxangle4 - minangle4) / steps + 1;
 
 K_vals = zeros(numsize, 2, 6);
 A_vals = zeros(numsize, 6, 6);
 B_vals = zeros(numsize, 6, 2);
-L_ranges = linspace(minleglen, maxleglen, numsize);
+L_vals = zeros(numsize, 1);
+I_vals = zeros(numsize, 1);
+Lw_vals = zeros(numsize, 1);
+Lb_vals = zeros(numsize, 1);
 
-for i = 1 : 1 : numsize
-valL = L_ranges(i);
+angle1_vals = zeros(numsize, 1);
+angle4_vals = zeros(numsize, 1);
 
-valA = subs(A, L, valL);
-valB = subs(B, L, valL);
-valA = double(valA);
-valB = double(valB);
-
-if(rank(ctrb(valA, valB)) == size(valA, 1))
-    disp('系统可控')
-else
-    disp('系统不可控')
-    K = 0;
-    return
+a = 1;
+for angle4 = minangle4 : steps : maxangle4
+    angle1 = 180 - angle4;
+    [valml, valIl, valL, valLw, valLb] = GetLegBaryCenter(angle1, angle4, 0);
+    valA = subs(A, [ml, Il, L, Lw, Lb], [2 * valml, 2 * valIl, valL, valLw, valLb]);
+    valB = subs(B, [ml, Il, L, Lw, Lb], [2 * valml, 2 * valIl, valL, valLw, valLb]);
+    valA = double(valA);
+    valB = double(valB);
+    
+    if(rank(ctrb(valA, valB)) == size(valA, 1))
+        disp('系统可控')
+    else
+        disp('系统不可控')
+        K = 0;
+        return
+    end
+    
+    C = eye(6);
+    D = zeros(6,2);
+    Q = diag([1 1 100 80 30 1]);
+    R = diag([1 0.25]);
+    sys = ss(valA, valB, C, D);
+    KLQR = lqr(sys, Q, R);%得到反馈增益矩阵
+    K_vals(a, :, :) = KLQR;
+    A_vals(a, :, :) = valA;
+    B_vals(a, :, :) = valB;
+    L_vals(a) = valL;
+    I_vals(a) = valIl;    
+    Lb_vals(a) = valLw;
+    Lw_vals(a) = valLb;
+    
+    angle1_vals(a) = angle1;
+    angle4_vals(a) = angle4;
+    a = a + 1;
 end
-disp(i)
 
-C = eye(6);
-D = zeros(6,2);
-Q = diag([5 0.5 60 20.0000 120 10]);
-R = diag([1 0.25]);
-sys = ss(valA, valB, C, D);
-KLQR = lqr(sys, Q, R);%得到反馈增益矩阵
-K_vals(i, :, :) = KLQR;
-A_vals(i, :, :) = valA;
-B_vals(i, :, :) = valB;
+K_coefficient = [];
+for i = 1:1:2
+    for j = 1 : 1 : 6
+    column_K = K_vals(:,i, j);
+    K_coefficient = [K_coefficient; polyfit(L_vals, column_K, 3)];%polyfit(x, y, n)多项式拟合，注意参数别写反了
+    end
 end
+disp(K_coefficient)
 
-%% LQR 拟合:比较倾向于使用Curve Fitting Toolbox，简单好用
+%% LQR 拟合:比较倾向于使用 Curve Fitting Toolbox ，简单好用
 K11 = K_vals(:, 1, 1);
 K12 = K_vals(:, 1, 2);
 K13 = K_vals(:, 1, 3);

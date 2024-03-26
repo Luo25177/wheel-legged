@@ -38,7 +38,7 @@
 // 虚拟力前馈
 #define FFEEDFORWARD    26.934435011f
 // 最小支持力阈值，判断是否离地的支持力的阈值
-#define FORCETHRESHOLD  20.f
+#define FORCETHRESHOLD  10.f
 // 机器人最大速度，如果追踪更大的速度会翻车
 #define MAXROBOTSPEED   1.f
 // 最小腿长
@@ -97,3 +97,4 @@ void OutputInit(Output* output);
 
 extern float Kcoeff[12][4];
 extern float Kcoeff_wbc[40][6];
+extern float inverted_pendulum[4];

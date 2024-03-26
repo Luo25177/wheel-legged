@@ -3,9 +3,20 @@
 Robot  robot;
 Tmotor tmotor[4];
 Zdrive zdrive[2];
-float  expectx     = 0;
-// TODO:
-float  expecttheta = -1.5f;
+VESC vesc[4];
+float  expectx         = 0;
+float  expectv         = 0;
+bool   initAngleWheel  = false;
+float  initAngleWheelL = 0;
+float  initAngleWheelR = 0;
+
+float DT               = 0.45f;
+float speeds[100]      = { 0 };
+int   speedscnt        = 0;
+float speedsum         = 0;
+float poslast          = 0;
+int   counttimes       = 0;
+bool  begin            = false;
 
 //----
 // @brief 初始化
@@ -28,9 +39,9 @@ void RobotInit() {
   robot.mode    = ROBOTNORMAL;
 
   // TODO: 参数暂定 调节
-  PidInit(&robot.yawpid, 3, 0, 3, 0, 1000, PIDPOS);
+  PidInit(&robot.yawpid, 2, 0, 10, 0, 1000, PIDPOS);
   PidInit(&robot.rollpid, 1, 1, 1, 0, 1000, PIDPOS);
-  PidInit(&robot.splitpid, 120, 0, 1000, 0, 1000, PIDPOS);
+  PidInit(&robot.splitpid, 50, 0, 500, 0, 1000, PIDPOS);
 
   robot.L0Set             = 0.15;
   robot.yawpid.target     = 0;
@@ -38,6 +49,13 @@ void RobotInit() {
   robot.splitpid.target   = 0;
   robot.legL.L0pid.target = robot.L0Set;
   robot.legR.L0pid.target = robot.L0Set;
+
+  KalmanFilterInit(&robot.thetaDot, 1, 1, 1, 5);
+  KalmanFilterInit(&robot.pitchNow, 1, 1, 1, 5);
+  KalmanFilterInit(&robot.pitchDot, 1, 1, 1, 3);
+
+  PidInit(&robot.pitchpid, 1, 0, 0, 100, 1000, PIDPOS);
+  PidInit(&robot.xpid, 1, 0, 0, 100, 1000, PIDPOS);
 }
 
 //----
@@ -51,28 +69,50 @@ void UpdateState() {
   Zjie(&robot.legL, pitch);
   Zjie(&robot.legR, pitch);
 
-  robot.legVir.dis.now = (-robot.legL.dis.now + robot.legR.dis.now) / 2;
-  robot.legVir.dis.dot = (-robot.legL.dis.dot + robot.legR.dis.dot) / 2;
-  robot.legVir.angle1  = (robot.legL.angle1 + robot.legR.angle1) / 2;
-  robot.legVir.angle4  = (robot.legL.angle4 + robot.legR.angle4) / 2;
+  if (!initAngleWheel && robot.yesense.init) {
+    initAngleWheelL = PI - robot.legL.angle3.now - robot.yesense.pitch.now;
+    initAngleWheelR = PI - robot.legR.angle3.now - robot.yesense.pitch.now;
+    initAngleWheel  = true;
+  }
+
+  robot.legVir.angle1 = (robot.legL.angle1 + robot.legR.angle1) / 2;
+  robot.legVir.angle4 = (robot.legL.angle4 + robot.legR.angle4) / 2;
 
   Zjie(&robot.legVir, pitch);
+
+  float compensateXL = (PI - robot.legL.angle3.now - robot.yesense.pitch.now - initAngleWheelL) * WHEELR;
+  float compensateXR = (PI - robot.legR.angle3.now - robot.yesense.pitch.now - initAngleWheelR) * WHEELR;
+  float compensateVL = (-robot.legL.angle3.dot - robot.yesense.pitch.dot) * WHEELR;
+  float compensateVR = (-robot.legR.angle3.dot - robot.yesense.pitch.dot) * WHEELR;
+
+  // float compensateXL   = robot.legVir.theta.now * WHEELR;
+  // float compensateXR   = robot.legVir.theta.now * WHEELR;
+  // float compensateVL   = robot.legVir.theta.dot * WHEELR;
+  // float compensateVR   = robot.legVir.theta.dot * WHEELR;
+
+  float speed        = 0;
+  if (counttimes < 1000) {
+    if (begin)
+      ++counttimes;
+    speed   = (-robot.legL.dis.now + robot.legR.dis.now - poslast) / 0.005f;
+    poslast = -robot.legL.dis.now + robot.legR.dis.now;
+  } else {
+    if (speedscnt >= 100) {
+      speedscnt = 0;
+    }
+    speedsum          -= speeds[speedscnt];
+    speeds[speedscnt]  = -robot.legL.dis.now + robot.legR.dis.now - poslast;
+    speedsum          += speeds[speedscnt];
+    ++speedscnt;
+    speed   = speedsum / DT;
+    poslast = -robot.legL.dis.now + robot.legR.dis.now;
+  }
+  robot.legVir.dis.now = (-robot.legL.dis.now + robot.legR.dis.now + compensateXL + compensateXR) / 2;
+  robot.legVir.dis.dot = (speed + compensateVL + compensateVR) / 2;
 
   FlyCheck();
 }
 
-float x = 0;
-float v = 0;
-float r = 1;
-//----
-// @brief 微分跟踪器，使得跟踪值更加平滑
-//
-// @param refx
-//----
-void  LTD(float refx) {
-  x = x + v * 0.0035;
-  v = v + 0.0035 * (-r * r * x - 2 * r * v + r * r * refx);
-}
 //----
 // @brief lqr 控制保持平衡
 //
@@ -82,42 +122,39 @@ void BalanceMode() {
   float L02 = L01 * L01;
   float L03 = L02 * L01;
 
-  if (robot.flyflag) {
-    for (int row = 0; row < 2; row++) {
-      for (int col = 0; col < 6; col++) {
-        int num = (row * 6) + col;
-        if (row == 1 && (col == 0 || col == 1))
-          robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
-        else
-          robot.legVir.K[row][col] = 0;
-      }
-    }
-  } else {
-    for (int row = 0; row < 2; row++) {
-      for (int col = 0; col < 6; col++) {
-        int num                  = (row * 6) + col;
-        robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
-      }
+  //  if (robot.flyflag) {
+  //    for (int row = 0; row < 2; row++) {
+  //      for (int col = 0; col < 6; col++) {
+  //        int num = (row * 6) + col;
+  //        if (row == 1 && (col == 0 || col == 1))
+  //          robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+  //        else
+  //          robot.legVir.K[row][col] = 0;
+  //      }
+  //    }
+  //  } else {
+  for (int row = 0; row < 2; row++) {
+    for (int col = 0; col < 6; col++) {
+      int num                  = (row * 6) + col;
+      robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
     }
   }
-  robot.legVir.X.theta    = robot.legVir.theta.now;
-  robot.legVir.X.thetadot = robot.legVir.theta.dot;
-  LimitInRange(float)(&robot.legVir.X.thetadot, 5);
-  robot.legVir.X.x        = robot.legVir.dis.now;
-  robot.legVir.X.v        = robot.legVir.dis.dot;
-  robot.legVir.X.pitch    = robot.yesense.pitch.now;
-  robot.legVir.X.pitchdot = robot.yesense.pitch.dot;
+  //  }
+  robot.legVir.X.theta      = robot.legVir.theta.now;
+  robot.legVir.X.thetadot   = robot.legVir.theta.dot;
+  robot.legVir.X.x          = robot.legVir.dis.now;
+  robot.legVir.X.v          = robot.legVir.dis.dot;
+  robot.legVir.X.pitch      = KalmanFilterRun(&robot.pitchNow, robot.yesense.pitch.now);
+  robot.legVir.X.pitchdot   = KalmanFilterRun(&robot.pitchDot, robot.yesense.pitch.dot);
 
-  LTD(expectx);
+  robot.legVir.Xd.theta     = 0;
+  robot.legVir.Xd.thetadot  = 0;
+  robot.legVir.Xd.x        += expectv * 0.005;
+  robot.legVir.Xd.v         = expectv;
+  robot.legVir.Xd.pitch     = 0;
+  robot.legVir.Xd.pitchdot  = 0;
 
-  robot.legVir.Xd.theta    = expecttheta / 180 * PI;
-  robot.legVir.Xd.thetadot = 0;
-  robot.legVir.Xd.x        = x;
-  robot.legVir.Xd.v        = 0;
-  robot.legVir.Xd.pitch    = 0;
-  robot.legVir.Xd.pitchdot = 0;
-
-  robot.legVir.U.Twheel    = robot.legVir.K[0][0] * (robot.legVir.Xd.theta - robot.legVir.X.theta) +
+  robot.legVir.U.Twheel     = robot.legVir.K[0][0] * (robot.legVir.Xd.theta - robot.legVir.X.theta) +
                           robot.legVir.K[0][1] * (robot.legVir.Xd.thetadot - robot.legVir.X.thetadot) +
                           robot.legVir.K[0][2] * (robot.legVir.Xd.x - robot.legVir.X.x) +
                           robot.legVir.K[0][3] * (robot.legVir.Xd.v - robot.legVir.X.v) +
@@ -242,9 +279,9 @@ void FlyCheck() {
   robot.legR.normalforce = rpw + MASSWHEEL * (GRAVITY + rzwdd);
   robot.legL.normalforce = lpw + MASSWHEEL * (GRAVITY + lzwdd);
 
-  float force            = (robot.legL.normalforce + robot.legR.normalforce) / 2;
+  robot.force            = (robot.legL.normalforce + robot.legR.normalforce) / 2;
 
-  if (force < FORCETHRESHOLD)
+  if (robot.force < FORCETHRESHOLD)
     robot.flyflag = true;
   else
     robot.flyflag = false;
@@ -259,6 +296,7 @@ void RobotRun() {
     case ROBOTNORMAL:
       // WBCControl();
       BalanceMode();
+      //      RobotInvertedPendulum();
       break;
     case ROBOTHALT:
       HaltMode();
@@ -388,7 +426,7 @@ void WBCControl() {
   VMC(&robot.legR);
 
   // 方向
-  //  robot.legL.TWheelset          *= robot.legL.dir;
+  // robot.legL.TWheelset          *= robot.legL.dir;
   robot.legL.TFset              *= robot.legL.dir;
   robot.legL.TBset              *= robot.legL.dir;
 
@@ -403,4 +441,14 @@ void WBCControl() {
   robot.legL.front->set.torque   = robot.legL.TFset;
   robot.legL.behind->set.torque  = robot.legL.TBset;
   robot.legL.wheel->set.torque   = robot.legL.TWheelset;
+}
+
+void RobotInvertedPendulum() {
+  float Tw = inverted_pendulum[0] * (0 - robot.legVir.dis.now) +
+             inverted_pendulum[1] * (0 - robot.legVir.dis.dot) +
+             inverted_pendulum[2] * (0 - robot.legVir.theta.now) +
+             inverted_pendulum[3] * (0 - robot.legVir.theta.dot);
+
+  robot.legR.wheel->set.torque = Tw;
+  robot.legL.wheel->set.torque = Tw;
 }

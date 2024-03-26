@@ -11,9 +11,11 @@
 
 #pragma once
 
+#include "KF.h"
 #include "btoscilloscope.h"
 #include "leg.h"
 #include "yesense.h"
+#include "vesc.h"
 
 typedef struct {
   bool flyflag;
@@ -31,10 +33,16 @@ typedef struct {
 
   RobotRunMode mode;
 
-  float L0Set;  // 设定腿长，也就是当前两条腿的平均腿长
-  float xSet;
-  float vSet;
-  float force;
+  float        L0Set;  // 设定腿长，也就是当前两条腿的平均腿长
+  float        xSet;
+  float        vSet;
+  float        force;
+  KalmanFilter thetaDot;
+  KalmanFilter pitchNow;
+  KalmanFilter pitchDot;
+
+  PID pitchpid;
+  PID xpid;
 } Robot;
 
 extern Robot robot;
@@ -47,3 +55,4 @@ void HaltMode();
 void FlyCheck();
 void RobotRun();
 void WBCControl();
+void RobotInvertedPendulum();

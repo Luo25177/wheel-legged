@@ -52,11 +52,11 @@ typedef struct {
 //----
 #define MotorValueDefine(T) \
   typedef struct {          \
-    T     current;          \
-    T     velocity;         \
-    float angleRad;         \
-    float angleDeg;         \
-    float torque;           \
+    volatile T     current;          \
+    volatile T     velocity;         \
+    volatile float angleRad;         \
+    volatile float angleDeg;         \
+    volatile float torque;           \
   } MotorValue_##T;
 #define MotorValue(T) MotorValue_##T
 

@@ -9,8 +9,8 @@
 #define KP_MAX 500.0f
 #define KD_MIN 0.0f  // KD极限（N-m/rad/s）
 #define KD_MAX 5.0f
-#define T_MIN  -12.0f  // 扭矩极限（Nm）
-#define T_MAX  12.0f
+#define T_MIN  -12.f  // 扭矩极限（Nm）
+#define T_MAX  12.f
 #define TRATIO 7.643f
 
 //----
@@ -22,8 +22,8 @@
 void TmotorInit(Tmotor* motor, u8 id) {
   // 电机初始参参数
   motor->id                  = id;
-  motor->kp                  = 80;
-  motor->kd                  = 0.66;
+  motor->kp                  = 20;
+  motor->kd                  = 0.40;
   motor->set.torque          = 0;
   motor->set.velocity        = 0;
   motor->set.angleDeg        = 0;
@@ -164,7 +164,7 @@ void TmotorEnable(Tmotor* motor, u8 controlword) {
 
 void TmotorRun(Tmotor* motor) {
   if (!motor->monitor.enable) {
-    motor->set.angleDeg = motor->real.angleDeg;
+    motor->set.angleRad = motor->real.angleRad;
     TmotorCommunicate(motor, 0, 0, 0, 0, 0);
     return;
   }
@@ -173,7 +173,7 @@ void TmotorRun(Tmotor* motor) {
       TmotorCommunicate(motor, 0, 0, 0, 0, 0);
       break;
     case POSITION:
-      TmotorCommunicate(motor, motor->set.angleDeg + motor->initReadAngle, 0, 0, motor->kp, motor->kd);
+      TmotorCommunicate(motor, motor->set.angleRad + motor->initReadAngle, 0, 0, motor->kp, motor->kd);
       break;
     case SPEED:
       TmotorCommunicate(motor, 0, motor->set.velocity, 0, 0, motor->kd);

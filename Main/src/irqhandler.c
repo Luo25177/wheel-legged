@@ -47,8 +47,19 @@ void TIM2_IRQHandler(void) {
     ++GlobalTimer;  // 全局计时器 代码的全局时间可都靠这个
     ++canCnt;
     if (canCnt == 10) {
-      CanSend(0x3);
+//      TmotorRun(tmotor);
+//      TmotorRun(tmotor + 1);
+//      TmotorRun(tmotor + 2);
+//      TmotorRun(tmotor + 3);
+
+//      ZdriveRun(zdrive);
+//      ZdriveRun(zdrive + 1);
+      ZdriveAskState(zdrive);
+      ZdriveAskState(zdrive + 1);
       canCnt = 0;
+    }
+    if (canCnt % 10 == 0) {
+      CanSend(0x3);
     }
   }
   TIM_ClearITPendingBit(TIM2, TIM_IT_Update);  // 清除中断标志位
@@ -61,7 +72,7 @@ void TIM3_IRQHandler(void) {
     for (int i = 0; i < 2; ++i) ZdriveMonitor(&zdrive[i]);
     //    RobotStateUpdate(&robotstate);
     // robot 状态检测
-    //    RobotLqrMonitor();
+    RobotLqrMonitor();
   }
   TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }

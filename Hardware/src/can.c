@@ -138,7 +138,7 @@ void Can2Init() {
 //----
 void CanSend(u8 ctrlWord) {
   CanTxMsg msg;
-  int      i = 2;  // 每次发送两条控制消息
+  int      i = 3;  // 每次发送两条控制消息
   while (i--) {
     if ((ctrlWord & 0x01) && can1Txmsg->pop(can1Txmsg, &msg))
       CAN_Transmit(CAN1, &msg);

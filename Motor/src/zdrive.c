@@ -2,10 +2,10 @@
 
 #define CYBERGEAR_GEARRATIO      1.f
 #define CYBERGEAR_REDUCTIONRATIO 7.75f
-//#define CYBERGEAR_ITOTORQUE      0.9f
+// #define CYBERGEAR_ITOTORQUE      0.9f
 #define CYBERGEAR_MAXCURRENT     20.f
 
-float CYBERGEAR_ITOTORQUE = 0.9f;
+float CYBERGEAR_ITOTORQUE = 0.87f;
 
 // mode
 typedef enum {
@@ -106,7 +106,7 @@ void ZdriveRun(Zdrive* motor) {
         ZdriveSetMode(motor, Zdrive_Current);
       txmsg.Data[0] = 0x43;
       float current = motor->set.torque / CYBERGEAR_ITOTORQUE;
-      LimitInRange(float)(&current, 7);
+      LimitInRange(float)(&current, 15);
       memcpy(txmsg.Data + 1, &current, sizeof(float));
       break;
     default:
@@ -114,7 +114,8 @@ void ZdriveRun(Zdrive* motor) {
   }
   can2Txmsg->push(can2Txmsg, txmsg);
 askstate:
-  ZdriveAskState(motor);
+  // ZdriveAskState(motor);
+  return;
 }
 
 void ZdriveMonitor(Zdrive* motor) {
@@ -171,8 +172,8 @@ void ZdriveAskState(Zdrive* motor) {
   //  txmsg.Data[0] = 0x52;
   //  can2Txmsg->push(can2Txmsg, txmsg);
   // speed
-  txmsg.Data[0] = 0x5C;
-  can2Txmsg->push(can2Txmsg, txmsg);
+  //  txmsg.Data[0] = 0x5C;
+  //  can2Txmsg->push(can2Txmsg, txmsg);
   // pos
   txmsg.Data[0] = 0x5E;
   can2Txmsg->push(can2Txmsg, txmsg);

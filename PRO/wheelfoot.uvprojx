@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,ARM_MATH_CM4,__FPU_PRESENT,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING,DEBUG_ENABLE_SEMIHOST,__TARGET_FPU_VFP</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Library\STM32F4xx_StdPeriph_Driver\inc;..\Library\Include;..\uCOSII\CONFIG;..\uCOSII\CORE;..\uCOSII\PORT;..\Library\CMSIS;..\Library\Startup;..\Hardware\inc;..\Function\inc;..\Main\inc;..\Chassis\inc;..\Motor\inc;..\Sensor\inc</IncludePath>
+              <IncludePath>..\Library\STM32F4xx_StdPeriph_Driver\inc;..\Library\Include;..\uCOSII\CONFIG;..\uCOSII\CORE;..\uCOSII\PORT;..\Library\CMSIS;..\Library\Startup;..\Hardware\inc;..\Function\inc;..\Main\inc;..\Chassis\inc;..\Motor\inc;..\Sensor\inc;..\Filter\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -430,6 +430,11 @@
               <FilePath>..\Function\src\vector.c</FilePath>
             </File>
             <File>
+              <FileName>btoscilloscope.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Function\src\btoscilloscope.c</FilePath>
+            </File>
+            <File>
               <FileName>queue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Function\src\queue.c</FilePath>
@@ -439,10 +444,25 @@
               <FileType>1</FileType>
               <FilePath>..\Function\src\vofa.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FILTER</GroupName>
+          <Files>
             <File>
-              <FileName>btoscilloscope.c</FileName>
+              <FileName>EKF.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Function\src\btoscilloscope.c</FilePath>
+              <FilePath>..\Filter\src\EKF.c</FilePath>
+            </File>
+            <File>
+              <FileName>KF.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Filter\src\KF.c</FilePath>
+            </File>
+            <File>
+              <FileName>trackingDifferentiator.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Filter\src\trackingDifferentiator.c</FilePath>
             </File>
           </Files>
         </Group>
