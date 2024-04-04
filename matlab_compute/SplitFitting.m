@@ -49,12 +49,7 @@ steps = 0.2;
 numsize = (maxangle4 - minangle4) / steps + 1;
 
 K_vals = zeros(numsize, 2, 6);
-A_vals = zeros(numsize, 6, 6);
-B_vals = zeros(numsize, 6, 2);
 L_vals = zeros(numsize, 1);
-I_vals = zeros(numsize, 1);
-Lw_vals = zeros(numsize, 1);
-Lb_vals = zeros(numsize, 1);
 
 angle1_vals = zeros(numsize, 1);
 angle4_vals = zeros(numsize, 1);
@@ -83,15 +78,7 @@ for angle4 = minangle4 : steps : maxangle4
     sys = ss(valA, valB, C, D);
     KLQR = lqr(sys, Q, R);%得到反馈增益矩阵
     K_vals(a, :, :) = KLQR;
-    A_vals(a, :, :) = valA;
-    B_vals(a, :, :) = valB;
-    L_vals(a) = valL;
-    I_vals(a) = valIl;    
-    Lb_vals(a) = valLw;
-    Lw_vals(a) = valLb;
-    
-    angle1_vals(a) = angle1;
-    angle4_vals(a) = angle4;
+    L_vals(a) = valL;   
     a = a + 1;
 end
 
@@ -118,63 +105,3 @@ K23 = K_vals(:, 2, 3);
 K24 = K_vals(:, 2, 4);
 K25 = K_vals(:, 2, 5);
 K26 = K_vals(:, 2, 6);
-
-A11 = A_vals(:, 1, 1);
-A12 = A_vals(:, 1, 2);
-A13 = A_vals(:, 1, 3);
-A14 = A_vals(:, 1, 4);
-A15 = A_vals(:, 1, 5);
-A16 = A_vals(:, 1, 6);
-
-A21 = A_vals(:, 2, 1);
-A22 = A_vals(:, 2, 2);
-A23 = A_vals(:, 2, 3);
-A24 = A_vals(:, 2, 4);
-A25 = A_vals(:, 2, 5);
-A26 = A_vals(:, 2, 6);
-
-A31 = A_vals(:, 3, 1);
-A32 = A_vals(:, 3, 2);
-A33 = A_vals(:, 3, 3);
-A34 = A_vals(:, 3, 4);
-A35 = A_vals(:, 3, 5);
-A36 = A_vals(:, 3, 6);
-
-A41 = A_vals(:, 4, 1);
-A42 = A_vals(:, 4, 2);
-A43 = A_vals(:, 4, 3);
-A44 = A_vals(:, 4, 4);
-A45 = A_vals(:, 4, 5);
-A46 = A_vals(:, 4, 6);
-
-A51 = A_vals(:, 5, 1);
-A52 = A_vals(:, 5, 2);
-A53 = A_vals(:, 5, 3);
-A54 = A_vals(:, 5, 4);
-A55 = A_vals(:, 5, 5);
-A56 = A_vals(:, 5, 6);
-
-A61 = A_vals(:, 6, 1);
-A62 = A_vals(:, 6, 2);
-A63 = A_vals(:, 6, 3);
-A64 = A_vals(:, 6, 4);
-A65 = A_vals(:, 6, 5);
-A66 = A_vals(:, 6, 6);
-
-B11 = B_vals(:, 1, 1);
-B12 = B_vals(:, 1, 2);
-
-B21 = B_vals(:, 2, 1);
-B22 = B_vals(:, 2, 2);
-
-B31 = B_vals(:, 3, 1);
-B32 = B_vals(:, 3, 2);
-
-B41 = B_vals(:, 4, 1);
-B42 = B_vals(:, 4, 2);
-
-B51 = B_vals(:, 5, 1);
-B52 = B_vals(:, 5, 2);
-
-B61 = B_vals(:, 6, 1);
-B62 = B_vals(:, 6, 2);

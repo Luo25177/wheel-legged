@@ -47,15 +47,15 @@ void TIM2_IRQHandler(void) {
     ++GlobalTimer;  // 全局计时器 代码的全局时间可都靠这个
     ++canCnt;
     if (canCnt == 10) {
-//      TmotorRun(tmotor);
-//      TmotorRun(tmotor + 1);
-//      TmotorRun(tmotor + 2);
-//      TmotorRun(tmotor + 3);
+      // TmotorRun(tmotor);
+      // TmotorRun(tmotor + 1);
+      // TmotorRun(tmotor + 2);
+      // TmotorRun(tmotor + 3);
 
-//      ZdriveRun(zdrive);
-//      ZdriveRun(zdrive + 1);
-      ZdriveAskState(zdrive);
-      ZdriveAskState(zdrive + 1);
+      // ZdriveRun(zdrive);
+      // ZdriveRun(zdrive + 1);
+      // ZdriveAskState(zdrive);
+      // ZdriveAskState(zdrive + 1);
       canCnt = 0;
     }
     if (canCnt % 10 == 0) {

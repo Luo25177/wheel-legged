@@ -106,7 +106,7 @@ static void TaskRun(void* pdata) {
       zdrive[1].monitor.enable = true;
       RobotRun();
     }
-    OSTimeDly(40);
+    OSTimeDly(30);
   }
 }
 

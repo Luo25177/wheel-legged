@@ -3,20 +3,18 @@
 Robot  robot;
 Tmotor tmotor[4];
 Zdrive zdrive[2];
-VESC vesc[4];
+VESC   vesc[4];
 float  expectx         = 0;
-float  expectv         = 0;
+float  expectv         = 0.f;
 bool   initAngleWheel  = false;
 float  initAngleWheelL = 0;
 float  initAngleWheelR = 0;
 
-float DT               = 0.45f;
-float speeds[100]      = { 0 };
-int   speedscnt        = 0;
-float speedsum         = 0;
 float poslast          = 0;
-int   counttimes       = 0;
-bool  begin            = false;
+float expecta          = 0;
+
+bool beginRun          = false;
+bool beginJump         = false;
 
 //----
 // @brief 初始化
@@ -35,11 +33,12 @@ void RobotInit() {
   LegInit(&robot.legR, LEGRIGHT, &zdrive[1], &tmotor[2], &tmotor[3]);
   LegInit(&robot.legL, LEGLEFT, &zdrive[0], &tmotor[0], &tmotor[1]);
 
-  robot.flyflag = false;
-  robot.mode    = ROBOTNORMAL;
+  robot.flyflag   = false;
+  robot.mode      = ROBOTNORMAL;
+  robot.jumpPhase = JUMPFINISH;
 
   // TODO: 参数暂定 调节
-  PidInit(&robot.yawpid, 2, 0, 10, 0, 1000, PIDPOS);
+  PidInit(&robot.yawpid, 3, 0, 90, 0, 1000, PIDPOS);
   PidInit(&robot.rollpid, 1, 1, 1, 0, 1000, PIDPOS);
   PidInit(&robot.splitpid, 50, 0, 500, 0, 1000, PIDPOS);
 
@@ -50,12 +49,10 @@ void RobotInit() {
   robot.legL.L0pid.target = robot.L0Set;
   robot.legR.L0pid.target = robot.L0Set;
 
-  KalmanFilterInit(&robot.thetaDot, 1, 1, 1, 5);
-  KalmanFilterInit(&robot.pitchNow, 1, 1, 1, 5);
-  KalmanFilterInit(&robot.pitchDot, 1, 1, 1, 3);
-
   PidInit(&robot.pitchpid, 1, 0, 0, 100, 1000, PIDPOS);
   PidInit(&robot.xpid, 1, 0, 0, 100, 1000, PIDPOS);
+
+  LineTrajInit(&robot.linetraj, 0.1, 1.5, 0, 5, 1.5, 3.3);
 }
 
 //----
@@ -80,36 +77,26 @@ void UpdateState() {
 
   Zjie(&robot.legVir, pitch);
 
-  float compensateXL = (PI - robot.legL.angle3.now - robot.yesense.pitch.now - initAngleWheelL) * WHEELR;
-  float compensateXR = (PI - robot.legR.angle3.now - robot.yesense.pitch.now - initAngleWheelR) * WHEELR;
-  float compensateVL = (-robot.legL.angle3.dot - robot.yesense.pitch.dot) * WHEELR;
-  float compensateVR = (-robot.legR.angle3.dot - robot.yesense.pitch.dot) * WHEELR;
+  float compensateXL   = (PI - robot.legL.angle3.now - robot.yesense.pitch.now - initAngleWheelL) * WHEELR;
+  float compensateXR   = (PI - robot.legR.angle3.now - robot.yesense.pitch.now - initAngleWheelR) * WHEELR;
+  float compensateVL   = (-robot.legL.angle3.dot - robot.yesense.pitch.dot) * WHEELR;
+  float compensateVR   = (-robot.legR.angle3.dot - robot.yesense.pitch.dot) * WHEELR;
 
   // float compensateXL   = robot.legVir.theta.now * WHEELR;
   // float compensateXR   = robot.legVir.theta.now * WHEELR;
   // float compensateVL   = robot.legVir.theta.dot * WHEELR;
   // float compensateVR   = robot.legVir.theta.dot * WHEELR;
 
-  float speed        = 0;
-  if (counttimes < 1000) {
-    if (begin)
-      ++counttimes;
-    speed   = (-robot.legL.dis.now + robot.legR.dis.now - poslast) / 0.005f;
-    poslast = -robot.legL.dis.now + robot.legR.dis.now;
-  } else {
-    if (speedscnt >= 100) {
-      speedscnt = 0;
-    }
-    speedsum          -= speeds[speedscnt];
-    speeds[speedscnt]  = -robot.legL.dis.now + robot.legR.dis.now - poslast;
-    speedsum          += speeds[speedscnt];
-    ++speedscnt;
-    speed   = speedsum / DT;
-    poslast = -robot.legL.dis.now + robot.legR.dis.now;
-  }
+  float speed          = (-robot.legL.dis.now + robot.legR.dis.now - poslast) / 0.005f;
+  poslast              = -robot.legL.dis.now + robot.legR.dis.now;
   robot.legVir.dis.now = (-robot.legL.dis.now + robot.legR.dis.now + compensateXL + compensateXR) / 2;
   robot.legVir.dis.dot = (speed + compensateVL + compensateVR) / 2;
 
+  if (beginJump) {
+    robot.jumpPhase = JUMPBEGIN;
+    beginJump       = false;
+  }
+  Jump();
   FlyCheck();
 }
 
@@ -122,39 +109,49 @@ void BalanceMode() {
   float L02 = L01 * L01;
   float L03 = L02 * L01;
 
-  //  if (robot.flyflag) {
-  //    for (int row = 0; row < 2; row++) {
-  //      for (int col = 0; col < 6; col++) {
-  //        int num = (row * 6) + col;
-  //        if (row == 1 && (col == 0 || col == 1))
-  //          robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
-  //        else
-  //          robot.legVir.K[row][col] = 0;
-  //      }
-  //    }
-  //  } else {
-  for (int row = 0; row < 2; row++) {
-    for (int col = 0; col < 6; col++) {
-      int num                  = (row * 6) + col;
-      robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+  if (robot.flyflag) {
+    for (int row = 0; row < 2; row++) {
+      for (int col = 0; col < 6; col++) {
+        int num = (row * 6) + col;
+        if (row == 1 && (col == 0 || col == 1))
+          robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+        else
+          robot.legVir.K[row][col] = 0;
+      }
+    }
+  } else {
+    for (int row = 0; row < 2; row++) {
+      for (int col = 0; col < 6; col++) {
+        int num                  = (row * 6) + col;
+        robot.legVir.K[row][col] = Kcoeff[num][0] * L03 + Kcoeff[num][1] * L02 + Kcoeff[num][2] * L01 + Kcoeff[num][3];
+      }
     }
   }
-  //  }
-  robot.legVir.X.theta      = robot.legVir.theta.now;
-  robot.legVir.X.thetadot   = robot.legVir.theta.dot;
-  robot.legVir.X.x          = robot.legVir.dis.now;
-  robot.legVir.X.v          = robot.legVir.dis.dot;
-  robot.legVir.X.pitch      = KalmanFilterRun(&robot.pitchNow, robot.yesense.pitch.now);
-  robot.legVir.X.pitchdot   = KalmanFilterRun(&robot.pitchDot, robot.yesense.pitch.dot);
+  robot.legVir.X.theta     = robot.legVir.theta.now;
+  robot.legVir.X.thetadot  = robot.legVir.theta.dot;
+  robot.legVir.X.x         = robot.legVir.dis.now;
+  robot.legVir.X.v         = robot.legVir.dis.dot;
+  robot.legVir.X.pitch     = robot.yesense.pitch.now;
+  robot.legVir.X.pitchdot  = robot.yesense.pitch.dot;
 
-  robot.legVir.Xd.theta     = 0;
-  robot.legVir.Xd.thetadot  = 0;
-  robot.legVir.Xd.x        += expectv * 0.005;
-  robot.legVir.Xd.v         = expectv;
-  robot.legVir.Xd.pitch     = 0;
-  robot.legVir.Xd.pitchdot  = 0;
+  robot.legVir.Xd.theta    = 0;
+  robot.legVir.Xd.thetadot = 0;
+  robot.legVir.Xd.pitch    = 0;
+  robot.legVir.Xd.pitchdot = 0;
 
-  robot.legVir.U.Twheel     = robot.legVir.K[0][0] * (robot.legVir.Xd.theta - robot.legVir.X.theta) +
+  if (!beginRun) {
+    robot.legVir.Xd.v = 0;
+    robot.legVir.Xd.x = 0;
+  } else {
+    LineTrajRun(&robot.linetraj, robot.legVir.X.x);
+    robot.legVir.Xd.x = robot.linetraj.xset;
+    robot.legVir.Xd.v = robot.linetraj.speed * 0.5;
+  }
+  // if (robot.legVir.Xd.v < expectv)
+  //   robot.legVir.Xd.v += expecta * 0.005;
+  // else
+
+  robot.legVir.U.Twheel = robot.legVir.K[0][0] * (robot.legVir.Xd.theta - robot.legVir.X.theta) +
                           robot.legVir.K[0][1] * (robot.legVir.Xd.thetadot - robot.legVir.X.thetadot) +
                           robot.legVir.K[0][2] * (robot.legVir.Xd.x - robot.legVir.X.x) +
                           robot.legVir.K[0][3] * (robot.legVir.Xd.v - robot.legVir.X.v) +
@@ -224,24 +221,24 @@ void Jump() {
     case JUMPBEGIN:
       robot.legL.L0pid.target = MINROBOTLEGLEN;
       robot.legR.L0pid.target = MINROBOTLEGLEN;
-      if (robot.legL.L0.now + robot.legR.L0.now <= 0.5)
+      if (robot.legL.L0.now + robot.legR.L0.now <= 0.30)
         robot.jumpPhase++;
       break;
     case JUMPKICK:
       robot.legL.L0pid.target = MAXROBOTLEGLEN;
       robot.legR.L0pid.target = MAXROBOTLEGLEN;
-      if (robot.legL.L0.now + robot.legR.L0.now >= 1.0)
+      if (robot.legL.L0.now + robot.legR.L0.now >= 0.74)
         robot.jumpPhase++;
       break;
     case JUMPSHRINK:
-      robot.legL.L0pid.target = MINROBOTLEGLEN;
-      robot.legR.L0pid.target = MINROBOTLEGLEN;
-      if (robot.force > 100)
+      robot.legL.L0pid.target = 0.17;
+      robot.legR.L0pid.target = 0.17;
+      if (robot.force > 40)
         robot.jumpPhase++;
       break;
     case JUMPBUFFER:
-      robot.legL.L0pid.target = MINROBOTLEGLEN;
-      robot.legR.L0pid.target = MINROBOTLEGLEN;
+      robot.legL.L0pid.target = 0.15;
+      robot.legR.L0pid.target = 0.15;
       robot.jumpPhase++;
       break;
     case JUMPFINISH:

@@ -14,8 +14,9 @@
 #include "KF.h"
 #include "btoscilloscope.h"
 #include "leg.h"
-#include "yesense.h"
+#include "linetraj.h"
 #include "vesc.h"
+#include "yesense.h"
 
 typedef struct {
   bool flyflag;
@@ -33,16 +34,15 @@ typedef struct {
 
   RobotRunMode mode;
 
-  float        L0Set;  // 设定腿长，也就是当前两条腿的平均腿长
-  float        xSet;
-  float        vSet;
-  float        force;
-  KalmanFilter thetaDot;
-  KalmanFilter pitchNow;
-  KalmanFilter pitchDot;
+  float L0Set;  // 设定腿长，也就是当前两条腿的平均腿长
+  float xSet;
+  float vSet;
+  float force;
 
   PID pitchpid;
   PID xpid;
+
+  LineTraj linetraj;
 } Robot;
 
 extern Robot robot;

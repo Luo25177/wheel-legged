@@ -114,7 +114,7 @@ void ZdriveRun(Zdrive* motor) {
   }
   can2Txmsg->push(can2Txmsg, txmsg);
 askstate:
-  // ZdriveAskState(motor);
+  ZdriveAskState(motor);
   return;
 }
 
