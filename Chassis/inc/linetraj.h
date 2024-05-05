@@ -4,7 +4,7 @@
 #include <math.h>
 
 typedef struct {
-  bool  finish;
+  bool finish;
   float xset;
   float speed;
   float x;
@@ -16,7 +16,7 @@ typedef struct {
   float speedDownDis;
 } LineTraj;
 
-void LineTrajSpeedUp(LineTraj* linetraj);
-void LineTrajSpeedDown(LineTraj* linetraj);
-void LineTrajRun(LineTraj* linetraj, float xnow);
-void LineTrajInit(LineTraj* linetraj, float startspeed, float uniformspeed, float endspeed, float aimx, float speedUpDis, float speedDownDis);
+void LineTrajSpeedUp(LineTraj *linetraj);
+void LineTrajSpeedDown(LineTraj *linetraj);
+void LineTrajRun(LineTraj *linetraj, float xnow);
+void LineTrajInit(LineTraj *linetraj, float startspeed, float uniformspeed, float endspeed, float aimx, float speedUpDis, float speedDownDis);

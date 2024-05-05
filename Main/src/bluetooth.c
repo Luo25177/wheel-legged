@@ -1,18 +1,18 @@
 #include "bluetooth.h"
 
-BlueToothMsg* bluetoothmsg;
+BlueToothMsg *bluetoothmsg;
 
 //----
 // @brief 初始化
 //
 //----
 void BlueToothInit() {
-  bluetoothmsg             = (BlueToothMsg*) malloc(sizeof(BlueToothMsg));
-  bluetoothmsg->gethead    = false;
+  bluetoothmsg = (BlueToothMsg *) malloc(sizeof(BlueToothMsg));
+  bluetoothmsg->gethead = false;
   bluetoothmsg->rxDataSize = 0;
   bluetoothmsg->txDataSize = 0;
-  bluetoothmsg->txData[0]  = HEADCHAR1;
-  bluetoothmsg->txData[1]  = HEADCHAR2;
+  bluetoothmsg->txData[0] = HEADCHAR1;
+  bluetoothmsg->txData[1] = HEADCHAR2;
   RobotStateInit(&robotstate);
   MasterInit(&master);
 }
@@ -29,7 +29,7 @@ void BlueToothReceive(u8 data) {
     bluetoothmsg->tail[1] = data;
     if (bluetoothmsg->tail[0] == TAILCHAR1 && bluetoothmsg->tail[1] == TAILCHAR2) {
       BlueToothDeal();
-      bluetoothmsg->gethead    = false;
+      bluetoothmsg->gethead = false;
       bluetoothmsg->rxDataSize = 0;
     } else
       bluetoothmsg->rxData[bluetoothmsg->rxDataSize++] = data;
@@ -43,7 +43,7 @@ void BlueToothReceive(u8 data) {
     }
   }
   if (bluetoothmsg->rxDataSize >= BLUETOOTHDATALEN) {
-    bluetoothmsg->gethead    = false;
+    bluetoothmsg->gethead = false;
     bluetoothmsg->rxDataSize = 0;
   }
 }
@@ -76,7 +76,7 @@ void BlueToothDeal() {
 // @param data
 // @param size
 //----
-void BlueToothSend(u8 id, void* data, u8 size) {
+void BlueToothSend(u8 id, void *data, u8 size) {
   bluetoothmsg->txData[2] = id;
   memcpy(&bluetoothmsg->txData[3], data, size);
   bluetoothmsg->txData[size + 3] = TAILCHAR1;

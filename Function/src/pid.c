@@ -7,7 +7,7 @@
 // @param input 输入
 // @return float 输出
 //----
-float IncCompute(PID* pid, float input) {
+float IncCompute(PID *pid, float input) {
   pid->err[0] = pid->target - input;
   pid->output = pid->kp * (pid->err[0] - pid->err[1]) + pid->ki * pid->err[0] + pid->kd * (pid->err[0] - 2 * pid->err[1] + pid->err[2]);
   pid->err[2] = pid->err[1];
@@ -22,8 +22,8 @@ float IncCompute(PID* pid, float input) {
 // @param input 输入
 // @return float 输出
 //----
-float PosCompute(PID* pid, float input) {
-  pid->err[0]  = pid->target - input;
+float PosCompute(PID *pid, float input) {
+  pid->err[0] = pid->target - input;
   pid->accErr += pid->err[0];
   LimitInRange(float)(&pid->accErr, pid->accErrLimit);
   pid->output = pid->kp * pid->err[0] + pid->ki * pid->accErr + pid->kd * (pid->err[0] - pid->err[1]);
@@ -40,9 +40,9 @@ float PosCompute(PID* pid, float input) {
 // @param input 输入
 // @return float 输出
 //----
-float TIncCompute(PID* pid, float input) {
+float TIncCompute(PID *pid, float input) {
   pid->err[0] = pid->target - input;
-  float ierr  = (pid->err[0] + pid->err[1]) / 2;
+  float ierr = (pid->err[0] + pid->err[1]) / 2;
   pid->output = pid->kp * (pid->err[0] - pid->err[1]) + pid->ki * ierr + pid->kd * (pid->err[0] - 2 * pid->err[1] + pid->err[2]);
   pid->err[2] = pid->err[1];
   pid->err[1] = pid->err[0];
@@ -57,8 +57,8 @@ float TIncCompute(PID* pid, float input) {
 // @param input 输入
 // @return float 输出
 //----
-float TPosCompute(PID* pid, float input) {
-  pid->err[0]  = pid->target - input;
+float TPosCompute(PID *pid, float input) {
+  pid->err[0] = pid->target - input;
   pid->accErr += (pid->err[0] + pid->err[1]) / 2;
   LimitInRange(float)(&pid->accErr, pid->accErrLimit);
   pid->output = pid->kp * pid->err[0] + pid->ki * pid->accErr + pid->kd * (pid->err[0] - pid->err[1]);
@@ -76,10 +76,10 @@ float TPosCompute(PID* pid, float input) {
 // @param inputdot
 // @return float
 //----
-float TwiceIncCompute(PID* pid, float input, float inputdot) {
-  pid->err[0]  = pid->target - input;
+float TwiceIncCompute(PID *pid, float input, float inputdot) {
+  pid->err[0] = pid->target - input;
   float errdot = 0 - inputdot;
-  pid->output  = pid->kp * pid->err[0] + pid->kd * errdot;
+  pid->output = pid->kp * pid->err[0] + pid->kd * errdot;
   if (pid->ki) {
     pid->accErr += inputdot;
     LimitInRange(float)(&pid->accErr, pid->accErrLimit);
@@ -100,13 +100,13 @@ float TwiceIncCompute(PID* pid, float input, float inputdot) {
 // @param accErrLimit
 // @param mode
 //----
-void PidInit(PID* pid, float kp, float ki, float kd, float outputLimit, float accErrLimit, pidMode mode) {
-  pid->kp          = kp;
-  pid->ki          = ki;
-  pid->kd          = kd;
-  pid->err[0]      = 0;
-  pid->err[1]      = 0;
-  pid->err[2]      = 0;
+void PidInit(PID *pid, float kp, float ki, float kd, float outputLimit, float accErrLimit, pidMode mode) {
+  pid->kp = kp;
+  pid->ki = ki;
+  pid->kd = kd;
+  pid->err[0] = 0;
+  pid->err[1] = 0;
+  pid->err[2] = 0;
   pid->outputLimit = outputLimit;
   pid->accErrLimit = accErrLimit;
 

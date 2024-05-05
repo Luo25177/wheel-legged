@@ -17,10 +17,10 @@
 #include <stdbool.h>
 
 typedef struct {
-  bool  init;
+  bool init;
   float timer;
 
-  float accelx;  // m/s2
+  float accelx;// m/s2
   float accely;
   float accelz;
 
@@ -32,7 +32,7 @@ typedef struct {
   float rawMagy;
   float rawMagz;
 
-  DataStruct pitch;  // deg
+  DataStruct pitch;// deg
   DataStruct roll;
   DataStruct yaw;
 
@@ -43,5 +43,5 @@ typedef struct {
 
 } Yesense;
 
-void yesenseReceiveHandler(Yesense* yesense, u8 temp);
-void yesenseInit(Yesense* yesense);
+void yesenseReceiveHandler(Yesense *yesense, u8 temp);
+void yesenseInit(Yesense *yesense);

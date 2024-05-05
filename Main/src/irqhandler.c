@@ -3,7 +3,7 @@
 // 数据传输完成，产生中断，检查是否还有没有传输的数据，继续传输
 void DMA2_Stream7_IRQHandler(void) {
   if (DMA_GetITStatus(DMA2_Stream7, DMA_IT_TCIF7) == SET) {
-    DMA_ClearFlag(DMA2_Stream7, DMA_IT_TCIF7);  // 清除中断标志
+    DMA_ClearFlag(DMA2_Stream7, DMA_IT_TCIF7);// 清除中断标志
     DMA_ClearITPendingBit(DMA2_Stream7, DMA_IT_TCIF7);
   }
 }
@@ -11,7 +11,7 @@ void DMA2_Stream7_IRQHandler(void) {
 // 数据传输完成,产生中断,检查是否还有没有传输的数据，继续传输
 void DMA1_Stream6_IRQHandler(void) {
   if (DMA_GetITStatus(DMA1_Stream6, DMA_IT_TCIF6) == SET) {
-    DMA_ClearFlag(DMA1_Stream6, DMA_IT_TCIF6);  // 清除中断标志
+    DMA_ClearFlag(DMA1_Stream6, DMA_IT_TCIF6);// 清除中断标志
     DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6);
   }
 }
@@ -30,7 +30,7 @@ void USART2_IRQHandler(void) {
   u8 temp;
   if (USART_GetITStatus(USART2, USART_IT_ORE_RX) != RESET) {
     temp = USART_ReceiveData(USART2);
-    USART_ClearFlag(USART2, USART_FLAG_ORE);  // 清除溢出中断
+    USART_ClearFlag(USART2, USART_FLAG_ORE);// 清除溢出中断
   }
   if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
     USART_ClearFlag(USART2, USART_FLAG_RXNE);
@@ -40,11 +40,11 @@ void USART2_IRQHandler(void) {
   }
 }
 
-int  canCnt = 0;
+int canCnt = 0;
 // 0.1 ms
 void TIM2_IRQHandler(void) {
   if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET) {
-    ++GlobalTimer;  // 全局计时器 代码的全局时间可都靠这个
+    ++GlobalTimer;// 全局计时器 代码的全局时间可都靠这个
     ++canCnt;
     if (canCnt == 10) {
       // TmotorRun(tmotor);
@@ -62,7 +62,7 @@ void TIM2_IRQHandler(void) {
       CanSend(0x3);
     }
   }
-  TIM_ClearITPendingBit(TIM2, TIM_IT_Update);  // 清除中断标志位
+  TIM_ClearITPendingBit(TIM2, TIM_IT_Update);// 清除中断标志位
 }
 
 // 100ms
