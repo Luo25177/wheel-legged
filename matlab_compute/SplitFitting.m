@@ -73,8 +73,8 @@ for angle4 = minangle4 : steps : maxangle4
     
     C = eye(6);
     D = zeros(6,2);
-    Q = diag([1 1 200 80 500 1]);
-    R = diag([2 0.5]);
+    Q = diag([1 1 500 100 5000 1]);
+    R = diag([1 0.5]);
     sys = ss(valA, valB, C, D);
     KLQR = lqr(sys, Q, R);%得到反馈增益矩阵
     K_vals(a, :, :) = KLQR;

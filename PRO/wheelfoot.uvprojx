@@ -460,11 +460,6 @@
               <FileType>1</FileType>
               <FilePath>..\Filter\src\KF.c</FilePath>
             </File>
-            <File>
-              <FileName>trackingDifferentiator.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Filter\src\trackingDifferentiator.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
