@@ -1,5 +1,8 @@
 function [ml, Il, L, Lw, Lb] = GetLegBaryCenter(angle1, angle4, pitch)
 
+angle1 = angle1 / 180 * pi();
+angle4 = angle4 / 180 * pi();
+
 l1 = 0.200;
 l2 = 0.400;
 l3 = 0.400;
