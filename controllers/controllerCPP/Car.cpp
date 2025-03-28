@@ -173,12 +173,13 @@ void Car::SplitLQRControl() {
       }
     }
   }
-  this->legL->StateSplit << this->legL->theta.now, this->legL->theta.dot, this->legL->dis.now, this->legL->dis.dot, this->sensor->pitch.now, this->sensor->pitch.dot;
+  
   this->ExpectSplit << 0, 0, 2, 0, 0, 0;
+  this->legL->StateSplit << this->legL->theta.now, this->legL->theta.dot, this->legL->dis.now, this->legL->dis.dot, this->sensor->pitch.now, this->sensor->pitch.dot;
   this->legL->InputSplit = this->legL->KSplit * (this->ExpectSplit - this->legL->StateSplit);
 
   this->legR->StateSplit << this->legR->theta.now, this->legR->theta.dot, this->legR->dis.now, this->legR->dis.dot, this->sensor->pitch.now, this->sensor->pitch.dot;
-  this->legL->InputSplit = this->legL->KSplit * (this->ExpectSplit - this->legL->StateSplit);
+  this->legR->InputSplit = this->legR->KSplit * (this->ExpectSplit - this->legR->StateSplit);
 
   this->legL->Twset      = this->legL->InputSplit(0, 0);
   this->legR->Twset      = this->legR->InputSplit(0, 0);
@@ -189,21 +190,21 @@ void Car::SplitLQRControl() {
   this->legL->Fset       = FFEEDFORWARD;
   this->legR->Fset       = FFEEDFORWARD;
 
-  // Ðý×ª²¹³¥
+  // è½¬è§’è¡¥å¿
   float yawCompensate    = this->turnPID.compute(this->sensor->yaw.dot);
   this->turnPID.setTarget(0);
   this->legL->Twset     -= yawCompensate;
   this->legR->Twset     += yawCompensate;
-  // ÐéÄâÁ¦
+  // è…¿é•¿æ”¯æŒåŠ›è¡¥å¿
   float lfCompensate     = this->legL->L0PID.compute(this->legL->L0.now);
   float rfCompensate     = this->legR->L0PID.compute(this->legR->L0.now);
   this->legL->Fset      += lfCompensate;
   this->legR->Fset      += rfCompensate;
-  // ÅüÍÈ²¹³¥
+  // åŒè…¿åŒæ­¥è¡¥å¿
   float splitCompensate  = this->splitPID.compute(this->legL->theta.now - this->legR->theta.now);
   this->legL->Tbset     += splitCompensate;
   this->legR->Tbset     -= splitCompensate;
-  // ·­¹ö½Ç²¹³¥
+  // æ¨ªæ»šè§’è¡¥å¿
   float rollCompensate   = this->rollPID.compute(this->sensor->roll.now);
   this->legL->Fset      += rollCompensate;
   this->legR->Fset      -= rollCompensate;
@@ -273,16 +274,16 @@ void Car::WbcLQRControl() {
 
   this->legL->Fset       = FFEEDFORWARD;
   this->legR->Fset       = FFEEDFORWARD;
-  // ÐéÄâÁ¦
+  // è‚¯ì½°ì œ
   float lfCompensate     = this->legL->L0PID.compute(this->legL->L0.now);
   float rfCompensate     = this->legR->L0PID.compute(this->legR->L0.now);
   this->legL->Fset      += lfCompensate;
   this->legR->Fset      += rfCompensate;
-  // ÅüÍÈ²¹³¥
+  // í‰è‹¦ê»¸ë‚„
   float splitCompensate  = this->splitPID.compute(this->legL->theta.now - this->legR->theta.now);
   this->legL->Tbset     += splitCompensate;
   this->legR->Tbset     -= splitCompensate;
-  // ·­¹ö½Ç²¹³¥
+  // ëŸ‡ë²„ì‹¤ê»¸ë‚„
   float rollCompensate   = this->rollPID.compute(this->sensor->roll.now);
   this->legL->Fset      += rollCompensate;
   this->legR->Fset      -= rollCompensate;
