@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="robot.SLDASM">
+  <link
+    name="body_link">
+    <inertial>
+      <origin
+        xyz="-5.78747286987912E-18 -1.99476468222325E-17 -3.26787402490085E-19"
+        rpy="0 0 0" />
+      <mass
+        value="0.972" />
+      <inertia
+        ixx="0.0026973"
+        ixy="4.42614694895482E-20"
+        ixz="2.52922682797419E-21"
+        iyy="0.0003645"
+        iyz="-2.53160123073193E-20"
+        izz="0.002916" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot.SLDASM/meshes/body_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot.SLDASM/meshes/body_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="rob_link">
+    <inertial>
+      <origin
+        xyz="-3.8548E-18 3.7798E-18 -1.3878E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.24" />
+      <inertia
+        ixx="0.000808"
+        ixy="-3.9104E-21"
+        ixz="-3.2255E-20"
+        iyy="0.000872"
+        iyz="-2.4668E-20"
+        izz="8E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot.SLDASM/meshes/rob_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot.SLDASM/meshes/rob_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rob_joint"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.115"
+      rpy="0 0 0" />
+    <parent
+      link="body_link" />
+    <child
+      link="rob_link" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="wheel_Link">
+    <inertial>
+      <origin
+        xyz="-2.7863E-18 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.47124" />
+      <inertia
+        ixx="0.00058905"
+        ixy="-6.1373E-23"
+        ixz="6.3766E-22"
+        iyy="0.0004359"
+        iyz="1.0164E-20"
+        izz="0.0004359" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot.SLDASM/meshes/wheel_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot.SLDASM/meshes/wheel_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.1"
+      rpy="-0.11947 0 0" />
+    <parent
+      link="rob_link" />
+    <child
+      link="wheel_Link" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+</robot>

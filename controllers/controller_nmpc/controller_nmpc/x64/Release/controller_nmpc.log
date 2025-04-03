@@ -1,0 +1,71 @@
+﻿  Accelerometer.cpp
+  Brake.cpp
+  Camera.cpp
+  Compass.cpp
+  Connector.cpp
+  Device.cpp
+  DifferentialWheels.cpp
+  Display.cpp
+  DistanceSensor.cpp
+  Emitter.cpp
+  Field.cpp
+  GPS.cpp
+  Gyro.cpp
+  InertialUnit.cpp
+  Joystick.cpp
+  Keyboard.cpp
+  LED.cpp
+  Lidar.cpp
+  LightSensor.cpp
+  Motion.cpp
+  正在编译...
+  Motor.cpp
+  Mouse.cpp
+  Node.cpp
+  Pen.cpp
+  PositionSensor.cpp
+  Radar.cpp
+  RangeFinder.cpp
+  Receiver.cpp
+  Robot.cpp
+  Skin.cpp
+  Speaker.cpp
+  Supervisor.cpp
+  TouchSensor.cpp
+  car.cc
+D:\Cpplabrary\casadi\install\casadi\include\casadi\core\sparsity.hpp(867,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“car.cc”)
+  
+D:\Cpplabrary\eigen-3.4.0\eigen-3.4.0\Eigen\src\Core\arch\Default\Half.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“car.cc”)
+  
+D:\Cpplabrary\eigen-3.4.0\eigen-3.4.0\Eigen\src\Core\arch\Default\BFloat16.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“car.cc”)
+  
+D:\Cpplabrary\eigen-3.4.0\eigen-3.4.0\Eigen\src\Core\arch\Default\GenericPacketMathFunctions.h(676,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“car.cc”)
+  
+C:\Users\belov\Desktop\wheelfoot\code\wheel-legged\controllers\controller_nmpc\car.cc(131,15): warning C4129: “%：: 不可识别的字符转义序列
+  data_struct.hh
+  main.cc
+D:\Cpplabrary\casadi\install\casadi\include\casadi\core\sparsity.hpp(867,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“main.cc”)
+  
+D:\Cpplabrary\eigen-3.4.0\eigen-3.4.0\Eigen\src\Core\arch\Default\Half.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“main.cc”)
+  
+D:\Cpplabrary\eigen-3.4.0\eigen-3.4.0\Eigen\src\Core\arch\Default\BFloat16.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“main.cc”)
+  
+D:\Cpplabrary\eigen-3.4.0\eigen-3.4.0\Eigen\src\Core\arch\Default\GenericPacketMathFunctions.h(676,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“main.cc”)
+  
+  nmpc_solver.cc
+D:\Cpplabrary\casadi\install\casadi\include\casadi\core\sparsity.hpp(867,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  (编译源文件“nmpc_solver.cc”)
+  
+  正在生成代码
+  Previous IPDB was built with incompatible compiler, fall back to full compilation.
+  All 998 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成代码的生成
+  controller_nmpc.vcxproj -> C:\Users\belov\Desktop\wheelfoot\code\wheel-legged\controllers\controller_nmpc\controller_nmpc.exe
